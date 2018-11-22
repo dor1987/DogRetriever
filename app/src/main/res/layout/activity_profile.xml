@@ -98,5 +98,11 @@
         android:text="@string/my_dogs" />
 
 
+    <ListView
+        android:id="@+id/dogs_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
 
 </LinearLayout>
