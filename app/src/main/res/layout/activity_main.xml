@@ -1,18 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/mainMenuTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/dog_retriever"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/userWelcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/hello_guest"
+        android:textSize="20sp"
+        android:layout_marginBottom="50dp"/>
+
+    <GridLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center"
+        android:columnCount="2"
+        android:background="#8c898f"
+        android:padding="2dp"
+        >
 
-</android.support.constraint.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/buttonScanner"
+            android:onClick="clickScanner"
+            android:orientation="vertical"
+            android:layout_margin="2dp"
+            >
+            <ImageButton
+                android:background="@drawable/tempButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+            <TextView
+                android:text="Scanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:background="@color/white"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonFindMyDog"
+            android:onClick="clickFindMyDog"
+            android:orientation="vertical"
+            android:layout_margin="2dp">
+            <ImageButton
+                android:background="@drawable/tempButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                />
+            <TextView
+                android:text="Find My Dog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:background="@color/white"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonSettings"
+            android:onClick="clickSettings"
+            android:orientation="vertical"
+            android:layout_margin="2dp">
+            <ImageButton
+                android:background="@drawable/tempButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"  />
+            <TextView
+                android:text="Settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:background="@color/white"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonProfile"
+            android:onClick="clickProfile"
+            android:orientation="vertical"
+            android:layout_margin="2dp">
+            <ImageButton
+                android:background="@drawable/tempButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"  />
+            <TextView
+                android:text="Profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:background="@color/white"
+                />
+        </LinearLayout>
+
+
+    </GridLayout>
+
+
+
+    <ImageButton
+        android:layout_marginTop="50dp"
+        android:background="@drawable/tempButton"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_gravity="end"
+        />
+
+</LinearLayout>

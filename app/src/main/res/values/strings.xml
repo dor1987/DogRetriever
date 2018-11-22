@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DogRetriever</string>
+    <string name="dog_retriever">Dog Retriever</string>
+    <string name="hello_guest">Hello Guest/User</string>
 </resources>
