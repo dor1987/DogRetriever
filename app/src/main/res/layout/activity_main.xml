@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".Presenter.MainActivity"
     android:orientation="vertical">
 
     <TextView
@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="@string/dog_retriever"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        />
 
     <TextView
         android:id="@+id/userWelcome"
@@ -39,7 +40,8 @@
             android:layout_margin="2dp"
             >
             <ImageButton
-                android:background="@drawable/tempButton"
+                android:background="@drawable/temp_button"
+                android:onClick="clickScanner"
                 android:layout_width="100dp"
                 android:layout_height="100dp" />
             <TextView
@@ -57,7 +59,8 @@
             android:orientation="vertical"
             android:layout_margin="2dp">
             <ImageButton
-                android:background="@drawable/tempButton"
+                android:background="@drawable/temp_button"
+                android:onClick="clickFindMyDog"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 />
@@ -76,7 +79,8 @@
             android:orientation="vertical"
             android:layout_margin="2dp">
             <ImageButton
-                android:background="@drawable/tempButton"
+                android:background="@drawable/temp_button"
+                android:onClick="clickSettings"
                 android:layout_width="100dp"
                 android:layout_height="100dp"  />
             <TextView
@@ -94,7 +98,8 @@
             android:orientation="vertical"
             android:layout_margin="2dp">
             <ImageButton
-                android:background="@drawable/tempButton"
+                android:background="@drawable/temp_button"
+                android:onClick="clickProfile"
                 android:layout_width="100dp"
                 android:layout_height="100dp"  />
             <TextView
@@ -113,10 +118,11 @@
 
     <ImageButton
         android:layout_marginTop="50dp"
-        android:background="@drawable/tempButton"
+        android:background="@drawable/temp_button"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_gravity="end"
+        android:onClick="clickAbout"
         />
 
 </LinearLayout>
