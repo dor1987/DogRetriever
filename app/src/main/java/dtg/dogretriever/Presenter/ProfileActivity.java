@@ -34,6 +34,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void initListToShow() {
         dogsList.add(new Dog(1,"Luka","Pitbull","White","Small","Insane"));
         dogsList.add(new Dog(2,"Nala","Labrador","White","Fat","Fat"));
+        dogsList.add(new Dog(3,"kc","Pincher","Brown","Tiny","Good girl"));
     }
 
 }
