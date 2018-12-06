@@ -1,0 +1,14 @@
+
+rsquid:UselessImportCheck"DRemove this unused import 'android.graphics.drawable.ColorDrawable'.(ÖŸÂ«øÿÿÿÿ8ªê‹˜ø,
+wsquid:S1450"VRemove the "mapView" field and declare it as a local variable in the relevant methods.(·Àºúÿÿÿÿ8ñèğ˜ø,
+Nsquid:S1135"2Complete the task associated to this TODO comment.(‡‚ùˆ8Ã«ò˜ø,
+csquid:S00112"FDefine and throw a dedicated exception instead of using a generic one.(İŒÜ±8Ã«ò˜ø,
+Dsquid:S1185"(Remove this method to simply inherit it.(ßìê¯8ó´·—ø,
+squid:S1488"`Immediately return this expression instead of assigning it to the temporary variable "fragment".(ëäº øÿÿÿÿ8Š£¸—ø,
+|squid:S00120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(Á¾—şÿÿÿÿ8×¶—ø,
+\squid:UselessImportCheck"3Remove this unused import 'java.util.zip.Inflater'.(„ËÅ¯8Ì§Ñ—ø,
+asquid:UselessImportCheck"3Remove this unused import 'android.graphics.Color'.(øãíòşÿÿÿÿ8Ø¨¢˜ø,
+Ssquid:S1135"2Complete the task associated to this TODO comment.(ßíŠÿÿÿÿÿ8×¶—ø,
+nsquid:UselessImportCheck"ERemove this unused import 'android.support.v4.content.ContextCompat'.(¹†Ç8Û¨©˜ø,
+Bsquid:S1172"&Remove these unused method parameters.(›·î8¾‹¸—ø,
+Osquid:S1068"4Remove this unused "currentAlgoShown" private field.(‘€“8üâ˜ø,
