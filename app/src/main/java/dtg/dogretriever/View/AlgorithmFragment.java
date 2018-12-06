@@ -85,7 +85,7 @@ public class AlgorithmFragment extends Fragment {
     private void setLearningAlgoON(){
         predictAlgoBtn.setBackgroundResource(R.color.dark_grey);
         learningAlgoBtn.setBackgroundResource(R.color.light_grey);
-        currentAlgoShown = algoType.PREDICTION;
+        currentAlgoShown = algoType.LEARNING;
     }
 
 
