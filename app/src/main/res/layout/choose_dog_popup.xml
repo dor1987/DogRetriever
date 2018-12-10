@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_popup"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/light_blue"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical" >
+
+
+        <TextView
+            android:id="@+id/layout_popup_txtMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Choose dog:" />
+
+        <ListView
+            android:id="@+id/popup_dog_name_list_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/light_blue"/>
+
+
+</LinearLayout>
