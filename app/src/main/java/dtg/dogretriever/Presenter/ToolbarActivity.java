@@ -8,13 +8,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import java.awt.font.TextAttribute;
-import java.lang.reflect.Type;
-
 import dtg.dogretriever.R;
 
 public class ToolbarActivity extends AppCompatActivity implements View.OnClickListener{
-    TextView ptofile_textview;
+    TextView profile_textview;
     FragmentManager fm;
 
     @Override
@@ -23,17 +20,17 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_toolbar);
         AlgorithmFragment algorithmFragment = new AlgorithmFragment();
 
-        ptofile_textview = findViewById(R.id.profile_toolbar_text);
+        profile_textview = findViewById(R.id.profile_toolbar_text);
 
-        ptofile_textview.setOnTouchListener(new View.OnTouchListener() {
+        profile_textview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        ptofile_textview.setTypeface(ptofile_textview.getTypeface(), Typeface.BOLD);
+                        profile_textview.setTypeface(profile_textview.getTypeface(), Typeface.BOLD);
                         break;
                     case MotionEvent.ACTION_UP:
-                        ptofile_textview.setTypeface(ptofile_textview.getTypeface(), Typeface.NORMAL);
+                        profile_textview.setTypeface(profile_textview.getTypeface(), Typeface.NORMAL);
                         break;
                 }
                 return false;
