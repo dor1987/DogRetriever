@@ -24,4 +24,9 @@
         completions.</string>
     <string name="dont_have_account">Don\'t have an account?</string>
     <string name="sign_in">sign in</string>
+    <string name="title_activity_toolbar">ToolbarActivity</string>
+    <string name="home_btn_text">Home</string>
+    <string name="about_toolbar_btn">About</string>
+    <string name="settings_toolbar_btn">Settings</string>
+    <string name="profile_toolbar_btn">Profile</string>
 </resources>
