@@ -2,6 +2,7 @@ package dtg.dogretriever.Presenter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -18,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.Profile;
@@ -29,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private PopupWindow popupWindow = null;
     private int popupWidth ;
     private int popupHeight;
+
+    //for database testing
+    public int profileIdCounter;
+    public int dogdCounter;
 
     //Firebase
     FirebaseDatabase dataBase;
@@ -127,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     public void addUserToDataBase(Profile user){
         //Gets user Profile and save it to FireBase by ID
         //This method would overwrite database child if the user have the same id
-        usersTableRef.child(user.getId()).setValue(user);
+      //  usersTableRef.child(user.getId()).setValue(user);
     }
 
 
@@ -139,6 +146,93 @@ public class MainActivity extends AppCompatActivity {
          dogTableRef.child(dog.getCollarId()+"").setValue(dog);
     }
 
+    //Assist functions to create random profile
 
+    public Profile GenerateRandomProfile(int id){
+         String fullName= getRandomName();
+         String userName = fullName.replaceAll("\\s+","");
+         String password = getRandomNumber()+"";
+         String eMail = userName+"@gmail.com";
+         String phoneNumber = getRandomNumber()+"";
+         String address ="Random Address";
+         ArrayList dogIdArrayList;
+         Bitmap randomIamge =null;
+
+
+
+        Profile profile = new Profile(id,userName,fullName,password,eMail,phoneNumber,address,dogIdArrayList,randomIamge);
+        return profile;
+    }
+    public String getRandomName() {
+        //Generate random name for Database testing
+
+        ArrayList<String> namesList = new ArrayList();
+        namesList.addAll(Arrays.asList("Donovan Eber",
+                "Dana Penny",
+                "Carie Saar",
+                "Lynn Philpot",
+                "Ignacio Hennig",
+                "Marci Rachal",
+                "Rosamaria Gallow",
+                "delina Turcios",
+                "Susanna Riding",
+                "Jerlene Henkle",
+                "Dorla Hydrick",
+                "Edyth Funnell",
+                "Fredia Wissing",
+                "Margret Harley",
+                "Augustina Lomax",
+                "Sylvie Roof",
+                "Edison Whobrey",
+                "Marlene Burgamy",
+                "Gerri Fiscus",
+                "Kathlene Weatherhead",
+                "Wendy Tedrow",
+                "Monte Mcgeehan",
+                "Maura Woodson",
+                "Ellena Embry",
+                "Migdalia Dupuis",
+                "Stephen Prager",
+                "Caprice Mitchener",
+                "Orval Lauber",
+                "Alesia Wilbanks",
+                "Kacie Reep",
+                "Brianne Cushman",
+                "Lela Mchaney",
+                "Tangela Stumbo",
+                "Melany Romano",
+                "Adah Stellhorn",
+                "Meda Shin",
+                "Janett Kempton",
+                "Arianne Pinkley",
+                "Jackelyn Ellman",
+                "Beckie Stotz",
+                "Kemberly Alligood",
+                "Brittaney Saleem",
+                "Anton Rolfes",
+                "Marth Bluhm",
+                "Lorina Crapo",
+                "Casimira Sowers",
+                "Marine Bramblett",
+                "Burl Martinelli",
+                "Johanna Fullbright",
+                "Avril Pusey"));
+
+        Random rand = new Random();
+
+        int n = rand.nextInt(50) + 1;
+
+        return namesList.get(n);
+    }
+
+    public int getRandomNumber(){
+        //an asisst function to create database
+        Random rand = new Random();
+       return ( 100000000 + rand.nextInt(900000000));
+    }
+
+
+
+    //Assist functions to create random Dog
 
 }
