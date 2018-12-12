@@ -1,19 +1,18 @@
 package dtg.dogretriever.Model;
 
 import android.graphics.Bitmap;
-import android.media.Image;
 
 import java.util.ArrayList;
 
 public class Profile {
-    private int id;
+    private String id;
     private String userName;
     private String fullName;
     private String password;
     private String eMail;
     private String phoneNumber;
     private String address;
-    private ArrayList dogArrayList;
+    private ArrayList dogsIDArrayList;
     private Bitmap profileImage;
 
     private Profile(ProfileBuilder profileBuilder){
@@ -24,11 +23,11 @@ public class Profile {
         seteMail(profileBuilder.eMail);
         setPhoneNumber(profileBuilder.phoneNumber);
         setAddress(profileBuilder.address);
-        setDogArrayList(profileBuilder.dogArrayList);
+        setDogsIDArrayList(profileBuilder.dogArrayList);
         setProfileImage(profileBuilder.profileImage);
     }
 
-    public Profile(int id, String userName, String fullName, String password, String eMail, String phoneNumber, String address, ArrayList dogArrayList, Bitmap profileImage) {
+    public Profile(String id, String userName, String fullName, String password, String eMail, String phoneNumber, String address, ArrayList dogsIDArrayList, Bitmap profileImage) {
         this.id = id;
         this.userName = userName;
         this.fullName = fullName;
@@ -36,15 +35,15 @@ public class Profile {
         this.eMail = eMail;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.dogArrayList = dogArrayList;
+        this.dogsIDArrayList = dogsIDArrayList;
         this.profileImage = profileImage;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -96,12 +95,12 @@ public class Profile {
         this.address = address;
     }
 
-    public ArrayList getDogArrayList() {
-        return dogArrayList;
+    public ArrayList getDogsIDArrayList() {
+        return dogsIDArrayList;
     }
 
-    public void setDogArrayList(ArrayList dogArrayList) {
-        this.dogArrayList = dogArrayList;
+    public void setDogsIDArrayList(ArrayList dogsIDArrayList) {
+        this.dogsIDArrayList = dogsIDArrayList;
     }
 
     public Bitmap getProfileImage() {
@@ -114,7 +113,7 @@ public class Profile {
 
     public static class ProfileBuilder{
         //required
-        private int id;
+        private String id;
         private String userName;
         private String fullName;
         private String password;
@@ -126,7 +125,7 @@ public class Profile {
         private ArrayList dogArrayList;
         private Bitmap profileImage;
 
-        public ProfileBuilder(int id, String userName, String fullName, String password) {
+        public ProfileBuilder(String id, String userName, String fullName, String password) {
             this.id = id;
             this.userName = userName;
             this.fullName = fullName;
@@ -134,7 +133,7 @@ public class Profile {
         }
 
 
-        public void setId(int id) {
+        public void setId(String id) {
             this.id = id;
         }
 
