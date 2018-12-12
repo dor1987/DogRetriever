@@ -89,7 +89,10 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //navigate to algo fragment
+                Intent intent = new Intent(getBaseContext(),ToolbarActivity.class);
+                intent.putExtra("DOG_ID",createDogsList().get(i).getCollarId());
+                startActivity(intent);
+
             }
         });
 

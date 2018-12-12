@@ -1,7 +1,7 @@
 package dtg.dogretriever.Model;
 
 public class Dog {
-    private enum enumSize {TINY , SMALL, MEDIUM, LARGE};
+    public enum enumSize {TINY , SMALL, MEDIUM, LARGE};
 
     private int collarId;
     private String name;
@@ -10,12 +10,14 @@ public class Dog {
     private enumSize size;
     private String notes;
 
+    public Dog(String name){
+        this.name = name;
+    } //remove after creating database
 
     public Dog(){}
 
     private Dog(DogBuilder dogBuilder){
-        this.collarId = dogBuilder.collarId;
-
+        setCollarId(dogBuilder.collarId);
         setName(dogBuilder.name);
         setBreed(dogBuilder.breed);
         setColor(dogBuilder.color);

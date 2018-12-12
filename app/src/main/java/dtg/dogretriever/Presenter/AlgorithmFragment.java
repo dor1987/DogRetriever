@@ -1,4 +1,4 @@
-package dtg.dogretriever.View;
+package dtg.dogretriever.Presenter;
 
 import android.content.Context;
 import android.net.Uri;
@@ -8,11 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
-import com.google.android.gms.maps.MapView;
-
-import java.util.zip.Inflater;
-
 import dtg.dogretriever.R;
 
 
@@ -22,7 +17,7 @@ public class AlgorithmFragment extends Fragment {
     private algoType currentAlgoShown = algoType.PREDICTION;
     private Button predictAlgoBtn;
     private Button learningAlgoBtn;
-    private MapView mapView;
+    //private Map mapView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -52,7 +47,7 @@ public class AlgorithmFragment extends Fragment {
         predictAlgoBtn = view.findViewById(R.id.predictionAlgo_btn);
         learningAlgoBtn = view.findViewById(R.id.learningAlgo_btn);
 
-        mapView = view.findViewById(R.id.mapView);
+      //  mapView = view.findViewById(R.id.mapView);
 
         predictAlgoBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -23,8 +23,12 @@
         </activity>
         <activity android:name=".Presenter.ProfileActivity" />
         <activity
-            android:name=".View.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:name=".Presenter.LoginActivity"
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".Presenter.ToolbarActivity"
+            android:label="@string/title_activity_toolbar"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
