@@ -3,12 +3,13 @@ package dtg.dogretriever.Model;
 public class Dog {
     public enum enumSize {TINY , SMALL, MEDIUM, LARGE};
 
-    private int collarId;
+    private String collarId;
     private String name;
     private String breed;
     private String color;
     private enumSize size;
     private String notes;
+    private String ownerId;
 
     public Dog(String name){
         this.name = name;
@@ -18,6 +19,7 @@ public class Dog {
 
     private Dog(DogBuilder dogBuilder){
         setCollarId(dogBuilder.collarId);
+        setOwnerId(dogBuilder.ownerId);
         setName(dogBuilder.name);
         setBreed(dogBuilder.breed);
         setColor(dogBuilder.color);
@@ -26,7 +28,7 @@ public class Dog {
 
     }
 
-    public Dog(int collarId, String name, String breed, String color, enumSize size, String notes) {
+    public Dog(String collarId, String name, String breed, String color, enumSize size, String notes) {
         this.collarId = collarId;
         this.name = name;
         this.breed = breed;
@@ -35,11 +37,11 @@ public class Dog {
         this.notes = notes;
     }
 
-    public int getCollarId() {
+    public String getCollarId() {
         return collarId;
     }
 
-    public void setCollarId(int collarId) {
+    public void setCollarId(String collarId) {
         this.collarId = collarId;
     }
 
@@ -83,10 +85,19 @@ public class Dog {
         this.notes = notes;
     }
 
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
 
     public static class DogBuilder {
         //required
-        private int collarId;
+        private String collarId;
+        private String ownerId;
 
 
         //optional
@@ -97,12 +108,16 @@ public class Dog {
         private String notes;
 
 
-        public DogBuilder(int collarId) {
+        public DogBuilder(String collarId, String ownerId) {
             this.collarId = collarId;
+            this.ownerId = ownerId;
         }
 
+        public void setOwnerId(String ownerId) {
+            this.ownerId = ownerId;
+        }
 
-        public DogBuilder setCollarId(int collarId) {
+        public DogBuilder setCollarId(String collarId) {
             this.collarId = collarId;
             return this;
         }
