@@ -26,18 +26,7 @@ public class Profile {
         setDogsIDArrayList(profileBuilder.dogArrayList);
         setProfileImage(profileBuilder.profileImage);
     }
-
-    public Profile(String id, String userName, String fullName, String password, String eMail, String phoneNumber, String address, ArrayList dogsIDArrayList, Bitmap profileImage) {
-        this.id = id;
-        this.userName = userName;
-        this.fullName = fullName;
-        this.password = password;
-        this.eMail = eMail;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.dogsIDArrayList = dogsIDArrayList;
-        this.profileImage = profileImage;
-    }
+    
 
     public String getId() {
         return id;

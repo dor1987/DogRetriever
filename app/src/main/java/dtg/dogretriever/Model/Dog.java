@@ -1,5 +1,7 @@
 package dtg.dogretriever.Model;
 
+import java.util.ArrayList;
+
 public class Dog {
     public enum enumSize {TINY , SMALL, MEDIUM, LARGE};
 
@@ -10,6 +12,7 @@ public class Dog {
     private enumSize size;
     private String notes;
     private String ownerId;
+    private ArrayList<Coordinate> scannedCoords;
 
     public Dog(String name){
         this.name = name;
@@ -25,17 +28,10 @@ public class Dog {
         setColor(dogBuilder.color);
         setSize(dogBuilder.size);
         setNotes(dogBuilder.notes);
+        setScannedCoords(scannedCoords);
 
     }
 
-    public Dog(String collarId, String name, String breed, String color, enumSize size, String notes) {
-        this.collarId = collarId;
-        this.name = name;
-        this.breed = breed;
-        this.color = color;
-        this.size = size;
-        this.notes = notes;
-    }
 
     public String getCollarId() {
         return collarId;
@@ -93,6 +89,14 @@ public class Dog {
         this.ownerId = ownerId;
     }
 
+    public ArrayList<Coordinate> getScannedCoords() {
+        return scannedCoords;
+    }
+
+    public void setScannedCoords(ArrayList<Coordinate> scannedCoords) {
+        this.scannedCoords = scannedCoords;
+    }
+
 
     public static class DogBuilder {
         //required
@@ -106,6 +110,7 @@ public class Dog {
         private String color;
         private enumSize size;
         private String notes;
+        private ArrayList<Coordinate> scannedCoords;
 
 
         public DogBuilder(String collarId, String ownerId) {
@@ -146,6 +151,12 @@ public class Dog {
             this.notes = notes;
             return this;
         }
+
+
+        public void setScannedCoords(ArrayList<Coordinate> scannedCoords) {
+            this.scannedCoords = scannedCoords;
+        }
+
 
 
         public Dog build() {
