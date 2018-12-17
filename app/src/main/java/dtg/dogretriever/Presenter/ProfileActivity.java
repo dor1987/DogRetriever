@@ -35,9 +35,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void initListToShow() {
-        dogsList.add(new Dog("1","Luka","Pitbull","White",Dog.enumSize.SMALL,"Insane"));
-        dogsList.add(new Dog("2","Nala","Labrador","White",Dog.enumSize.LARGE,"Fat"));
-        dogsList.add(new Dog("3","kc","Pincher","Brown",Dog.enumSize.TINY,"Good girl"));
+//        dogsList.add(new Dog("1","Luka","Pitbull","White",Dog.enumSize.SMALL,"Insane"));
+//        dogsList.add(new Dog("2","Nala","Labrador","White",Dog.enumSize.LARGE,"Fat"));
+//        dogsList.add(new Dog("3","kc","Pincher","Brown",Dog.enumSize.TINY,"Good girl"));
     }
 
 }

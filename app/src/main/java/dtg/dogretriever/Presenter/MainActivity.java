@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getBaseContext(),ToolbarActivity.class);
+                intent.putExtra("TAG","AlgorithmFragment");
                 intent.putExtra("DOG_ID",createDogsList().get(i).getCollarId());
                 startActivity(intent);
 
@@ -175,8 +176,10 @@ public class MainActivity extends AppCompatActivity {
              dogIdArrayList.add(tempDog.getCollarId());
              dogIdCounter+=1;
          }
+        Profile.ProfileBuilder profileBuilder = new Profile.ProfileBuilder(id+"",userName,fullName,password);
+        Profile profile = profileBuilder.setAddress(address).seteMail(eMail).setPhoneNumber(phoneNumber).setDogArrayList(dogIdArrayList)
+                .setProfileImage(randomIamge).build();
 
-        Profile profile = new Profile(id+"",userName,fullName,password,eMail,phoneNumber,address,dogIdArrayList,randomIamge);
          return profile;
     }
     public String getRandomName() {
@@ -255,8 +258,9 @@ public class MainActivity extends AppCompatActivity {
          Dog.enumSize size = getRandomSize();
          String notes = "Random Note";
 
-        Dog dog = new Dog(collarId,name,breed,color,size,notes);
-        dog.setOwnerId(ownerId+"");
+        Dog.DogBuilder dogBuilder = new Dog.DogBuilder(collarId,ownerId+"");
+        Dog dog = dogBuilder.setName(name).setBreed(breed).setColor(color).setSize(size).setNotes(notes).build();
+
         addDogToDataBase(dog);
 
         return dog;

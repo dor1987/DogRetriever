@@ -3,9 +3,11 @@ package dtg.dogretriever.Presenter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import dtg.dogretriever.R;
@@ -13,6 +15,7 @@ import dtg.dogretriever.R;
 public class ToolbarActivity extends AppCompatActivity implements View.OnClickListener{
     TextView profile_textview;
     FragmentManager fm;
+    FrameLayout frameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,21 +25,26 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
 
         profile_textview = findViewById(R.id.profile_toolbar_text);
 
-        profile_textview.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        profile_textview.setTypeface(profile_textview.getTypeface(), Typeface.BOLD);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        profile_textview.setTypeface(profile_textview.getTypeface(), Typeface.NORMAL);
-                        break;
-                }
-                return false;
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.fragment_container, algorithmFragment);
+        fragmentTransaction.commit();
 
-            }
-        });
+
+//        profile_textview.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                switch (motionEvent.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        profile_textview.setTypeface(profile_textview.getTypeface(), Typeface.BOLD);
+//                        break;
+//                    case MotionEvent.ACTION_UP:
+//                        profile_textview.setTypeface(profile_textview.getTypeface(), Typeface.NORMAL);
+//                        break;
+//                }
+//                return false;
+//
+//            }
+//        });
 
     }
 
