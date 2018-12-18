@@ -20,6 +20,7 @@ public class Dog {
 
     public Dog(){}
 
+
     private Dog(DogBuilder dogBuilder){
         setCollarId(dogBuilder.collarId);
         setOwnerId(dogBuilder.ownerId);
@@ -152,7 +153,7 @@ public class Dog {
             return this;
         }
 
-
+        //ToDo *** Need to make an Add coord and not set coord
         public void setScannedCoords(ArrayList<Coordinate> scannedCoords) {
             this.scannedCoords = scannedCoords;
         }
