@@ -69,4 +69,8 @@ public class Coordinate {
     public void setErrorApproximation(Float errorApproximation) {
         this.errorApproximation = errorApproximation;
     }
+
+    public LatLng getLatLng(){
+        return new LatLng(latitude,longitude);
+    }
 }

@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         DogsFromDataBaseList = new ArrayList<Dog>(); //This is where the list of dog will be after it get it from firebase
 
+
         //Firebase Listeners
         dogTableRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -99,11 +100,8 @@ public class MainActivity extends AppCompatActivity {
                         coordinates.addAll(DogsFromDataBaseList.get(i).getScannedCoords());
                     }
                 }
-                int size = coordinates.size();
 
-                for (Coordinate cord : coordinates){
-                    System.out.println("listOfPointsNearBy.add(new Point(-1,new LatLng("+cord.getLatitude()+","+cord.getLongitude()+")));");
-                }
+
 
             }
 
