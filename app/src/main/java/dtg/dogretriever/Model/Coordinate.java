@@ -32,13 +32,23 @@ public class Coordinate {
 
 
 
-
+/*
     public LatLng getLocation() {
         return new LatLng(latitude,longitude);
     //    return location;
     }
+*/
 
-    public void setLocation(double latitude,double longitude) {
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLocation(double latitude, double longitude) {
        this.latitude = latitude;
        this.longitude = longitude;
         //this.location = location;

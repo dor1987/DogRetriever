@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     //Firebase
     FirebaseDatabase dataBase;
     DatabaseReference dogTableRef;
-    DatabaseReference oneDogRef;
     DatabaseReference usersTableRef;
     ArrayList<Dog> DogsFromDataBaseList;
 
@@ -92,7 +91,22 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("onChildAdded", "dog:" + dog.getName());
                     DogsFromDataBaseList.add(dog);
                 }
+
+                ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
+
+                for(int i = 0; i< DogsFromDataBaseList.size() ;i++){
+                    if(DogsFromDataBaseList.get(i).getScannedCoords()!=null) {
+                        coordinates.addAll(DogsFromDataBaseList.get(i).getScannedCoords());
+                    }
+                }
+                int size = coordinates.size();
+
+                for (Coordinate cord : coordinates){
+                    System.out.println("listOfPointsNearBy.add(new Point(-1,new LatLng("+cord.getLatitude()+","+cord.getLongitude()+")));");
+                }
+
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
