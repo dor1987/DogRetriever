@@ -15,8 +15,9 @@ public class Profile {
     private ArrayList dogsIDArrayList;
     private Bitmap profileImage;
 
-    public Profile() {
-    }
+
+
+    public Profile() { }
 
     private Profile(ProfileBuilder profileBuilder){
         setId(profileBuilder.id);
