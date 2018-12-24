@@ -4,28 +4,54 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.Date;
 
 public class Coordinate {
-    LatLng location;
+    //LatLng location;
+    double latitude;
+    double longitude;
+
     Date timeStamp;
     Float errorApproximation;
 
-    public Coordinate(LatLng location, Date timeStamp, Float errorApproximation) {
-        this.location = location;
+    public Coordinate(){
+        //an empty constructor must be define for Firebase
+    }
+
+    public Coordinate(Double latitude , Double longitude, Date timeStamp, Float errorApproximation) {
+       // this.location = location;
+        this.latitude =latitude;
+        this.longitude =longitude;
         this.timeStamp = timeStamp;
         this.errorApproximation = errorApproximation;
     }
 
-    public Coordinate(LatLng location, Date timeStamp) {
-        this.location = location;
+    public Coordinate(Double latitude , Double longitude, Date timeStamp) {
+       // this.location = location;
+        this.latitude =latitude;
+        this.longitude =longitude;
         this.timeStamp = timeStamp;
     }
 
 
+
+/*
     public LatLng getLocation() {
-        return location;
+        return new LatLng(latitude,longitude);
+    //    return location;
+    }
+*/
+
+
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setLocation(LatLng location) {
-        this.location = location;
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLocation(double latitude, double longitude) {
+       this.latitude = latitude;
+       this.longitude = longitude;
+        //this.location = location;
     }
 
     public Date getTimeStamp() {
@@ -42,5 +68,9 @@ public class Coordinate {
 
     public void setErrorApproximation(Float errorApproximation) {
         this.errorApproximation = errorApproximation;
+    }
+
+    public LatLng getLatLng(){
+        return new LatLng(latitude,longitude);
     }
 }

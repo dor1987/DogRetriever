@@ -161,7 +161,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(true);
-        showRadiusArea(getCoordinatesToShow(), getRandomRadius(getCoordinatesToShow().size()));
+       // showRadiusArea(getCoordinatesToShow(), getRandomRadius(getCoordinatesToShow().size()));
     }
 
     @Override
@@ -277,8 +277,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private void showRadiusArea(ArrayList<Coordinate> centerList, ArrayList<Double> radiusList){
 
         for(int i=0 ; i<centerList.size() ; i++){
-            mMap.addCircle(new CircleOptions().center(centerList.get(i).getLocation())
-                    .radius(radiusList.get(i)).fillColor(getRandomColor()));
+      //      mMap.addCircle(new CircleOptions().center(centerList.get(i).get)
+      //              .radius(radiusList.get(i)).fillColor(getRandomColor()));
         }
     }
 
@@ -287,18 +287,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         return Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
     }
 
-    private ArrayList<Coordinate> getCoordinatesToShow(){
-
-        ArrayList<Coordinate> coordinates = new ArrayList<>();
-        coordinates.add(new Coordinate((new LatLng(32.0820469,34.811154)),new Date(System.currentTimeMillis())));
-        coordinates.add(new Coordinate((new LatLng(32.08167461,34.81057763)),new Date(System.currentTimeMillis())));
-        coordinates.add(new Coordinate((new LatLng(32.08202004,34.8135817)),new Date(System.currentTimeMillis())));
-        coordinates.add(new Coordinate((new LatLng(32.08049284,34.81220841)),new Date(System.currentTimeMillis())));
-        coordinates.add(new Coordinate((new LatLng(32.08156552,34.80885386)),new Date(System.currentTimeMillis())));
-
-        return coordinates;
-
-    }
 
     private ArrayList getRandomRadius(int size){
         Random rnd = new Random();
