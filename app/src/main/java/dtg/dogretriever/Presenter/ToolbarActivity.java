@@ -1,7 +1,9 @@
 package dtg.dogretriever.Presenter;
 
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -16,12 +18,13 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     TextView profile_textview;
     FragmentManager fm;
     FrameLayout frameLayout;
+    AlgorithmFragment algorithmFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toolbar);
-        AlgorithmFragment algorithmFragment = new AlgorithmFragment();
+        algorithmFragment = new AlgorithmFragment();
 
         profile_textview = findViewById(R.id.profile_toolbar_text);
 
@@ -46,6 +49,18 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
 //            }
 //        });
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == AlgorithmFragment.MY_CODE_REQUEST){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                algorithmFragment.updateMapUI();
+            }
+        }
+        else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override

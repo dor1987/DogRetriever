@@ -1,8 +1,12 @@
 package dtg.dogretriever.Presenter;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.TaskStackBuilder;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -10,29 +14,40 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -40,10 +55,11 @@ import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.R;
 
 
-public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener{
+public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener {
     private static final String TAG = "AlgorithmFragment";
-
+    public static final int MY_CODE_REQUEST = 123;
     private enum algoType {PREDICTION, LEARNING}
+
     private final double minRadius = 1000.0;
     private final double maxRadius = 5000.0;
     private ArrayList<Color> colors;
@@ -65,51 +81,109 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        checkForPermissions();
+        displayLocationSettingsRequest(getContext());
         mMap.setOnMarkerClickListener(this);
-        updateLocationUI();
 
+
+    }
+    private void displayLocationSettingsRequest(Context context) {
+        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(LocationServices.API).build();
+        googleApiClient.connect();
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(10000 / 2);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        Log.i(TAG, "All location settings are satisfied.");
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
+
+                        try {
+                            // Show the dialog by calling startResolutionForResult(), and check the result
+                            // in onActivityResult().
+                            status.startResolutionForResult(getActivity(), MY_CODE_REQUEST);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.i(TAG, "PendingIntent unable to execute request.");
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                        break;
+                }
+            }
+        });
     }
 
 
-    @SuppressLint("MissingPermission")
-    private void updateLocationUI() {
+
+
+    private void checkForPermissions() {
         if (mMap == null) {
+            Log.d(TAG, "map in null");
             return;
         }
-        if (checkLocationPermissionAndEnabled()){
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            mMap.getUiSettings().setMapToolbarEnabled(true);
-            showRadiusArea(getCoordinatesToShow(),getRandomRadius(getCoordinatesToShow().size()));
 
-        } else {
-            mMap.setMyLocationEnabled(false);
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        if (getContext().checkSelfPermission( Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && getContext().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            this.requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_CODE_REQUEST);
+
+
+        }else{
+            updateMapUI();
+            Log.d(TAG,"Location permission granted from manifest");
         }
+
     }
 
-    private boolean checkLocationPermissionAndEnabled (){
-        LocationManager locationManager = (LocationManager) this.getActivity().getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
-        else{
-            try {
-                gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            } catch(Exception ex) {}
-            try {
-                network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            } catch(Exception ex) {}
-
-            if(!gps_enabled && !network_enabled) {
-                return false;
-            }
-            return true;
-        }
+    @SuppressLint("MissingPermission")
+    public void updateMapUI(){
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        showRadiusArea(getCoordinatesToShow(), getRandomRadius(getCoordinatesToShow().size()));
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+       super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+
+        switch(requestCode){
+            case MY_CODE_REQUEST:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    updateMapUI();
+                    Log.d(TAG,"Location permission granted");
+                }
+                else{
+                    Log.d(TAG, "Location permission denied");
+                }
+
+
+        }
+
+
+    }
+
 
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -126,6 +200,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
 
     }
@@ -149,7 +224,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         super.onActivityCreated(savedInstanceState);
 
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();/// getChildFragmentManager();
+        FragmentManager fm = getActivity().getSupportFragmentManager();
         smFragment = (SupportMapFragment) fm.findFragmentById(R.id.mapView);
         if (smFragment == null) {
             smFragment = SupportMapFragment.newInstance();
@@ -158,9 +233,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
 
         smFragment.getMapAsync(this);
-
-
-
 
 
     }
@@ -240,6 +312,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
     @Override
     public void onLocationChanged(Location location) {
+        currentLocation = location;
+        Log.i(TAG, "Current location: Lat - " + location.getLatitude() + "Long - " +location.getLongitude() );
         mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(),currentLocation.getAltitude())));
 
 
@@ -248,6 +322,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(),currentLocation.getAltitude())));
 
     }
 
@@ -258,6 +333,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
     @Override
     public void onProviderDisabled(String s) {
+
 
     }
 }
