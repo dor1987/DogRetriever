@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getBaseContext(),ToolbarActivity.class);
+                intent.putExtra("TAG","AlgorithmFragment");
                 intent.putExtra("DOG_ID",createDogsList().get(i).getCollarId());
                 startActivity(intent);
 
