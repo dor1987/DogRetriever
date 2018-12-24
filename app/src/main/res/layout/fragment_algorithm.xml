@@ -1,45 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Presenter.AlgorithmFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tablayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <android.support.design.widget.TabItem
+
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:text="Tab1" />
 
-            <Button
-                android:id="@+id/predictionAlgo_btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="Button"
-                android:background="@color/colorPrimaryDark"/>
+        <android.support.design.widget.TabItem
 
-            <Button
-                android:id="@+id/learningAlgo_btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Button"
-                android:background="@color/colorPrimary"
-                android:layout_weight="0.5"/>
-
-        </LinearLayout>
-
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tab2" />
+    </android.support.design.widget.TabLayout>
 
 
-    </LinearLayout>
-</FrameLayout>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mapView"
+        tools:context=".ui.activities.GoogleMapsActivity"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    </fragment>
+</LinearLayout>
+

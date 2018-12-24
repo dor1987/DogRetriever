@@ -249,7 +249,8 @@ public class FakeDataBaseGenerator {
                     break;
             }
 
-            scannedCoords.add(new Coordinate(locationToReturn.latitude,locationToReturn.longitude,getRandomTimeStamp()));
+
+            scannedCoords.add(new Coordinate(locationToReturn.latitude,locationToReturn.longitude));
 
         }
         return scannedCoords;

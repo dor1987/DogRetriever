@@ -19,14 +19,15 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 
 
-
-
+import java.io.IOException;
 import java.util.ArrayList;
 
 
+import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Profile;
+import dtg.dogretriever.Model.Scan;
 import dtg.dogretriever.R;
 import dtg.dogretriever.View.DogNamesAdapter;
 
@@ -48,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
         popupHeight = displayMetrics.heightPixels ;
 
         firebaseAdapter = new FirebaseAdapter();
+
+       // InitDataBase(); Uncomment only if database need to be rebuilt
+       // InitDataBase(); Uncomment only if database need to be rebuilt
+        //test
 
 
     }
@@ -90,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getBaseContext(),ToolbarActivity.class);
+                intent.putExtra("TAG","AlgorithmFragment");
                 intent.putExtra("DOG_ID",createDogsList().get(i).getCollarId());
                 startActivity(intent);
 
