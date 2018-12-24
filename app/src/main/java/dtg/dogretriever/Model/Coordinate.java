@@ -8,26 +8,18 @@ public class Coordinate {
     double latitude;
     double longitude;
 
-    Date timeStamp;
-    Float errorApproximation;
+
+
 
     public Coordinate(){
         //an empty constructor must be define for Firebase
     }
 
-    public Coordinate(Double latitude , Double longitude, Date timeStamp, Float errorApproximation) {
+    public Coordinate(Double latitude , Double longitude) {
        // this.location = location;
         this.latitude =latitude;
         this.longitude =longitude;
-        this.timeStamp = timeStamp;
-        this.errorApproximation = errorApproximation;
-    }
 
-    public Coordinate(Double latitude , Double longitude, Date timeStamp) {
-       // this.location = location;
-        this.latitude =latitude;
-        this.longitude =longitude;
-        this.timeStamp = timeStamp;
     }
 
 
@@ -54,23 +46,14 @@ public class Coordinate {
         //this.location = location;
     }
 
-    public Date getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(Date timeStamp) {
-        this.timeStamp = timeStamp;
-    }
-
-    public Float getErrorApproximation() {
-        return errorApproximation;
-    }
-
-    public void setErrorApproximation(Float errorApproximation) {
-        this.errorApproximation = errorApproximation;
-    }
 
     public LatLng getLatLng(){
         return new LatLng(latitude,longitude);
+    }
+
+
+    @Override
+    public String toString() {
+        return latitude + "," + longitude;
     }
 }

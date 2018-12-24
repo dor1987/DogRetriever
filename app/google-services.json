@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "802083718021",
+    "firebase_url": "https://dog-retriever.firebaseio.com",
+    "project_id": "dog-retriever",
+    "storage_bucket": "dog-retriever.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802083718021:android:7f9ffe64107b59e5",
+        "android_client_info": {
+          "package_name": "dtg.dogretriever"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802083718021-drfhjia5qp54rpb2g6n1bt2qupe7g7mg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTDmMNFTekqcFEWeK9yAJYzxdaM-IU8Wk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
