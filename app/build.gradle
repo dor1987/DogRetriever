@@ -40,6 +40,10 @@ dependencies {
     implementation 'com.github.florent37:materialviewpager:1.2.3'
 
 
+
+    implementation 'com.google.firebase:firebase-auth:16.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

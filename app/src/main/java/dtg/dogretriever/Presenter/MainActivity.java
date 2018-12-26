@@ -73,7 +73,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickProfile(View view) {
+        /*
         Intent i = new Intent(getBaseContext(),ProfileActivity.class);
+        startActivity(i);
+        */
+        Intent i = new Intent(getBaseContext(),LoginActivity.class);
         startActivity(i);
     }
 

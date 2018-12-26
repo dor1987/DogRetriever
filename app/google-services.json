@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "802083718021-0ngdcr011pken0lqr96rhg657p0hiu12.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dtg.dogretriever",
+            "certificate_hash": "da12b8dd40601bf266e5b2f93946a68c38bc38e7"
+          }
+        },
+        {
+          "client_id": "802083718021-llm5qui6g786kd6cpr7n1l7r1unhl923.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dtg.dogretriever",
+            "certificate_hash": "d9749bcb29132339e9f00fd5babd62fa33998643"
+          }
+        },
+        {
           "client_id": "802083718021-drfhjia5qp54rpb2g6n1bt2qupe7g7mg.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "802083718021-drfhjia5qp54rpb2g6n1bt2qupe7g7mg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

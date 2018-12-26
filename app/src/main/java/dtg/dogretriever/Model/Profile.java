@@ -110,19 +110,21 @@ public class Profile {
         private String userName;
         private String fullName;
         private String password;
+        private String eMail;
+
 
         //optinal
-        private String eMail;
         private String phoneNumber;
         private String address;
         private ArrayList dogArrayList;
         private Bitmap profileImage;
 
-        public ProfileBuilder(String id, String userName, String fullName, String password) {
+        public ProfileBuilder(String id, String userName, String fullName, String password, String eMail) {
             this.id = id;
             this.userName = userName;
             this.fullName = fullName;
             this.password = password;
+            this.eMail = eMail;
         }
 
 
