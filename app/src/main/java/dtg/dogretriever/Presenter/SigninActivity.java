@@ -55,7 +55,7 @@ protected void onCreate(Bundle savedInstanceState) {
     mPhoneNumberView    = findViewById(R.id.signin_phone_number);
     mEmailView    = findViewById(R.id.signin_email);
 
-    firebaseAdapter = new FirebaseAdapter();
+    firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
 
     mAuth = FirebaseAuth.getInstance();
 
@@ -69,6 +69,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
     mSigninFormView = findViewById(R.id.signin_form);
     mProgressView = findViewById(R.id.signin_progress);
+
 
 }
 

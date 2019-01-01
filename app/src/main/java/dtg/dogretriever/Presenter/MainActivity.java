@@ -48,11 +48,7 @@ public class MainActivity extends AppCompatActivity {
         popupWidth = displayMetrics.widthPixels ;
         popupHeight = displayMetrics.heightPixels ;
 
-        firebaseAdapter = new FirebaseAdapter();
-
-       // InitDataBase(); Uncomment only if database need to be rebuilt
-       // InitDataBase(); Uncomment only if database need to be rebuilt
-        //test
+        firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
 
 
     }
@@ -73,12 +69,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickProfile(View view) {
-        /*
-        Intent i = new Intent(getBaseContext(),ProfileActivity.class);
+        //check if user logged in
+        //if user logged in send to profile
+        //else send to login activity
+
+        Intent i;
+        if(firebaseAdapter.isUserConnected()){
+            i = new Intent(getBaseContext(),ProfileActivity.class);
+        }
+        else{
+            i = new Intent(getBaseContext(),LoginActivity.class);
+        }
+
         startActivity(i);
-        */
-        Intent i = new Intent(getBaseContext(),LoginActivity.class);
-        startActivity(i);
+
     }
 
     public void clickAbout(View view) {

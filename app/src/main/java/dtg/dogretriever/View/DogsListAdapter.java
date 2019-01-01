@@ -11,14 +11,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import dtg.dogretriever.Model.Dog;
+import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.R;
 
 public class DogsListAdapter extends BaseAdapter {
     private ArrayList<Dog> dogsList;
-    private ImageView deleteMeal;
+    private ImageView deleteDog;
     private Context context;
     private LayoutInflater inflater;
-
 
     public DogsListAdapter(ArrayList<Dog> dogs, Context context){
         this.dogsList = dogs;

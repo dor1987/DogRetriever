@@ -3,6 +3,7 @@ package dtg.dogretriever.Model;
 import android.graphics.Bitmap;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Profile {
     private String id;
@@ -12,7 +13,8 @@ public class Profile {
     private String eMail;
     private String phoneNumber;
     private String address;
-    private ArrayList dogsIDArrayList;
+   // private ArrayList<String> dogsIDArrayList;
+    private Map<String,String> dogsIDMap;
     private Bitmap profileImage;
 
 
@@ -27,7 +29,8 @@ public class Profile {
         seteMail(profileBuilder.eMail);
         setPhoneNumber(profileBuilder.phoneNumber);
         setAddress(profileBuilder.address);
-        setDogsIDArrayList(profileBuilder.dogArrayList);
+        //setDogsIDArrayList(profileBuilder.dogArrayList);
+        setDogsIDMap(profileBuilder.dogIDMap);
         setProfileImage(profileBuilder.profileImage);
     }
     
@@ -88,12 +91,34 @@ public class Profile {
         this.address = address;
     }
 
-    public ArrayList getDogsIDArrayList() {
-        return dogsIDArrayList;
+//    public ArrayList<String> getDogsIDArrayList() {
+//        return dogsIDArrayList;
+//    }
+
+
+    public Map<String,String> getDogsIDMap(){
+        return dogsIDMap;
     }
 
-    public void setDogsIDArrayList(ArrayList dogsIDArrayList) {
+    public ArrayList<String> getDogIDAsArrayList(){
+        //Give back an arrayList for Dogs Id that register under this profile
+        ArrayList<String> dogIDArrayList = new ArrayList<>();
+
+        if(dogsIDMap != null) {
+            for (Map.Entry<String, String> entry : dogsIDMap.entrySet()) {
+                dogIDArrayList.add(entry.getValue());
+            }
+        }
+
+        return dogIDArrayList;
+    }
+    /*
+    public void setDogsIDArrayList(ArrayList<String> dogsIDArrayList) {
         this.dogsIDArrayList = dogsIDArrayList;
+    }
+*/
+    public void setDogsIDMap(Map<String,String> dogsIDMap) {
+        this.dogsIDMap = dogsIDMap;
     }
 
     public Bitmap getProfileImage() {
@@ -116,7 +141,8 @@ public class Profile {
         //optinal
         private String phoneNumber;
         private String address;
-        private ArrayList dogArrayList;
+      //  private ArrayList<String> dogArrayList;
+        private Map<String,String> dogIDMap;
         private Bitmap profileImage;
 
         public ProfileBuilder(String id, String userName, String fullName, String password, String eMail) {
@@ -162,15 +188,21 @@ public class Profile {
             return this;
         }
 
-        public ProfileBuilder setDogArrayList(ArrayList dogArrayList) {
-            this.dogArrayList = dogArrayList;
-            return this;
-        }
+//        public ProfileBuilder setDogArrayList(ArrayList dogArrayList) {
+//            this.dogArrayList = dogArrayList;
+//            return this;
+//        }
 
         public ProfileBuilder setProfileImage(Bitmap profileImage) {
             this.profileImage = profileImage;
             return this;
         }
+
+        public ProfileBuilder setdogIDMap(Map<String,String> dogIDMap) {
+            this.dogIDMap = dogIDMap;
+            return this;
+        }
+
 
         public Profile build(){return new Profile(this);}
     }

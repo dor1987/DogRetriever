@@ -73,7 +73,7 @@ public class FakeDataBaseGenerator {
         profile.seteMail(eMail);
         profile.setPhoneNumber(phoneNumber);
         profile.setAddress(address);
-        profile.setDogsIDArrayList(dogIdArrayList);
+       // profile.setDogsIDArrayList(dogIdArrayList);
         profile.setProfileImage(randomIamge);
 
         return profile;

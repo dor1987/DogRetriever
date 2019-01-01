@@ -13,6 +13,8 @@ public class Dog {
     private String notes;
     private String ownerId;
     private ArrayList<Coordinate> scannedCoords;
+    private String hashCode;  //testing new thing for firebase
+
 
     public Dog(String name){
         this.name = name;
@@ -33,6 +35,13 @@ public class Dog {
 
     }
 
+    public String getHashCode() {
+        return hashCode;
+    }
+
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
 
     public String getCollarId() {
         return collarId;
@@ -112,7 +121,6 @@ public class Dog {
         private enumSize size;
         private String notes;
         private ArrayList<Coordinate> scannedCoords;
-
 
         public DogBuilder(String collarId, String ownerId) {
             this.collarId = collarId;
