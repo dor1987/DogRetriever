@@ -6,25 +6,156 @@
     android:layout_height="wrap_content"
     android:background="@color/light_blue"
     android:gravity="center_vertical|center_horizontal"
-    android:orientation="vertical" >
-
+    android:orientation="vertical"
+    >
 
     <TextView
-        android:id="@+id/dog_add_layout_popup_txtMessage"
+        android:id="@+id/add_dog_popup_layout_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Register new dog:" />
+        android:textStyle="bold"
+        android:textSize="24dp"
+        android:text="Add new Dog"
+        android:padding="40dp"/>
+
+
+    <ScrollView
+        android:id="@+id/add_dog_popup_layout_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:id="@+id/add_dog_popup_layout_sublinarlayout_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/add_dog_popup_layout_dog_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_dog_popup_dog_name"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/add_dog_popup_layout_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_dog_popup_dog_color"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <Spinner
+                    android:id="@+id/add_dog_popup_layout_size_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:tooltipText="@string/add_dog_popup_dog_size"/>
+
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/add_dog_popup_layout_breed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_dog_popup_dog_breed"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/add_dog_popup_layout_collarid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_dog_popup_collar_id"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/add_dog_popup_layout_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_dog_popup_notes"
+                    android:inputType="text"
+                    android:maxLines="3"
+                     />
+
+            </android.support.design.widget.TextInputLayout>
 
 
 
 
+            <Button
+            android:id="@+id/add_dog_popup_layout_add_dog_button"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"
+            android:text="Save"
+            android:onClick="saveDog"
+                />
 
-    <ListView
-        android:id="@+id/popup_dog_name_list_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/light_blue"/>
+            <Button
+                android:id="@+id/add_dog_popup_layout_cancel"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textStyle="bold"
+                android:text="Cancel"
+                android:onClick="cancelPopUp"
+                />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
 
 
 </LinearLayout>

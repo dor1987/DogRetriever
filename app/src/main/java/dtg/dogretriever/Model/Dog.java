@@ -13,12 +13,9 @@ public class Dog {
     private String notes;
     private String ownerId;
     private ArrayList<Coordinate> scannedCoords;
-    private String hashCode;  //testing new thing for firebase
+    private String hashCode;  //Because the dog id is save at profile inside hashmap , i saved the hash related with this dog to be able to identify it later
 
 
-    public Dog(String name){
-        this.name = name;
-    } //remove after creating database
 
     public Dog(){}
 

@@ -18,6 +18,15 @@
     <string name="prompt_address">Address(Optional)</string>
     <string name="prompt_full_name">Full name</string>
     <string name="prompt_user_name">User name</string>
+
+    <string name="add_dog_popup_dog_name">Dog Name</string>
+    <string name="add_dog_popup_dog_color">Color</string>
+    <string name="add_dog_popup_dog_size">Size</string>
+    <string name="add_dog_popup_dog_breed">Breed</string>
+    <string name="add_dog_popup_notes">Notes</string>
+    <string name="add_dog_popup_collar_id">Collar ID</string>
+
+
     <string name="prompt_password">Password</string>
     <string name="prompt_re_enter_password">Re enter password</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -39,4 +48,11 @@
     <string name="about_toolbar_btn">About</string>
     <string name="settings_toolbar_btn">Settings</string>
     <string name="profile_toolbar_btn">Profile</string>
+
+    <string-array name="size">
+        <item>TINY</item>
+        <item>SMALL</item>
+        <item>MEDIUM</item>
+        <item>LARGE</item>
+    </string-array>
 </resources>

@@ -60,8 +60,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickFindMyDog(View view) {
-       createPopUpChooseDogName();
-
+        if(firebaseAdapter.isUserConnected())
+            createPopUpChooseDogName();
+        else {
+            Intent i = new Intent(getBaseContext(), SigninActivity.class);
+            startActivity(i);
+        }
     }
 
     public void clickSettings(View view) {
@@ -129,12 +133,15 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Dog> createDogsList(){
 
-        ArrayList<Dog> dogs = new ArrayList<>();
+        //ArrayList<Dog> dogs = new ArrayList<>();
 
-        dogs.add(new Dog("Luka"));
-        dogs.add(new Dog("Nala"));
+        //dogs.add(new Dog("Luka"));
+        //dogs.add(new Dog("Nala"));
 
-        return dogs;
+
+
+        //return dogs;
+        return firebaseAdapter.getListOfDogsOwnedByCurrentUser();
     }
 
 

@@ -178,4 +178,20 @@ public class FirebaseAdapter {
     public Profile getCurrentUserProfileFromFireBase(){
         return profile;
     }
+
+    public ArrayList<Dog> getListOfDogsOwnedByCurrentUser(){
+        //give an Arraylist of dogs owned by the current user
+        //if no dogs found will return null
+
+        ArrayList<Dog> dogArrayList = new ArrayList<>();
+
+        try {
+            for (String dogId : profile.getDogIDAsArrayList()) {
+                dogArrayList.add(getDogByCollarIdFromFireBase(dogId));
+            }
+        }catch (NullPointerException e){
+            return null;
+        }
+        return  dogArrayList;
+    }
 }

@@ -19,10 +19,12 @@ public class DogsListAdapter extends BaseAdapter {
     private ImageView deleteDog;
     private Context context;
     private LayoutInflater inflater;
+    private FirebaseAdapter firebaseAdapter;
 
     public DogsListAdapter(ArrayList<Dog> dogs, Context context){
         this.dogsList = dogs;
         this.context = context;
+        firebaseAdapter = FirebaseAdapter.getInstanceOfFireBaseAdapter();
 
     }
 
@@ -58,6 +60,7 @@ public class DogsListAdapter extends BaseAdapter {
         deleteDog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                firebaseAdapter.removeDogFromDataBase(dogsList.get(i));
                 dogsList.remove(i);
                 notifyDataSetChanged();
             }
