@@ -21,5 +21,25 @@
             android:layout_height="wrap_content"
             android:background="@color/light_blue"/>
 
+        <TextView
+            android:id="@+id/popup_layout_errorMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="You don't have any dogs"
+            android:visibility="gone"
+
+            />
+
+        <Button
+            android:id="@+id/popup_layout_cancel"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textStyle="bold"
+            android:text="Cancel"
+            android:onClick="cancelPopUp"
+            />
 
 </LinearLayout>

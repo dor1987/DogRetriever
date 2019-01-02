@@ -46,11 +46,11 @@ public class Coordinate {
         //this.location = location;
     }
 
-
+/*
     public LatLng getLatLng(){
         return new LatLng(latitude,longitude);
     }
-
+*/
 
     @Override
     public String toString() {

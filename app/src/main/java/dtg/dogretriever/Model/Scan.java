@@ -15,6 +15,8 @@ public class Scan {
     private Float errorApproximation;
     private Weather.weather currentWeather;
 
+    public Scan() {}
+
     public Scan(Coordinate coordinate) throws IOException {
         this.coordinate = coordinate;
         setTimeStamp();

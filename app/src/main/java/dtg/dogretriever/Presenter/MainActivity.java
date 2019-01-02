@@ -15,15 +15,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 
-import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Profile;
@@ -100,19 +101,27 @@ public class MainActivity extends AppCompatActivity {
         View layout = layoutInflater.inflate(R.layout.choose_dog_popup, null);
 
         ListView listView = layout.findViewById(R.id.popup_dog_name_list_view);
-        DogNamesAdapter dogNamesAdapter = new DogNamesAdapter(createDogsList(),this);
-        listView.setAdapter(dogNamesAdapter);
+        Button cancelBtn = layout.findViewById(R.id.popup_layout_cancel);
+        TextView errorMessage = layout.findViewById(R.id.popup_layout_errorMessage);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getBaseContext(),ToolbarActivity.class);
-                intent.putExtra("TAG","AlgorithmFragment");
-                intent.putExtra("DOG_ID",createDogsList().get(i).getCollarId());
-                startActivity(intent);
+            DogNamesAdapter dogNamesAdapter = new DogNamesAdapter(createDogsList(), this);
+            listView.setAdapter(dogNamesAdapter);
 
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+                    intent.putExtra("TAG", "AlgorithmFragment");
+                    intent.putExtra("DOG_ID", createDogsList().get(i).getCollarId());
+                    startActivity(intent);
+
+                }
+            });
+
+            if(dogNamesAdapter.getCount()==0){
+                errorMessage.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
             }
-        });
 
         popupWindow = new PopupWindow(this);
         popupWindow.setContentView(layout);
@@ -124,25 +133,15 @@ public class MainActivity extends AppCompatActivity {
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
-
-
-
-
     }
 
 
     private ArrayList<Dog> createDogsList(){
-
-        //ArrayList<Dog> dogs = new ArrayList<>();
-
-        //dogs.add(new Dog("Luka"));
-        //dogs.add(new Dog("Nala"));
-
-
-
-        //return dogs;
         return firebaseAdapter.getListOfDogsOwnedByCurrentUser();
     }
 
 
+    public void cancelPopUp(View view) {
+        popupWindow.dismiss();
+    }
 }

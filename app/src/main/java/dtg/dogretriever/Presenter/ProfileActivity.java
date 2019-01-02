@@ -18,12 +18,17 @@ import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Profile;
+import dtg.dogretriever.Model.Scan;
 import dtg.dogretriever.R;
 import dtg.dogretriever.View.DogNamesAdapter;
 import dtg.dogretriever.View.DogsListAdapter;
@@ -111,10 +116,10 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
     }
 
     public void onClickAdd(View view) {
-        //TODO Popup of dog register need to be implmented this method will draw info from there
         //dogsList.add(new Dog("test"));
        // dogsListAdapter.notifyDataSetChanged();
         createPopUpAddNewDog();
+
     }
 
     private void createPopUpAddNewDog(){

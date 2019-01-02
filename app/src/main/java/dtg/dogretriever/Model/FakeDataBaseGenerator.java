@@ -162,7 +162,7 @@ public class FakeDataBaseGenerator {
         dog.setColor(color);
         dog.setSize(size);
         dog.setNotes(notes);
-        dog.setScannedCoords(scannedCoords);
+       // dog.setScannedCoords(scannedCoords);
         dog.setOwnerId(ownerId+"");
         //addDogToDataBase(dog);
         fakeDogsDataBase.add(dog);

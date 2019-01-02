@@ -57,12 +57,16 @@ public class FirebaseAdapter {
                     Log.d("onChildAdded", "dog:" + dog.getName());
                     DogsFromDataBaseList.add(dog);
                 }
+                /*
                 ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
                 for (int i = 0; i < DogsFromDataBaseList.size(); i++) {
                     if (DogsFromDataBaseList.get(i).getScannedCoords() != null) {
                         coordinates.addAll(DogsFromDataBaseList.get(i).getScannedCoords());
                     }
                 }
+                */
+
+
             }
 
 
@@ -159,10 +163,17 @@ public class FirebaseAdapter {
         return null;
     }
 
-    public void addCoordToDog(Dog dog,Coordinate coordinate){
-        //Get dog and coordinate and add the coordinate to the dog coordinate list at firebase
-        DatabaseReference currentDogRef = dogTableRef.child(dog.getCollarId()).child("scannedCoords");
-        currentDogRef.push();
+    public void addScanToDog(Dog dog,Scan scan){
+        //Get dog and scan and add the scan to the dog scan map at firebase
+        DatabaseReference currentDogRef = dogTableRef.child(dog.getCollarId()).child("scans");
+        String hashCode = currentDogRef.push().getKey();
+
+        currentDogRef.child(hashCode).setValue(scan);
+    }
+
+    public Map<String,Scan> getAllScanOfSpecificDog(Dog dog){
+        //Get dog and give back all his scans as map
+        return getDogByCollarIdFromFireBase(dog.getCollarId()).getScans();
     }
 
     public boolean isUserConnected(){
@@ -194,4 +205,6 @@ public class FirebaseAdapter {
         }
         return  dogArrayList;
     }
+
+
 }

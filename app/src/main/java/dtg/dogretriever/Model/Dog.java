@@ -1,6 +1,7 @@
 package dtg.dogretriever.Model;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Dog {
     public enum enumSize {TINY , SMALL, MEDIUM, LARGE};
@@ -12,10 +13,9 @@ public class Dog {
     private enumSize size;
     private String notes;
     private String ownerId;
-    private ArrayList<Coordinate> scannedCoords;
+    //private ArrayList<Coordinate> scannedCoords;
     private String hashCode;  //Because the dog id is save at profile inside hashmap , i saved the hash related with this dog to be able to identify it later
-
-
+    private Map<String,Scan> scans;
 
     public Dog(){}
 
@@ -28,7 +28,7 @@ public class Dog {
         setColor(dogBuilder.color);
         setSize(dogBuilder.size);
         setNotes(dogBuilder.notes);
-        setScannedCoords(scannedCoords);
+        setScans(scans);
 
     }
 
@@ -95,15 +95,33 @@ public class Dog {
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
-
+/*
     public ArrayList<Coordinate> getScannedCoords() {
         return scannedCoords;
     }
-
+*/
+/*
     public void setScannedCoords(ArrayList<Coordinate> scannedCoords) {
         this.scannedCoords = scannedCoords;
     }
+*/
+/*
+    public Map<String, Coordinate> getScannedCoords() {
+        return scannedCoords;
+    }
 
+    public void setScannedCoords(Map<String, Coordinate> scannedCoords) {
+        this.scannedCoords = scannedCoords;
+    }
+*/
+
+    public Map<String, Scan> getScans() {
+        return scans;
+    }
+
+    public void setScans(Map<String, Scan> scans) {
+        this.scans = scans;
+    }
 
     public static class DogBuilder {
         //required
@@ -117,7 +135,9 @@ public class Dog {
         private String color;
         private enumSize size;
         private String notes;
-        private ArrayList<Coordinate> scannedCoords;
+        //private ArrayList<Coordinate> scannedCoords;
+        //private Map<String,Coordinate> scannedCoords;
+        private Map<String,Scan> scans;
 
         public DogBuilder(String collarId, String ownerId) {
             this.collarId = collarId;
@@ -158,12 +178,20 @@ public class Dog {
             return this;
         }
 
-        //ToDo *** Need to make an Add coord and not set coord
+        /*
         public void setScannedCoords(ArrayList<Coordinate> scannedCoords) {
             this.scannedCoords = scannedCoords;
         }
+        */
+/*
+        public void setScannedCoords(Map<String,Coordinate> scannedCoords){
+            this.scannedCoords = scannedCoords;
+        }
+  */
 
-
+        public void setScans(Map<String, Scan> scans) {
+            this.scans = scans;
+        }
 
         public Dog build() {
             return new Dog(this);

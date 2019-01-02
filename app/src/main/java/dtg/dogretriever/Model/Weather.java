@@ -18,6 +18,8 @@ public class Weather {
 
     private weather currentWeather;
 
+    public Weather() { }
+
     public Weather(final String coord)  {
         Thread thread = new Thread(new Runnable() {
             @Override
