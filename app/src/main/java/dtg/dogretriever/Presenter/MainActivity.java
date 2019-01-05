@@ -2,6 +2,7 @@ package dtg.dogretriever.Presenter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
+import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Profile;
@@ -51,12 +53,21 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
 
-
     }
 
 
 
     public void clickScanner(View view) {
+        //temp implementation for debugging
+
+         Dog tempDog = firebaseAdapter.getDogByCollarIdFromFireBase("55555");
+        try {
+            Scan tempScan = new Scan(new Coordinate(32.30613403,35.00500989));
+            firebaseAdapter.addScanToDog(tempDog,tempScan);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

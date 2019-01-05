@@ -2,6 +2,7 @@ package dtg.dogretriever.Presenter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -34,6 +35,8 @@ import dtg.dogretriever.View.DogNamesAdapter;
 import dtg.dogretriever.View.DogsListAdapter;
 
 public class ProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    public static final String SHARED_PREFS = "sharedPrefs";
+
     private ArrayList<Dog> dogsList;
     private ListView listView;
     private DogsListAdapter dogsListAdapter;
@@ -92,10 +95,12 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         listView = findViewById(R.id.profile_dogs_list);
         listView.setAdapter(dogsListAdapter);
 
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+        firebaseAdapter.writeNewTokenToFireBase(sharedPreferences.getString("token",""));
 
 
 
-       // dogsListAdapter.notifyDataSetChanged();
+        // dogsListAdapter.notifyDataSetChanged();
     }
 
     private void updateProfileViews() {
@@ -119,6 +124,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         //dogsList.add(new Dog("test"));
        // dogsListAdapter.notifyDataSetChanged();
         createPopUpAddNewDog();
+
 
     }
 

@@ -16,7 +16,7 @@ public class Profile {
    // private ArrayList<String> dogsIDArrayList;
     private Map<String,String> dogsIDMap;
     private Bitmap profileImage;
-
+    private String token;
 
 
     public Profile() { }
@@ -96,6 +96,14 @@ public class Profile {
 //    }
 
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public Map<String,String> getDogsIDMap(){
         return dogsIDMap;
     }
@@ -144,6 +152,7 @@ public class Profile {
       //  private ArrayList<String> dogArrayList;
         private Map<String,String> dogIDMap;
         private Bitmap profileImage;
+        private String token;
 
         public ProfileBuilder(String id, String userName, String fullName, String password, String eMail) {
             this.id = id;
@@ -203,6 +212,9 @@ public class Profile {
             return this;
         }
 
+        public void setToken(String token) {
+            this.token = token;
+        }
 
         public Profile build(){return new Profile(this);}
     }

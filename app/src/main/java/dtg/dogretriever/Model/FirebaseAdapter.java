@@ -1,9 +1,14 @@
 package dtg.dogretriever.Model;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -12,9 +17,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import dtg.dogretriever.Presenter.MainActivity;
 
 public class FirebaseAdapter {
     //singleton
@@ -30,10 +38,15 @@ public class FirebaseAdapter {
     ArrayList<Dog> DogsFromDataBaseList;
     ArrayList<Profile> ProfilesFromDataBaseList;
     Profile profile;
+    FirebaseAuth.AuthStateListener mAuthListener;
+    String userID;
+    final DataSnapshot[] mainDataSnapshot= new DataSnapshot[1];
 
     private FirebaseAdapter() {
+
         //Init FireBase
         dataBase = FirebaseDatabase.getInstance();
+
         //Referenecs for both tables
         dogTableRef = dataBase.getReference().child("Dogs");
         usersTableRef = dataBase.getReference().child("Users");
@@ -44,6 +57,22 @@ public class FirebaseAdapter {
         mAuth = FirebaseAuth.getInstance();
 
         //Firebase Listeners
+/*
+        if(mAuth.getCurrentUser() != null){
+            userID = mAuth.getCurrentUser().getUid();
+        }
+*/
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(mAuth.getCurrentUser() != null){
+                    userID = mAuth.getCurrentUser().getUid();
+
+                }
+            }
+
+
+        };
 
         dogTableRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -57,18 +86,8 @@ public class FirebaseAdapter {
                     Log.d("onChildAdded", "dog:" + dog.getName());
                     DogsFromDataBaseList.add(dog);
                 }
-                /*
-                ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
-                for (int i = 0; i < DogsFromDataBaseList.size(); i++) {
-                    if (DogsFromDataBaseList.get(i).getScannedCoords() != null) {
-                        coordinates.addAll(DogsFromDataBaseList.get(i).getScannedCoords());
-                    }
-                }
-                */
-
 
             }
-
 
 
             @Override
@@ -77,33 +96,37 @@ public class FirebaseAdapter {
             }
         });
 
-        if(isUserConnected()) {
-            usersTableRef.orderByKey().equalTo(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+
+
+
+
+
+          //  usersTableRef.orderByKey().equalTo(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+            usersTableRef.addValueEventListener(new ValueEventListener() {
 
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                    // ProfilesFromDataBaseList.clear();
                     //profile = dataSnapshot.getValue(Profile.class);
+                    mainDataSnapshot[0] = dataSnapshot;
 
-                    for (DataSnapshot temp: dataSnapshot.getChildren()){
-                        if(temp.hasChild("fullName"))
-                            profile.setFullName((String)temp.child("fullName").getValue());
-                        if(temp.hasChild("phoneNumber"))
-                            profile.setPhoneNumber((String)temp.child("phoneNumber").getValue());
-                        if(temp.hasChild("address"))
-                            profile.setAddress((String)temp.child("address").getValue());
-                        if(temp.hasChild("eMail"))
-                            profile.seteMail((String)temp.child("eMail").getValue());
-                        if(temp.hasChild("dogsIDArrayList"))
-                            profile.setDogsIDMap((Map<String,String>) temp.child("dogsIDArrayList").getValue());
-                    }
-
+             //       for (DataSnapshot temp: dataSnapshot.getChildren()){
                     /*
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        Profile profile = dataSnapshot.getValue(Profile.class);
-                        ProfilesFromDataBaseList.add(profile);
-                    }
-  */
+                        if(dataSnapshot.child(userID).hasChild("id"));
+                            profile.setId((String)dataSnapshot.child(userID).child("id").getValue());
+                        if(dataSnapshot.child(userID).hasChild("fullName"))
+                            profile.setFullName((String)dataSnapshot.child(userID).child("fullName").getValue());
+                        if(dataSnapshot.child(userID).hasChild("phoneNumber"))
+                            profile.setPhoneNumber((String)dataSnapshot.child(userID).child("phoneNumber").getValue());
+                        if(dataSnapshot.child(userID).hasChild("address"))
+                            profile.setAddress((String)dataSnapshot.child(userID).child("address").getValue());
+                        if(dataSnapshot.child(userID).hasChild("eMail"))
+                            profile.seteMail((String)dataSnapshot.child(userID).child("eMail").getValue());
+                        if(dataSnapshot.child(userID).hasChild("dogsIDArrayList"))
+                            profile.setDogsIDMap((Map<String,String>) dataSnapshot.child(userID).child("dogsIDArrayList").getValue());
+                 */
+                   // }
+
                 }
 
                 @Override
@@ -111,7 +134,8 @@ public class FirebaseAdapter {
 
                 }
             });
-        }
+
+
     }
 
     public static FirebaseAdapter getInstanceOfFireBaseAdapter(){
@@ -187,6 +211,23 @@ public class FirebaseAdapter {
     }
 
     public Profile getCurrentUserProfileFromFireBase(){
+        userID = mAuth.getCurrentUser().getUid();
+
+        if(mainDataSnapshot[0].child(userID).hasChild("id"));
+        profile.setId((String)mainDataSnapshot[0].child(userID).child("id").getValue());
+        if(mainDataSnapshot[0].child(userID).hasChild("fullName"))
+            profile.setFullName((String)mainDataSnapshot[0].child(userID).child("fullName").getValue());
+        if(mainDataSnapshot[0].child(userID).hasChild("phoneNumber"))
+            profile.setPhoneNumber((String)mainDataSnapshot[0].child(userID).child("phoneNumber").getValue());
+        if(mainDataSnapshot[0].child(userID).hasChild("address"))
+            profile.setAddress((String)mainDataSnapshot[0].child(userID).child("address").getValue());
+        if(mainDataSnapshot[0].child(userID).hasChild("eMail"))
+            profile.seteMail((String)mainDataSnapshot[0].child(userID).child("eMail").getValue());
+        if(mainDataSnapshot[0].child(userID).hasChild("dogsIDArrayList"))
+            profile.setDogsIDMap((Map<String,String>) mainDataSnapshot[0].child(userID).child("dogsIDArrayList").getValue());
+
+
+
         return profile;
     }
 
@@ -205,6 +246,12 @@ public class FirebaseAdapter {
         }
         return  dogArrayList;
     }
+
+    public void writeNewTokenToFireBase(String token) {
+            DatabaseReference currentUserRef = usersTableRef.child(mAuth.getUid()).child("token");
+            currentUserRef.setValue(token);
+    }
+
 
 
 }
