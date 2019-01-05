@@ -60,15 +60,6 @@ public class MainActivity extends AppCompatActivity {
     public void clickScanner(View view) {
         //temp implementation for debugging
 
-         Dog tempDog = firebaseAdapter.getDogByCollarIdFromFireBase("55555");
-        try {
-            Scan tempScan = new Scan(new Coordinate(32.30613403,35.00500989));
-            firebaseAdapter.addScanToDog(tempDog,tempScan);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public void clickFindMyDog(View view) {
