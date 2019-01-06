@@ -1,10 +1,14 @@
 package dtg.dogretriever.Presenter;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -40,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private int popupWidth ;
     private int popupHeight;
     private FirebaseAdapter firebaseAdapter;
-
+    private View mProgressView;
+    private View mMainMenuFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
 
+        mProgressView = findViewById(R.id.loading_progress);
+        mMainMenuFormView = findViewById(R.id.mainMenuForm);
+
+
+
     }
 
 
@@ -63,8 +73,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickFindMyDog(View view) {
-        if(firebaseAdapter.isUserConnected())
-            createPopUpChooseDogName();
+        if(firebaseAdapter.isUserConnected()) {
+
+            if(firebaseAdapter.isUserDataReadyNow()){
+                createPopUpChooseDogName();
+            }
+            else {
+                showProgress(true);
+                firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
+                    @Override
+                    public void onDataReady() {
+                        showProgress(false);
+                        createPopUpChooseDogName();
+                        firebaseAdapter.removeProfileDataListener();
+                    }
+                });
+            }
+        }
         else {
             Intent i = new Intent(getBaseContext(), SigninActivity.class);
             startActivity(i);
@@ -80,15 +105,31 @@ public class MainActivity extends AppCompatActivity {
         //if user logged in send to profile
         //else send to login activity
 
-        Intent i;
+
         if(firebaseAdapter.isUserConnected()){
-            i = new Intent(getBaseContext(),ProfileActivity.class);
+            if(firebaseAdapter.isUserDataReadyNow()){
+                Intent i = new Intent(getBaseContext(),ProfileActivity.class);
+            }
+
+            else {
+                showProgress(true);
+                firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
+                    @Override
+                    public void onDataReady() {
+                        showProgress(false);
+                        Intent i = new Intent(getBaseContext(),ProfileActivity.class);
+                        firebaseAdapter.removeProfileDataListener();
+                        startActivity(i);
+
+                    }
+                });
+            }
+
         }
         else{
-            i = new Intent(getBaseContext(),LoginActivity.class);
+            Intent i = new Intent(getBaseContext(),LoginActivity.class);
+            startActivity(i);
         }
-
-        startActivity(i);
 
     }
 
@@ -139,11 +180,45 @@ public class MainActivity extends AppCompatActivity {
 
 
     private ArrayList<Dog> createDogsList(){
+        firebaseAdapter.getCurrentUserProfileFromFireBase();
         return firebaseAdapter.getListOfDogsOwnedByCurrentUser();
     }
 
 
     public void cancelPopUp(View view) {
         popupWindow.dismiss();
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mMainMenuFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mMainMenuFormView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mMainMenuFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mMainMenuFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 }

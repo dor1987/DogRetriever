@@ -6,6 +6,23 @@
     tools:context=".Presenter.MainActivity"
     android:orientation="vertical">
 
+    <!-- Loading progress -->
+    <ProgressBar
+        android:id="@+id/loading_progress"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+
+        android:visibility="gone" />
+
+    <LinearLayout
+    android:id="@+id/mainMenuForm"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
     <TextView
         android:id="@+id/mainMenuTitle"
         android:layout_width="match_parent"
@@ -125,4 +142,5 @@
         android:onClick="clickAbout"
         />
 
+    </LinearLayout>
 </LinearLayout>

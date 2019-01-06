@@ -42,7 +42,15 @@ public class FirebaseAdapter {
     String userID;
     final DataSnapshot[] mainDataSnapshot= new DataSnapshot[1];
 
+
+    //Listeners
+    private ProfileDataListener profileDataListener;
+
     private FirebaseAdapter() {
+        //listeners
+        this.profileDataListener = null;
+
+
 
         //Init FireBase
         dataBase = FirebaseDatabase.getInstance();
@@ -67,7 +75,6 @@ public class FirebaseAdapter {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(mAuth.getCurrentUser() != null){
                     userID = mAuth.getCurrentUser().getUid();
-
                 }
             }
 
@@ -110,6 +117,9 @@ public class FirebaseAdapter {
                     //profile = dataSnapshot.getValue(Profile.class);
                     mainDataSnapshot[0] = dataSnapshot;
 
+                    if(profileDataListener != null){ //let main menu know that the profile data is ready
+                        profileDataListener.onDataReady();
+                    }
              //       for (DataSnapshot temp: dataSnapshot.getChildren()){
                     /*
                         if(dataSnapshot.child(userID).hasChild("id"));
@@ -211,21 +221,26 @@ public class FirebaseAdapter {
     }
 
     public Profile getCurrentUserProfileFromFireBase(){
-        userID = mAuth.getCurrentUser().getUid();
 
-        if(mainDataSnapshot[0].child(userID).hasChild("id"));
-        profile.setId((String)mainDataSnapshot[0].child(userID).child("id").getValue());
-        if(mainDataSnapshot[0].child(userID).hasChild("fullName"))
-            profile.setFullName((String)mainDataSnapshot[0].child(userID).child("fullName").getValue());
-        if(mainDataSnapshot[0].child(userID).hasChild("phoneNumber"))
-            profile.setPhoneNumber((String)mainDataSnapshot[0].child(userID).child("phoneNumber").getValue());
-        if(mainDataSnapshot[0].child(userID).hasChild("address"))
-            profile.setAddress((String)mainDataSnapshot[0].child(userID).child("address").getValue());
-        if(mainDataSnapshot[0].child(userID).hasChild("eMail"))
-            profile.seteMail((String)mainDataSnapshot[0].child(userID).child("eMail").getValue());
-        if(mainDataSnapshot[0].child(userID).hasChild("dogsIDArrayList"))
-            profile.setDogsIDMap((Map<String,String>) mainDataSnapshot[0].child(userID).child("dogsIDArrayList").getValue());
+        userID = mAuth.getCurrentUser().getUid();//maybe redundant, need 2 check if already init in constructor
+    try {
+        if (mainDataSnapshot[0].child(userID).hasChild("id")) ;
+        profile.setId((String) mainDataSnapshot[0].child(userID).child("id").getValue());
+        if (mainDataSnapshot[0].child(userID).hasChild("fullName"))
+            profile.setFullName((String) mainDataSnapshot[0].child(userID).child("fullName").getValue());
+        if (mainDataSnapshot[0].child(userID).hasChild("phoneNumber"))
+            profile.setPhoneNumber((String) mainDataSnapshot[0].child(userID).child("phoneNumber").getValue());
+        if (mainDataSnapshot[0].child(userID).hasChild("address"))
+            profile.setAddress((String) mainDataSnapshot[0].child(userID).child("address").getValue());
+        if (mainDataSnapshot[0].child(userID).hasChild("eMail"))
+            profile.seteMail((String) mainDataSnapshot[0].child(userID).child("eMail").getValue());
+        if (mainDataSnapshot[0].child(userID).hasChild("dogsIDArrayList"))
+            profile.setDogsIDMap((Map<String, String>) mainDataSnapshot[0].child(userID).child("dogsIDArrayList").getValue());
+    }
 
+    catch (NullPointerException e){
+        return null;
+    }
 
 
         return profile;
@@ -253,5 +268,23 @@ public class FirebaseAdapter {
     }
 
 
+    public void registerProfileDataListener(ProfileDataListener profileDataListener) {
+        this.profileDataListener = profileDataListener;
+    }
+
+    public void removeProfileDataListener(){
+        this.profileDataListener = null;
+    }
+
+    public Boolean isUserDataReadyNow(){
+        if(mainDataSnapshot[0]!=null){
+            return true;
+        }
+        else
+            return false;
+    }
+    public interface ProfileDataListener {
+        public void onDataReady();
+    }
 
 }
