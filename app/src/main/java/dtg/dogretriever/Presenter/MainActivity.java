@@ -21,13 +21,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 
 import dtg.dogretriever.Model.Coordinate;
@@ -46,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAdapter firebaseAdapter;
     private View mProgressView;
     private View mMainMenuFormView;
+
+    //debug
+    private PopupWindow fakeScanPopUp = null;
+    private EditText dogIdFromFakeScanTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickScanner(View view) {
         //temp implementation for debugging
+        createPopUpFakeScan();
 
     }
 
@@ -176,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
+
+
     }
 
 
@@ -220,5 +234,102 @@ public class MainActivity extends AppCompatActivity {
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mMainMenuFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+
+    private void createPopUpFakeScan(){
+        //for debug
+
+        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.fake_scan_debug, null);
+
+        //Button cancelBtn = layout.findViewById(R.id.fake_scan__popup_layout_cancel);
+        //Button scanBtn = layout.findViewById(R.id.fake_scan__popup_layout_add_dog_button);
+
+
+
+        fakeScanPopUp = new PopupWindow(this);
+        fakeScanPopUp.setContentView(layout);
+        fakeScanPopUp.setWindowLayoutMode(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        fakeScanPopUp.setHeight(1);
+        fakeScanPopUp.setWidth(1);
+        fakeScanPopUp.setFocusable(true);
+        fakeScanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
+        dogIdFromFakeScanTextView = layout.findViewById(R.id.fake_scan__popup_layout_dog_id);
+
+    }
+
+    public void scanDog(View view) {
+        //for debug
+        String collarId = dogIdFromFakeScanTextView.getText().toString();
+
+        Dog tempDog = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
+        if(tempDog!= null) {
+            LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
+
+            try {
+                Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
+
+                firebaseAdapter.addScanToDog(tempDog, tempScan);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            fakeScanPopUp.dismiss();
+
+        }
+
+        else{
+            dogIdFromFakeScanTextView.setText("Id not found in Database");
+        }
+
+    }
+
+    public void cancelScanPopUp(View view) {
+        //for debug
+        fakeScanPopUp.dismiss();
+    }
+
+    public LatLng getRandomLocation(LatLng point, int radius) {
+        //get random location in a predefined radius
+        List<LatLng> randomPoints = new ArrayList<>();
+        List<Float> randomDistances = new ArrayList<>();
+        Location myLocation = new Location("");
+        myLocation.setLatitude(point.latitude);
+        myLocation.setLongitude(point.longitude);
+
+        //This is to generate 10 random points
+        for(int i = 0; i<10; i++) {
+            double x0 = point.latitude;
+            double y0 = point.longitude;
+
+            Random random = new Random();
+
+            // Convert radius from meters to degrees
+            double radiusInDegrees = radius / 111000f;
+
+            double u = random.nextDouble();
+            double v = random.nextDouble();
+            double w = radiusInDegrees * Math.sqrt(u);
+            double t = 2 * Math.PI * v;
+            double x = w * Math.cos(t);
+            double y = w * Math.sin(t);
+
+            // Adjust the x-coordinate for the shrinking of the east-west distances
+            double new_x = x / Math.cos(y0);
+
+            double foundLatitude = new_x + x0;
+            double foundLongitude = y + y0;
+            LatLng randomLatLng = new LatLng(foundLatitude, foundLongitude);
+            randomPoints.add(randomLatLng);
+            Location l1 = new Location("");
+            l1.setLatitude(randomLatLng.latitude);
+            l1.setLongitude(randomLatLng.longitude);
+            randomDistances.add(l1.distanceTo(myLocation));
+        }
+        //Get nearest point to the centre
+        int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
+        return randomPoints.get(indexOfNearestPointToCentre);
     }
 }
