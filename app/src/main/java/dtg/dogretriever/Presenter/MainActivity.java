@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(getBaseContext(),LoginActivity.class);
             startActivity(i);
         }
-
     }
 
     public void clickAbout(View view) {
