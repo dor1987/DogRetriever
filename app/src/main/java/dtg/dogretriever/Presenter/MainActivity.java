@@ -47,8 +47,6 @@ import dtg.dogretriever.View.DogNamesAdapter;
 public class MainActivity extends AppCompatActivity {
 
     private PopupWindow popupWindow = null;
-    private int popupWidth ;
-    private int popupHeight;
     private FirebaseAdapter firebaseAdapter;
     private View mProgressView;
     private View mMainMenuFormView;
@@ -64,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
-        popupWidth = displayMetrics.widthPixels ;
-        popupHeight = displayMetrics.heightPixels ;
 
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
 
@@ -245,11 +241,8 @@ public class MainActivity extends AppCompatActivity {
 
         fakeScanPopUp = new PopupWindow(this);
         fakeScanPopUp.setContentView(layout);
-        fakeScanPopUp.setWindowLayoutMode(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        fakeScanPopUp.setHeight(1);
-        fakeScanPopUp.setWidth(1);
+        fakeScanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        fakeScanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
         fakeScanPopUp.setFocusable(true);
         fakeScanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
         dogIdFromFakeScanTextView = layout.findViewById(R.id.fake_scan__popup_layout_dog_id);
@@ -282,10 +275,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void cancelScanPopUp(View view) {
-        //for debug
-        fakeScanPopUp.dismiss();
-    }
 
     public LatLng getRandomLocation(LatLng point, int radius) {
         //get random location in a predefined radius
