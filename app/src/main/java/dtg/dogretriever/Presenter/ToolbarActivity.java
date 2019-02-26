@@ -12,13 +12,19 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import dtg.dogretriever.Model.FakeDataBaseGenerator;
 import dtg.dogretriever.R;
 
 public class ToolbarActivity extends AppCompatActivity implements View.OnClickListener{
+    private static final String PREDICT_ALGO_KEY= "predictAlgo";
+    private static final String LEARNING_ALGO_KEY= "learningAlgo";
+
     TextView profile_textview;
     FragmentManager fm;
     FrameLayout frameLayout;
     AlgorithmFragment algorithmFragment;
+    FakeDataBaseGenerator fakeDataBaseGenerator = new FakeDataBaseGenerator(2); //dont forget to remove
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +33,9 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         algorithmFragment = new AlgorithmFragment();
 
         profile_textview = findViewById(R.id.profile_toolbar_text);
-
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(LEARNING_ALGO_KEY,fakeDataBaseGenerator.getRandomScanCoordsArray());
+        algorithmFragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, algorithmFragment);
         fragmentTransaction.commit();

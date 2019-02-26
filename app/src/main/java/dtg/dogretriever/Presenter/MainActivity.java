@@ -179,11 +179,8 @@ public class MainActivity extends AppCompatActivity {
 
         popupWindow = new PopupWindow(this);
         popupWindow.setContentView(layout);
-        popupWindow.setWindowLayoutMode(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.setHeight(1);
-        popupWindow.setWidth(1);
+        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
