@@ -275,7 +275,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
+    public void cancelScanPopUp(View view) {
+        //for debug
+        fakeScanPopUp.dismiss();
+    }
+    
     public LatLng getRandomLocation(LatLng point, int radius) {
         //get random location in a predefined radius
         List<LatLng> randomPoints = new ArrayList<>();
