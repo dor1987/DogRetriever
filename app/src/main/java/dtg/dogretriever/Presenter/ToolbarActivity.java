@@ -31,23 +31,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, algorithmFragment);
         fragmentTransaction.commit();
-
-
-//        profile_textview.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                switch (motionEvent.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        profile_textview.setTypeface(profile_textview.getTypeface(), Typeface.BOLD);
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        profile_textview.setTypeface(profile_textview.getTypeface(), Typeface.NORMAL);
-//                        break;
-//                }
-//                return false;
-//
-//            }
-//        });
+        
 
     }
 
