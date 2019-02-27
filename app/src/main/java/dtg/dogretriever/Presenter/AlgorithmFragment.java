@@ -46,6 +46,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,6 +86,16 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         displayLocationSettingsRequest(getContext());
         mMap.setOnMarkerClickListener(this);
 
+
+
+    }
+    private Marker createMarker(double latitude, double longitude, String title, String snippet) {
+
+        return mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .anchor(0.5f, 0.5f)
+                .title(title)
+                .snippet(snippet));
 
     }
     private void displayLocationSettingsRequest(Context context) {
@@ -161,6 +172,12 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(true);
+
+        ArrayList<Coordinate> coordinates = getLearningAlgoCoordsList();
+
+        for(Coordinate coordinate : coordinates){
+            createMarker(coordinate.getLatitude(),coordinate.getLongitude(),"bla bla","bla bla");
+        }
        // showRadiusArea(getCoordinatesToShow(), getRandomRadius(getCoordinatesToShow().size()));
     }
 
@@ -323,5 +340,9 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     public void onProviderDisabled(String s) {
 
 
+    }
+
+    private ArrayList<Coordinate> getLearningAlgoCoordsList(){
+       return getArguments().getParcelableArrayList("learningAlgo");
     }
 }
