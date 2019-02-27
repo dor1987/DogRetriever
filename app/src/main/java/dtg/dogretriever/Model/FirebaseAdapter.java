@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import dtg.dogretriever.Presenter.MainActivity;
@@ -208,6 +209,18 @@ public class FirebaseAdapter {
     public Map<String,Scan> getAllScanOfSpecificDog(Dog dog){
         //Get dog and give back all his scans as map
         return getDogByCollarIdFromFireBase(dog.getCollarId()).getScans();
+    }
+
+    public Map<String,Scan> getAllScanOfAllDogs(){
+        //give back Map of all the scans of all the dogs
+        Map<String,Scan> tempMapOfScans = new HashMap<String,Scan>();
+
+        for (Dog dog : DogsFromDataBaseList){
+            if(dog.getScans()!=null) {
+                tempMapOfScans.putAll(dog.getScans());
+            }
+        }
+        return tempMapOfScans;
     }
 
     public boolean isUserConnected(){

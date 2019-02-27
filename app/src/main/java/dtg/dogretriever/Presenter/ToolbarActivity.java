@@ -12,7 +12,15 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.FakeDataBaseGenerator;
+import dtg.dogretriever.Model.FirebaseAdapter;
+import dtg.dogretriever.Model.Scan;
+import dtg.dogretriever.Presenter.LearningAlgoTemp.LearningAlgo;
 import dtg.dogretriever.R;
 
 public class ToolbarActivity extends AppCompatActivity implements View.OnClickListener{
@@ -25,6 +33,9 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     AlgorithmFragment algorithmFragment;
     FakeDataBaseGenerator fakeDataBaseGenerator = new FakeDataBaseGenerator(2); //dont forget to remove
 
+    FirebaseAdapter firebaseAdapter;
+    LearningAlgo learningAlgo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +45,33 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
 
         profile_textview = findViewById(R.id.profile_toolbar_text);
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(LEARNING_ALGO_KEY,fakeDataBaseGenerator.getRandomScanCoordsArray());
+
+        learningAlgo = new LearningAlgo();
+
+
+        //1.get the dog Id from bundle
+        //2.and create a array of cords
+        //3.put array of cords in bundle to send to algo fragment
+        firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
+        String newString;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                newString= null;
+            } else {
+                newString= extras.getString("DOG_ID");
+            }
+        } else {
+            newString= (String) savedInstanceState.getSerializable("DOG_ID");
+        }
+
+       // Map<String,Scan> mapOfScans =  firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(newString));
+        Map<String,Scan> mapOfScans =  firebaseAdapter.getAllScanOfAllDogs();
+
+        bundle.putParcelableArrayList(LEARNING_ALGO_KEY,learningAlgo.learningAlgo(mapOfScans));
+        //
+
+        //bundle.putParcelableArrayList(LEARNING_ALGO_KEY,fakeDataBaseGenerator.getRandomScanCoordsArray());
         algorithmFragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, algorithmFragment);
