@@ -1,6 +1,7 @@
 package dtg.dogretriever.Model;
 
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
@@ -218,6 +219,26 @@ public class FirebaseAdapter {
         for (Dog dog : DogsFromDataBaseList){
             if(dog.getScans()!=null) {
                 tempMapOfScans.putAll(dog.getScans());
+            }
+        }
+        return tempMapOfScans;
+    }
+
+    public Map<String,Scan> getAllScanOfAllDogsInNamedRadius(Location currentLocation,float radius){
+        //give back Map of all the scans of all the dogs within given location and radius
+        Map<String,Scan> tempMapOfScans = new HashMap<String,Scan>();
+
+        for (Dog dog : DogsFromDataBaseList){
+            if(dog.getScans()!=null) {
+                for (Map.Entry<String, Scan> pair : dog.getScans().entrySet()){
+                    Location tempLocation = new Location("");
+                    tempLocation.setLatitude(pair.getValue().getCoordinate().getLatitude());
+                    tempLocation.setLongitude(pair.getValue().getCoordinate().getLongitude());
+
+                    if(currentLocation.distanceTo(tempLocation)< radius){
+                        tempMapOfScans.put(pair.getKey(),pair.getValue());
+                    }
+                }
             }
         }
         return tempMapOfScans;

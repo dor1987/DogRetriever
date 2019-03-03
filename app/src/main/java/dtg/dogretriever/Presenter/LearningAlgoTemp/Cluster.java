@@ -70,7 +70,6 @@ public class Cluster {
         numOfPoints+=1;
     }
 
-
     public void removePointFromCluster(Point point){
         double convertedLat = point.getLocation().latitude * Math.PI / 180;
         double convertedLong = point.getLocation().longitude * Math.PI / 180;

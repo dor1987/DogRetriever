@@ -1,16 +1,20 @@
 package dtg.dogretriever.Presenter;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -27,7 +31,10 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +48,7 @@ import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Profile;
 import dtg.dogretriever.Model.Scan;
+import dtg.dogretriever.Presenter.GooglePlaces.GetNearbyPlaces;
 import dtg.dogretriever.R;
 import dtg.dogretriever.View.DogNamesAdapter;
 
@@ -55,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
     private PopupWindow fakeScanPopUp = null;
     private EditText dogIdFromFakeScanTextView;
 
+    //use current location
+    private FusedLocationProviderClient fusedLocationClient;
+    private Location userCurrentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +79,37 @@ public class MainActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.loading_progress);
         mMainMenuFormView = findViewById(R.id.mainMenuForm);
 
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        userCurrentLocation = new Location("");
+        getUserCurrentLocation();
 
     }
 
+    private void getUserCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            userCurrentLocation.setLatitude(location.getLatitude());
+                            userCurrentLocation.setLongitude(location.getLongitude());
+                        }
+                    }
+                });
+
+    }
 
 
     public void clickScanner(View view) {
@@ -255,16 +293,15 @@ public class MainActivity extends AppCompatActivity {
 
         Dog tempDog = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
         if(tempDog!= null) {
-            LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
+                //LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
 
-            try {
-                Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
-
-                firebaseAdapter.addScanToDog(tempDog, tempScan);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+                try {
+                    Scan tempScan = new Scan(new Coordinate(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude()));
+                    getPlaceType(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude());
+                    firebaseAdapter.addScanToDog(tempDog, tempScan);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             fakeScanPopUp.dismiss();
 
         }
@@ -279,6 +316,8 @@ public class MainActivity extends AppCompatActivity {
         //for debug
         fakeScanPopUp.dismiss();
     }
+
+
     
     public LatLng getRandomLocation(LatLng point, int radius) {
         //get random location in a predefined radius
@@ -320,5 +359,30 @@ public class MainActivity extends AppCompatActivity {
         //Get nearest point to the centre
         int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
         return randomPoints.get(indexOfNearestPointToCentre);
+    }
+
+    public void getPlaceType(double latitide, double longitude){
+        //Getting Lat Long and get type list from google api
+        Object transferData[] = new Object[1];
+        GetNearbyPlaces getNearbyPlaces = new GetNearbyPlaces();
+
+        String url = getUrl(latitide, longitude,"30");
+        transferData[0] = url;
+        getNearbyPlaces.execute(transferData);
+    }
+
+    private String getUrl(double latitide, double longitude, String ProximityRadius)
+    {
+        //Assist function for "getPlaceType", building Url to fit the Search
+        StringBuilder googleURL = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googleURL.append("location=" + latitide + "," + longitude);
+        googleURL.append("&radius=" + ProximityRadius);
+        //googleURL.append("&type=" + nearbyPlace); not a specific type
+        googleURL.append("&sensor=true"); //not a must
+        googleURL.append("&key=" + "AIzaSyDTDmMNFTekqcFEWeK9yAJYzxdaM-IU8Wk");
+
+        Log.d("GoogleMapsActivity", "url = " + googleURL.toString());
+
+        return googleURL.toString();
     }
 }

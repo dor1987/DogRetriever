@@ -345,4 +345,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private ArrayList<Coordinate> getLearningAlgoCoordsList(){
        return getArguments().getParcelableArrayList("learningAlgo");
     }
+
+
 }
