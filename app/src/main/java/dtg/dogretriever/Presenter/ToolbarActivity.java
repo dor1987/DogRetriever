@@ -46,7 +46,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     private FusedLocationProviderClient fusedLocationClient;
 
     final Bundle bundle = new Bundle();
-    final Map<String,Scan> mapOfScans = new HashMap<>();
+    //final Map<String,Scan> mapOfScans = new HashMap<>();
 
 
     @Override
@@ -76,9 +76,9 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
             dogId = (String) savedInstanceState.getSerializable("DOG_ID");
         }
 
-        startAlgoFragmentDefault(dogId);
+        //startAlgoFragmentDefault(dogId);
         //startAlgoFragmentLearningAlgo(500);
-
+        startAlgoMapFragment(dogId);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
             default:
         }
     }
-
+/*
     public void startAlgoFragmentDefault(String dogId){
         //init the algo fragment with a list of specif dogs scan
         ArrayList<Coordinate> temp = new ArrayList<>();
@@ -125,7 +125,18 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         fragmentTransaction.add(R.id.fragment_container, algorithmFragment);
         fragmentTransaction.commit();
     }
+*/
+    public void startAlgoMapFragment(String dogId){
+        //Testing new way of starting the algo fragment
+        //we pass dogId and the algo fragment get the data needed directly from Firebase
 
+        bundle.putString("dogId",dogId);
+        algorithmFragment.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.fragment_container, algorithmFragment);
+        fragmentTransaction.commit();
+    }
+/*
     public void startAlgoFragmentLearningAlgo(final float radius){
         //init the algo fragment with a list of specif dogs scan
 
@@ -158,7 +169,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 });
     }
-
+*/
     private void checkForPermissions() {
 
     }

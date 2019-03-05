@@ -297,7 +297,8 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     Scan tempScan = new Scan(new Coordinate(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude()));
-                    getPlaceType(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude());
+                    //getPlaceType(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude());
+
                     firebaseAdapter.addScanToDog(tempDog, tempScan);
                 } catch (IOException e) {
                     e.printStackTrace();
