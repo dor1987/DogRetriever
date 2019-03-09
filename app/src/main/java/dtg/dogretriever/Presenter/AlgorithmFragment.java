@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -68,9 +69,11 @@ import dtg.dogretriever.R;
 import static android.support.v4.content.ContextCompat.getSystemService;
 
 
-public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener {
+public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "AlgorithmFragment";
     public static final int MY_CODE_REQUEST = 123;
+
+
 
     private enum algoType {DEFUALT, PREDICTION, LEARNING}
 
@@ -86,6 +89,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private ArrayList<Coordinate> coordinatesToShow;
     private Location currentLocation;
 
+
     private OnFragmentInteractionListener mListener;
     final Map<String, Scan> mapOfScans = new HashMap<>();
     FirebaseAdapter firebaseAdapter;
@@ -93,6 +97,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     LocationManager mLocationManager;
     LearningAlgo learningAlgo;
     TabLayout tabLayout;
+    boolean isMapReady;
+    boolean isFirstTimeLocationSet;
 
     public AlgorithmFragment() {
         // Required empty public constructor
@@ -105,10 +111,14 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         displayLocationSettingsRequest(getContext());
         mMap.setOnMarkerClickListener(this);
 
-        currentLocation = getLastKnownLocation();
+        //currentLocation = getLastKnownLocation();
+        //currentLocation = ((ToolbarActivity) getActivity()).getUserCurrentLocation();
+        currentLocation = ((ToolbarActivity)getActivity()).getCurrentLocation();
+        Log.d("DorCheck","Location At AlgoFragment onMapReady: "+ currentLocation+"");
+
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),15));
         tabLayout.getTabAt(0).select();
-
+        isMapReady= true;
     }
 
     private Marker createMarker(double latitude, double longitude, String title, String snippet) {
@@ -254,6 +264,16 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        isMapReady = false;
+        isFirstTimeLocationSet = true;
+        currentLocation = ((ToolbarActivity)getActivity()).getCurrentLocation();
+        Log.d("DorCheck","Location At AlgoFragment OnCreateView: "+ currentLocation+"");
+
+     /*
+        currentLocation = new Location("");
+        currentLocation.setLongitude(0);
+        currentLocation.setLatitude(0);
+       */
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
         View view = inflater.inflate(R.layout.fragment_algorithm, container, false);
         ViewPager viewPager = view.findViewById(R.id.viewpager);
@@ -310,6 +330,9 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                         coordinatesToShow.clear();
                         coordinatesToShow.addAll(learningAlgo.learningAlgo(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
                         updateMapUI();
+                        if(coordinatesToShow.size() == 0){
+                            Toast.makeText(getContext(), "Not enough information", Toast.LENGTH_SHORT).show();
+                        }
                         break;
 
                     case 2:
@@ -401,6 +424,29 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         return radiusList;
     }
 
+    public void locationChanged(Location location) {
+        //activates from toolbar activity
+        if(location!=null)
+            currentLocation = location;
+        //currentLocation.setLatitude(location.getLatitude());
+        //currentLocation.setLongitude(location.getLongitude());
+
+        Log.i(TAG, "Current location: Lat - " + currentLocation.getLatitude() + "Long - " + currentLocation.getLongitude());
+        if(isMapReady) {
+            /*
+            if (isFirstTimeLocationSet) {
+            */
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 15));
+
+                isFirstTimeLocationSet = false;
+        /*
+        }
+                else
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
+        */
+        }
+    }
+    /*
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = location;
@@ -426,11 +472,13 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
 
     }
+    */
 /*
     private ArrayList<Coordinate> getLearningAlgoCoordsList() {
         return getArguments().getParcelableArrayList("learningAlgo");
     }
 */
+/*
     private Location getLastKnownLocation() {
         mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = mLocationManager.getProviders(true);
@@ -456,4 +504,5 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         }
         return bestLocation;
     }
+    */
 }

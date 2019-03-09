@@ -34,11 +34,19 @@ public class LearningAlgo {
         ArrayList<Coordinate> coordinatesResultOfAlgo = new ArrayList<>();
 
         pointsList = convertScanMapToPointsArrayList(scansMap);
-
         int numOfClusters = 3; //Starting with 1 if cluster is good enough ok else increase k by 1;
         currentQuality = 0;
         qualityFlag = false;
 
+
+
+        if(pointsList.size()<20){
+            //if not enough points return the list of points
+            for(Scan scan: scansMap.values()){
+                coordinatesResultOfAlgo.add(scan.getCoordinate());
+            }
+            return coordinatesResultOfAlgo;
+        }
 
 
         initAllClusters(pointsList,clustersList,numOfClusters);

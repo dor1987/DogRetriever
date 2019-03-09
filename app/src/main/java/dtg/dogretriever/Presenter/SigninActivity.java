@@ -226,8 +226,11 @@ protected void onCreate(Bundle savedInstanceState) {
 
                             //TODO need to update preferences
                            // updateUI(user);
-                            Intent i = new Intent(getBaseContext(),ProfileActivity.class);
-                            startActivity(i);
+                           // Intent i = new Intent(getBaseContext(),ProfileActivity.class);
+                            //startActivity(i);
+                            Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+                            intent.putExtra("fragmentToOpen", 3);
+                            startActivity(intent);
 
                         } else {
                             // If sign in fails, display a message to the user.

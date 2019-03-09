@@ -7,6 +7,15 @@
     android:weightSum="1"
     tools:context=".Presenter.ToolbarActivity">
 
+    <ProgressBar
+        android:id="@+id/loading_progress_toolbar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+
+        android:visibility="gone" />
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
@@ -45,6 +54,7 @@
                     android:layout_marginTop="3dp"
                     android:background="@drawable/ic_home_black"
                     android:layout_gravity="center_horizontal|center_vertical"
+                    android:onClick="OnClickHomeButton"
                   />
                 <TextView
                     android:layout_width="match_parent"
@@ -70,7 +80,10 @@
                     android:layout_height="32dp"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:layout_marginTop="3dp"
-                    android:background="@drawable/ic_info_black" />
+                    android:background="@drawable/ic_info_black"
+                    android:onClick="OnClickAboutButton"
+
+                    />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -96,7 +109,10 @@
                     android:layout_height="32dp"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:layout_marginTop="3dp"
-                    android:background="@drawable/ic_settings_black" />
+                    android:background="@drawable/ic_settings_black"
+                    android:onClick="OnClickSettingsButton"
+
+                    />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -122,7 +138,10 @@
                     android:layout_height="32dp"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:layout_marginTop="3dp"
-                    android:background="@drawable/ic_profile_black" />
+                    android:background="@drawable/ic_profile_black"
+                    android:onClick="OnClickProfileButton"
+
+                    />
 
                 <TextView
                     android:id="@+id/profile_toolbar_text"

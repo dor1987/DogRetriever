@@ -4,16 +4,13 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.location.Geocoder;
+import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,12 +26,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,13 +41,12 @@ import java.util.Random;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
-import dtg.dogretriever.Model.Profile;
 import dtg.dogretriever.Model.Scan;
 import dtg.dogretriever.Presenter.GooglePlaces.GetNearbyPlaces;
 import dtg.dogretriever.R;
 import dtg.dogretriever.View.DogNamesAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MyLocationService.LocationListener {
 
     private PopupWindow popupWindow = null;
     private FirebaseAdapter firebaseAdapter;
@@ -64,36 +58,55 @@ public class MainActivity extends AppCompatActivity {
     private EditText dogIdFromFakeScanTextView;
 
     //use current location
-    private FusedLocationProviderClient fusedLocationClient;
+   // private FusedLocationProviderClient fusedLocationClient;
+   // private LocationManager locationManager;
+
+    //Location Service
+    boolean isBound = false;
+    private MyLocationService.MylocalBinder mBinder;
     private Location userCurrentLocation;
+    private MyLocationService myLocationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
-
-        firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
-
         mProgressView = findViewById(R.id.loading_progress);
         mMainMenuFormView = findViewById(R.id.mainMenuForm);
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        //permissionCheck();//If permission is ok it will start a get current location sequence
+
+
+        firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
+
+       // fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         userCurrentLocation = new Location("");
-        getUserCurrentLocation();
+
+
+        //start the service
+        Intent intent = new Intent(this, MyLocationService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+
+
+        DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isBound) {
+            mBinder.DeleteLocationListener(MainActivity.this);
+            unbindService(mConnection);
+            isBound = false;
+        }
+    }
+
+    /*
     private void getUserCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         fusedLocationClient.getLastLocation()
@@ -106,12 +119,55 @@ public class MainActivity extends AppCompatActivity {
                             userCurrentLocation.setLatitude(location.getLatitude());
                             userCurrentLocation.setLongitude(location.getLongitude());
                         }
+                        showProgress(false);
                     }
                 });
 
     }
+*/
+
+/*
+    private void permissionCheck() {
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+    }
+*/
+/*
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        permissionCheck();
+                        return;
+                    }
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 50, this);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 50, this);
 
 
+
+
+                } else {
+                    // permission denied, boo!
+                    //closing app
+                    System.exit(0);
+
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+
+        }
+    }
+*/
     public void clickScanner(View view) {
         //temp implementation for debugging
         createPopUpFakeScan();
@@ -137,13 +193,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else {
-            Intent i = new Intent(getBaseContext(), SigninActivity.class);
+
+            Intent i = new Intent(getBaseContext(), LoginActivity.class);
             startActivity(i);
         }
     }
 
     public void clickSettings(View view) {
-
+        Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+        intent.putExtra("fragmentToOpen", 1);
+        startActivity(intent);
     }
 
     public void clickProfile(View view) {
@@ -151,10 +210,41 @@ public class MainActivity extends AppCompatActivity {
         //if user logged in send to profile
         //else send to login activity
 
+        Toast.makeText(this, "Clicked Profile", Toast.LENGTH_SHORT).show();
 
         if(firebaseAdapter.isUserConnected()){
             if(firebaseAdapter.isUserDataReadyNow()){
+                Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+                intent.putExtra("fragmentToOpen", 3);
+                startActivity(intent);
+            }
+
+            else {
+                showProgress(true);
+                firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
+                    @Override
+                    public void onDataReady() {
+                        showProgress(false);
+                        Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+                        intent.putExtra("fragmentToOpen", 3);
+                        firebaseAdapter.removeProfileDataListener();
+                        startActivity(intent);
+
+                    }
+                });
+            }
+
+        }
+        else{
+            Intent i = new Intent(getBaseContext(),LoginActivity.class);
+            startActivity(i);
+        }
+
+        /*
+        if(firebaseAdapter.isUserConnected()){
+            if(firebaseAdapter.isUserDataReadyNow()){
                 Intent i = new Intent(getBaseContext(),ProfileActivity.class);
+                startActivity(i);
             }
 
             else {
@@ -176,10 +266,14 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(getBaseContext(),LoginActivity.class);
             startActivity(i);
         }
+
+        */
     }
 
     public void clickAbout(View view) {
-
+        Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+        intent.putExtra("fragmentToOpen", 2);
+        startActivity(intent);
     }
 
 
@@ -194,13 +288,16 @@ public class MainActivity extends AppCompatActivity {
 
             DogNamesAdapter dogNamesAdapter = new DogNamesAdapter(createDogsList(), this);
             listView.setAdapter(dogNamesAdapter);
+        Log.d("DorCheck","Location At MainMenu: "+ userCurrentLocation+"");
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
                     intent.putExtra("TAG", "AlgorithmFragment");
+                    intent.putExtra("fragmentToOpen", "0");
                     intent.putExtra("DOG_ID", createDogsList().get(i).getCollarId());
+                    intent.putExtra("currentLocation", userCurrentLocation);
                     startActivity(intent);
 
                 }
@@ -319,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    
+
     public LatLng getRandomLocation(LatLng point, int radius) {
         //get random location in a predefined radius
         List<LatLng> randomPoints = new ArrayList<>();
@@ -386,4 +483,61 @@ public class MainActivity extends AppCompatActivity {
 
         return googleURL.toString();
     }
+
+    @Override
+    public void locationChanged(Location location) {
+        Toast.makeText(this, "Location Updated At MainActivity", Toast.LENGTH_SHORT).show();
+        showProgress(false);
+
+        userCurrentLocation = location;
+    }
+
+
+
+
+
+    /*
+        @Override
+        public void onLocationChanged(Location location) {
+            //getUserCurrentLocation();
+            userCurrentLocation.setLatitude(location.getLatitude());
+            userCurrentLocation.setLongitude(location.getLongitude());
+            showProgress(false);
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+        */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mBinder = (MyLocationService.MylocalBinder) service;
+            mBinder.registerLocationListener(MainActivity.this);
+            myLocationService = mBinder.getMyLocationService();
+            isBound = true;
+
+            if(myLocationService.isFirstTimeRuning()){
+                showProgress(true);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            isBound = false;
+        }
+    };
+
 }
