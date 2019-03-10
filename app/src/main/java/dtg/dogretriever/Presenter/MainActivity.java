@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private FirebaseAdapter firebaseAdapter;
     private View mProgressView;
     private View mMainMenuFormView;
-
+    private TextView userWelcomeTextView;
     //debug
     private PopupWindow fakeScanPopUp = null;
     private EditText dogIdFromFakeScanTextView;
@@ -73,12 +73,13 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         setContentView(R.layout.activity_main);
         mProgressView = findViewById(R.id.loading_progress);
         mMainMenuFormView = findViewById(R.id.mainMenuForm);
+        userWelcomeTextView = findViewById(R.id.userWelcome);
 
         //permissionCheck();//If permission is ok it will start a get current location sequence
 
 
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
-
+        initWelcomeTextview();
        // fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         userCurrentLocation = new Location("");
@@ -173,7 +174,30 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         createPopUpFakeScan();
 
     }
+    public void initWelcomeTextview(){
+        if(firebaseAdapter.isUserConnected()) {
 
+            if(firebaseAdapter.isUserDataReadyNow()){
+                userWelcomeTextView.setText("Hello "+firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
+
+            }
+            else {
+
+                firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
+                    @Override
+                    public void onDataReady() {
+                        firebaseAdapter.removeProfileDataListener();
+                        userWelcomeTextView.setText("Hello "+firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
+
+                    }
+                });
+            }
+        }
+        else {
+
+            userWelcomeTextView.setText("Hello Guest");
+        }
+    }
     public void clickFindMyDog(View view) {
         if(firebaseAdapter.isUserConnected()) {
 
