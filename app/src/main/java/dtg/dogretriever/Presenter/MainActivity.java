@@ -410,9 +410,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
     public void scanDog(View view) {
         //for debug
+        Dog tempDog = null;
         String collarId = dogIdFromFakeScanTextView.getText().toString();
 
-        Dog tempDog = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
+        if(!collarId.equals(""))
+            tempDog  = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
+
         if(tempDog!= null) {
                 //LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
 

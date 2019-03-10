@@ -32,7 +32,11 @@ public class Weather {
             }
         });
             thread.start();
-
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -82,6 +86,7 @@ public class Weather {
         try{
 
          String temperature = json.getJSONObject("currently").getString("temperature");
+
             temperatureF = Double.valueOf(temperature);
             setCurrentWeather(fahrenheitToCelsius(temperatureF));
 
