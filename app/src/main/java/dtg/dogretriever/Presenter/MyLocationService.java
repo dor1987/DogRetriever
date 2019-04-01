@@ -42,7 +42,7 @@ public class MyLocationService extends Service implements LocationListener {
         super.onCreate();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        Toast.makeText(this, "new Service Created", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "new Service Created", Toast.LENGTH_SHORT).show();
 
 
 

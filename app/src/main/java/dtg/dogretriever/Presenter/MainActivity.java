@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
 
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+
 
     }
 
@@ -420,10 +422,19 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 //LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
 
                 try {
+
                     Scan tempScan = new Scan(new Coordinate(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude()));
                     //getPlaceType(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude());
-
                     firebaseAdapter.addScanToDog(tempDog, tempScan);
+
+                  /*
+                  //used to generate random scans around your location - do not use
+                  for(int i =0 ; i<200;i++) {
+                      LatLng locationToReturn = getRandomLocation((new LatLng(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude())), 4000);
+                      Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
+                      firebaseAdapter.addScanToDog(tempDog, tempScan);
+                  }
+                */
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

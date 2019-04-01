@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -32,6 +33,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
+import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
+import com.amazonaws.regions.Regions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -63,8 +68,13 @@ import java.util.Random;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Scan;
+import dtg.dogretriever.Presenter.LearningAlgoTemp.Cluster;
 import dtg.dogretriever.Presenter.LearningAlgoTemp.LearningAlgo;
+import dtg.dogretriever.Presenter.LearningAlgoTemp.Point;
 import dtg.dogretriever.R;
+import com.amazonaws.mobileconnectors.lambdainvoker.*;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.regions.Regions;
 
 import static android.support.v4.content.ContextCompat.getSystemService;
 
@@ -88,7 +98,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private FragmentTabHost mTabHost;
     private ArrayList<Coordinate> coordinatesToShow;
     private Location currentLocation;
-
+    private ArrayList<Coordinate> hotZonesAlgoResult;
 
     private OnFragmentInteractionListener mListener;
     final Map<String, Scan> mapOfScans = new HashMap<>();
@@ -279,8 +289,10 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         ViewPager viewPager = view.findViewById(R.id.viewpager);
         tabLayout = view.findViewById(R.id.tablayout);
         coordinatesToShow = new ArrayList<>();
-        learningAlgo = new LearningAlgo();
+        hotZonesAlgoResult = new ArrayList<>();
 
+        //learningAlgo = new LearningAlgo();
+        hotZonesAlgo();
 
 
         return view;
@@ -328,7 +340,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                         //show algo1 result for selected dog
 
                         coordinatesToShow.clear();
-                        coordinatesToShow.addAll(learningAlgo.learningAlgo(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
+                       // coordinatesToShow.addAll(learningAlgo.learningAlgo(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
+                        coordinatesToShow.addAll(hotZonesAlgoResult);
                         updateMapUI();
                         if(coordinatesToShow.size() == 0){
                             Toast.makeText(getContext(), "Not enough information", Toast.LENGTH_SHORT).show();
@@ -505,4 +518,75 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         return bestLocation;
     }
     */
+
+
+    @SuppressLint("StaticFieldLeak")
+    public void hotZonesAlgo(){
+        //testing Lambda
+
+        // Create an instance of CognitoCachingCredentialsProvider
+        CognitoCachingCredentialsProvider cognitoProvider = new CognitoCachingCredentialsProvider(
+                this.getActivity().getApplicationContext(), "us-east-1:0843e7a0-4eaa-4d94-8450-29790fb2faf0", Regions.US_EAST_1);
+
+// Create LambdaInvokerFactory, to be used to instantiate the Lambda proxy.
+        LambdaInvokerFactory factory = new LambdaInvokerFactory(this.getActivity().getApplicationContext(),
+                Regions.US_EAST_1, cognitoProvider);
+
+// Create the Lambda proxy object with a default Json data binder.
+// You can provide your own data binder by implementing
+// LambdaDataBinder.
+        final MyInterface myInterface = factory.build(MyInterface.class);
+
+        RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
+// The Lambda function invocation results in a network call.
+// Make sure it is not called from the main thread.
+
+        new AsyncTask<RequestClass, Void, ResponseClass>() {
+            @Override
+            protected ResponseClass doInBackground(RequestClass... params) {
+                // invoke "echo" method. In case it fails, it will throw a
+                // LambdaFunctionException.
+                try {
+                    return myInterface.AndroidBackendLambdaFunction(params[0]);
+                } catch (LambdaFunctionException lfe) {
+                    Log.e("Tag", "Failed to invoke echo", lfe);
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(ResponseClass result) {
+                if (result == null) {
+                    return;
+                }
+
+                // Do a toast
+                //Toast.makeText(MainActivity.this, result.getGreetings(), Toast.LENGTH_LONG).show();
+                hotZonesAlgoResult.addAll(convertClusterArrayListToCoordiante(result.getClustersList()));
+                Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
+
+            }
+        }.execute(request);
+
+        //End testing lambda
+
+    }
+    public ArrayList<Point> convretMapOfScansToPoint(Map<String,Scan> scansMap){
+        ArrayList<Point> pointsArrayList = new ArrayList<>();
+
+        for(Scan scan : scansMap.values()){
+            pointsArrayList.add(new Point(-1,scan.getCoordinate().getLatitude(),scan.getCoordinate().getLongitude()));
+        }
+
+        return pointsArrayList;
+    }
+
+    public ArrayList<Coordinate> convertClusterArrayListToCoordiante(ArrayList<Cluster> cluserArrayList){
+        ArrayList<Coordinate> coordinatesArrayList = new ArrayList<>();
+
+        for (Cluster cluser : cluserArrayList){
+            coordinatesArrayList.add(new Coordinate(cluser.getCenterLat(),cluser.getCenterLong()));
+        }
+        return coordinatesArrayList;
+    }
 }
