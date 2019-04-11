@@ -1,6 +1,5 @@
 package dtg.dogretriever.Presenter.LearningAlgoTemp;
 
-import com.google.android.gms.maps.model.LatLng;
 
 public class Cluster {
     private int clusterId;

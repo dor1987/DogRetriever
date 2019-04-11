@@ -496,7 +496,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
         return randomPoints.get(indexOfNearestPointToCentre);
     }
-
+/*
     public void getPlaceType(double latitide, double longitude){
         //Getting Lat Long and get type list from google api
         Object transferData[] = new Object[1];
@@ -521,7 +521,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
         return googleURL.toString();
     }
-
+*/
     @Override
     public void locationChanged(Location location) {
         Toast.makeText(this, "Location Updated At MainActivity", Toast.LENGTH_SHORT).show();

@@ -48,6 +48,9 @@ public class FirebaseAdapter {
     //Listeners
     private ProfileDataListener profileDataListener;
 
+    //For Type histogram
+    Map<String,Integer> histogramOfPlacesMap;
+
     private FirebaseAdapter() {
         //listeners
         this.profileDataListener = null;
@@ -66,6 +69,8 @@ public class FirebaseAdapter {
         profile = new Profile();
         mAuth = FirebaseAuth.getInstance();
 
+        //init histogram array
+        histogramOfPlacesMap = new HashMap<String,Integer>();
         //Firebase Listeners
 /*
         if(mAuth.getCurrentUser() != null){
@@ -95,7 +100,7 @@ public class FirebaseAdapter {
                     Log.d("onChildAdded", "dog:" + dog.getName());
                     DogsFromDataBaseList.add(dog);
                 }
-
+                generatePlacesHistogram();
             }
 
 
@@ -242,6 +247,35 @@ public class FirebaseAdapter {
             }
         }
         return tempMapOfScans;
+    }
+
+    public void generatePlacesHistogram(){
+        final Map<String,Scan> tempMapOfScans = getAllScanOfAllDogs();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                for(Scan scan : tempMapOfScans.values()){
+                    if(scan.getPlaces()!=null) {
+                        for (String place : scan.getPlaces()) {
+                            if (histogramOfPlacesMap.get(place) != null) {
+                                histogramOfPlacesMap.put(place, histogramOfPlacesMap.get(place) + 1);
+                            } else {
+                                histogramOfPlacesMap.put(place, 1);
+                            }
+                        }
+                    }
+                }
+            }
+        })
+.start();
+
+
+    }
+
+    public Map<String,Integer> getPlacesHistogram(){
+        return histogramOfPlacesMap;
     }
 
     public boolean isUserConnected(){

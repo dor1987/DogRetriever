@@ -68,6 +68,7 @@ import java.util.Random;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Scan;
+import dtg.dogretriever.Model.Weather;
 import dtg.dogretriever.Presenter.LearningAlgoTemp.Cluster;
 import dtg.dogretriever.Presenter.LearningAlgoTemp.LearningAlgo;
 import dtg.dogretriever.Presenter.LearningAlgoTemp.Point;
@@ -109,6 +110,10 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     TabLayout tabLayout;
     boolean isMapReady;
     boolean isFirstTimeLocationSet;
+
+    //weather
+    private Weather.weather currentWeather;
+    private Weather weather;
 
     public AlgorithmFragment() {
         // Required empty public constructor
@@ -277,6 +282,9 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         isMapReady = false;
         isFirstTimeLocationSet = true;
         currentLocation = ((ToolbarActivity)getActivity()).getCurrentLocation();
+        weather = new Weather(new Coordinate(currentLocation.getLatitude(), currentLocation.getLongitude()).toString());
+        currentWeather = weather.getCurrentWeather();
+
         Log.d("DorCheck","Location At AlgoFragment OnCreateView: "+ currentLocation+"");
 
      /*
@@ -446,14 +454,16 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
         Log.i(TAG, "Current location: Lat - " + currentLocation.getLatitude() + "Long - " + currentLocation.getLongitude());
         if(isMapReady) {
-            /*
+
             if (isFirstTimeLocationSet) {
-            */
+
+
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 15));
 
                 isFirstTimeLocationSet = false;
-        /*
+
         }
+          /*
                 else
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
         */
@@ -537,7 +547,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 // LambdaDataBinder.
         final MyInterface myInterface = factory.build(MyInterface.class);
 
-        RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
+        RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)),currentWeather.name());
 // The Lambda function invocation results in a network call.
 // Make sure it is not called from the main thread.
 
@@ -575,7 +585,10 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         ArrayList<Point> pointsArrayList = new ArrayList<>();
 
         for(Scan scan : scansMap.values()){
-            pointsArrayList.add(new Point(-1,scan.getCoordinate().getLatitude(),scan.getCoordinate().getLongitude()));
+            pointsArrayList.add(new Point(-1,scan.getCoordinate().getLatitude(),
+                    scan.getCoordinate().getLongitude(),
+                    scan.getCurrentWeather() == null ? Weather.weather.UNKNOWN.name() : scan.getCurrentWeather().name(),
+                    scan.getTimeStamp().getTime()));
         }
 
         return pointsArrayList;

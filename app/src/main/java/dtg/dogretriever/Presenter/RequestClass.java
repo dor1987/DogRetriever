@@ -6,12 +6,15 @@ import dtg.dogretriever.Presenter.LearningAlgoTemp.Point;
 
 public class RequestClass {
     ArrayList<Point> pointsList;
+    String weather;
 
     public RequestClass() {
     }
 
-    public RequestClass(ArrayList<Point> pointsList) {
+    public RequestClass(ArrayList<Point> pointsList, String weather) {
         this.pointsList = pointsList;
+        this.weather = weather;
+
     }
 
     public ArrayList<Point> getPointsList() {
@@ -20,6 +23,13 @@ public class RequestClass {
 
     public void setPointsList(ArrayList<Point> pointsList) {
         this.pointsList = pointsList;
+    }
+    public String getWeather() {
+        return weather;
+    }
+
+    public void setWeather(String weather) {
+        this.weather = weather;
     }
 
     /*
