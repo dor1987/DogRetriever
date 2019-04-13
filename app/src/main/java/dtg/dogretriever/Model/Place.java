@@ -13,16 +13,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.net.ssl.HttpsURLConnection;
 
 public class Place {
+    private final int MAX_RADIUS = 100;
+    private final int LIMIT = 10;
     private final static String TAG = "Place";
     private final String CLIENT_ID = "DYSSILD5DEHVLDFII0BELZ4QHOTS4PEEPNAP5UXEZTTTRC3F";
     private final String CLIENT_SECRET = "HRXKJAWTGVUP130AP5Y1G1IA1J35NOSGDVFGKLODTFMGXUWA";
     private final String API = "https://api.foursquare.com/v2/venues/search?client_id=";
 
-    private String placeType;
+    private HashSet<String> placeType;
 
     public Place(final String coord) {
         Thread thread = new Thread(new Runnable() {
@@ -43,7 +47,8 @@ public class Place {
         BufferedReader reader = null;
 
         HttpsURLConnection httpsURLConnection=null;
-        String url = API + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=20130815&ll=" + coord;
+        String url = API + CLIENT_ID + "&client_secret=" + CLIENT_SECRET
+                + "&v=20130815&intent=checkin&ll=" + coord + "&radius=" + MAX_RADIUS + "&limit=" + LIMIT;
         try {
             URL urlConnection = new URL(url);
 
@@ -89,17 +94,29 @@ public class Place {
 
     private void getPlaceDetailFromJson(JSONObject json){
 
+        HashSet<String> venuesType = new HashSet<>();
 
         try{
-            this.placeType =json.getJSONObject("response").
-                    getJSONArray("venues").
-                    getJSONObject(0).
-                    getJSONArray("categories").
-                    getJSONObject(0).
-                    getString("shortName");
+            JSONArray venues =json.getJSONObject("response").getJSONArray("venues");
+
+            for (int i=0 ; i< venues.length(); i++) {
+                if (json.getJSONObject("response").getJSONArray("venues").getJSONObject(i) != null) {
+                        JSONArray jsonArray = json.getJSONObject("response").getJSONArray("venues").getJSONObject(i).
+                                getJSONArray("categories");
+                        if (!jsonArray.isNull(0)) {
+                            String place = jsonArray.getJSONObject(0).
+                                    getString("shortName");
+                            venuesType.add(place);
+                            Log.d(TAG, "place type found : " + place);
+
+                    }
 
 
-            Log.d(TAG,"place type found : " + placeType);
+                }
+            }
+
+            this.placeType = venuesType;
+
 
         }catch(Exception e){
 
@@ -110,7 +127,7 @@ public class Place {
 
     }
 
-    public String getPlaceType() {
+    public HashSet<String> getPlaceType() {
         return placeType;
     }
 

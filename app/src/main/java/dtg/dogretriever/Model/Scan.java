@@ -1,6 +1,7 @@
 package dtg.dogretriever.Model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -10,7 +11,7 @@ public class Scan {
     private Coordinate coordinate;
     private Date timeStamp;
     private Weather.weather currentWeather;
-    private String place;
+    private ArrayList<String> places;
 
     public Scan() {}
 
@@ -21,13 +22,17 @@ public class Scan {
         setCurrentWeather(weather.getCurrentWeather());
 
         Place place  = new Place(coordinate.toString());
-        setPlace(place.getPlaceType());
+        setPlaces(new ArrayList<>(place.getPlaceType()));
 
     }
 
 
-    public void setPlace(String place) {
-        this.place = place;
+    public ArrayList<String> getPlaces() {
+        return places;
+    }
+
+    public void setPlaces(ArrayList<String> places) {
+        this.places = places;
     }
 
     public Coordinate getCoordinate() {
