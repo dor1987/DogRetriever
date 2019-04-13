@@ -110,6 +110,11 @@ public class Place {
 
     }
 
+    public String getPlaceType() {
+        return placeType;
+    }
+
+
 
 }
 
