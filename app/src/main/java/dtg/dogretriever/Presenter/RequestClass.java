@@ -1,19 +1,22 @@
 package dtg.dogretriever.Presenter;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import dtg.dogretriever.Presenter.LearningAlgoTemp.Point;
 
 public class RequestClass {
     ArrayList<Point> pointsList;
     String weather;
+    Map<String,Integer> placesHistogram;
 
     public RequestClass() {
     }
 
-    public RequestClass(ArrayList<Point> pointsList, String weather) {
+    public RequestClass(ArrayList<Point> pointsList, String weather,Map<String,Integer> placesHistogram) {
         this.pointsList = pointsList;
         this.weather = weather;
+        this.placesHistogram = placesHistogram;
 
     }
 
@@ -32,6 +35,13 @@ public class RequestClass {
         this.weather = weather;
     }
 
+    public Map<String, Integer> getPlacesHistogram() {
+        return placesHistogram;
+    }
+
+    public void setPlacesHistogram(Map<String, Integer> placesHistogram) {
+        this.placesHistogram = placesHistogram;
+    }
     /*
     String firstName;
     String lastName;

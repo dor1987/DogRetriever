@@ -36,7 +36,7 @@ public class Scan {
         this.errorApproximation = errorApproximation;
         Weather weather = new Weather(coordinate.toString());
         setCurrentWeather(weather.getCurrentWeather());
-
+        places = new ArrayList<>();
         fakeGetNearbyPlaces(coordinate.getLatitude(),coordinate.getLongitude());
         //getNearbyPlaces(coordinate.getLatitude(),coordinate.getLongitude());
     }

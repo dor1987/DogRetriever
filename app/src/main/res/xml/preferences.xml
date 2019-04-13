@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="notification_pre"
+        android:title="Notification"
+        android:summary="Will notify you if your dog is scanned"
+        android:defaultValue="true"
+        >
+
+    </CheckBoxPreference>
+
+    <ListPreference
+        android:key="hot_zones_algo_radius"
+        android:title="Hot Zones"
+        android:entries="@array/pref_hotzones_radius_type_entries"
+        android:entryValues="@array/pref_hotzones_radius_type_values"
+        android:defaultValue="@string/pref_hotzones_radius_default_value"
+        android:summary="How far you want the algo to search"
+        >
+    </ListPreference>
+
+
+
+</PreferenceScreen>

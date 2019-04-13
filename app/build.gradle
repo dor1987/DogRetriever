@@ -47,6 +47,8 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
     implementation 'com.amazonaws:aws-android-sdk-lambda:2.2.+'
 
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'

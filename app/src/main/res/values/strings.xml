@@ -57,6 +57,23 @@
         <item>LARGE</item>
     </string-array>
 
+
+    <string name="sync_pref">Sync</string>
+
+    <string name="pref_hotzones_radius_default_value">4000</string>
+
+    <string-array name="pref_hotzones_radius_type_entries">
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Big</item>
+    </string-array>
+
+    <string-array name="pref_hotzones_radius_type_values">
+        <item>1000</item>
+        <item>4000</item>
+        <item>8000</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

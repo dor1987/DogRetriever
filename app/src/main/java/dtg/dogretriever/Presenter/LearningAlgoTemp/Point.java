@@ -1,8 +1,8 @@
 package dtg.dogretriever.Presenter.LearningAlgoTemp;
 
 
+import java.util.ArrayList;
 import java.util.Date;
-
 
 public class Point {
 
@@ -11,13 +11,15 @@ public class Point {
     private Double mLongitude;
     private String weather;
     private long timeStamp;
+    private ArrayList<String> places;
 
-    public Point(int clusterId, double mLatitude, double mLongitude, String weather,long timeStamp) {
+    public Point(int clusterId, double mLatitude, double mLongitude, String weather,long timeStamp,ArrayList<String> places) {
         this.clusterId = clusterId;
         this.mLatitude = mLatitude;
         this.mLongitude = mLongitude;
         this.weather = weather;
         this.timeStamp = timeStamp;
+        this.places = places;
 
     }
     public Point() {
@@ -62,7 +64,13 @@ public class Point {
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
     }
+    public ArrayList<String> getPlaces() {
+        return places;
+    }
 
+    public void setPlaces(ArrayList<String> places) {
+        this.places = places;
+    }
 /*
     private int clusterId;
     private Double mLatitude;

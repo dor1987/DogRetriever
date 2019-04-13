@@ -547,7 +547,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 // LambdaDataBinder.
         final MyInterface myInterface = factory.build(MyInterface.class);
 
-        RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)),currentWeather.name());
+        RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
 // The Lambda function invocation results in a network call.
 // Make sure it is not called from the main thread.
 
@@ -588,7 +588,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
             pointsArrayList.add(new Point(-1,scan.getCoordinate().getLatitude(),
                     scan.getCoordinate().getLongitude(),
                     scan.getCurrentWeather() == null ? Weather.weather.UNKNOWN.name() : scan.getCurrentWeather().name(),
-                    scan.getTimeStamp().getTime()));
+                    scan.getTimeStamp().getTime(),
+                    scan.getPlaces()));
         }
 
         return pointsArrayList;

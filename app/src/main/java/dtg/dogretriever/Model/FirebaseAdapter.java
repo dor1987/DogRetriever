@@ -50,6 +50,7 @@ public class FirebaseAdapter {
 
     //For Type histogram
     Map<String,Integer> histogramOfPlacesMap;
+    boolean isHistogramReady;
 
     private FirebaseAdapter() {
         //listeners
@@ -71,6 +72,8 @@ public class FirebaseAdapter {
 
         //init histogram array
         histogramOfPlacesMap = new HashMap<String,Integer>();
+        isHistogramReady = false;
+
         //Firebase Listeners
 /*
         if(mAuth.getCurrentUser() != null){
@@ -267,11 +270,16 @@ public class FirebaseAdapter {
                         }
                     }
                 }
+                isHistogramReady = true;
             }
         })
 .start();
 
 
+    }
+
+    public boolean isHistogramReady(){
+        return isHistogramReady;
     }
 
     public Map<String,Integer> getPlacesHistogram(){
