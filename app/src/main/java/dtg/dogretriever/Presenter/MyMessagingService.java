@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.R;
 
@@ -38,7 +39,14 @@ public class MyMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        showNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        boolean isNotificationOn = sharedPreferences.getBoolean("notification_pre",true);
+
+
+        if(isNotificationOn) {
+            showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+        }
     }
 
     @Override

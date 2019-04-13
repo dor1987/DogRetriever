@@ -2,6 +2,10 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <Preference android:title="Settings"
+
+       />
+
     <CheckBoxPreference
         android:key="notification_pre"
         android:title="Notification"

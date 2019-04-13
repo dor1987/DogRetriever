@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -73,6 +74,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTabHost;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.FirebaseAdapter;
@@ -124,6 +126,9 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     //weather
     private Weather.weather currentWeather;
     private Weather weather;
+
+    SharedPreferences sharedPreferences;
+
 
     public AlgorithmFragment() {
         // Required empty public constructor
@@ -281,7 +286,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
 
     }
 
@@ -557,8 +562,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 // You can provide your own data binder by implementing
 // LambdaDataBinder.
         final MyInterface myInterface = factory.build(MyInterface.class);
-
-        RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
+        int radius = Integer.parseInt(sharedPreferences.getString("hot_zones_algo_radius","4000"));
+        RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
 // The Lambda function invocation results in a network call.
 // Make sure it is not called from the main thread.
 

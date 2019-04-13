@@ -63,9 +63,9 @@
     <string name="pref_hotzones_radius_default_value">4000</string>
 
     <string-array name="pref_hotzones_radius_type_entries">
-        <item>Small</item>
-        <item>Medium</item>
-        <item>Big</item>
+        <item>Small 1 Km</item>
+        <item>Medium 4 Km</item>
+        <item>Big 8 Km</item>
     </string-array>
 
     <string-array name="pref_hotzones_radius_type_values">
