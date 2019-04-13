@@ -13,9 +13,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Binder;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+//import android.support.annotation.NonNull;
+//import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
 
 
 public class MyLocationService extends Service implements LocationListener {

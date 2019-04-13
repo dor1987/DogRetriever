@@ -2,7 +2,7 @@ package dtg.dogretriever.Model;
 
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.support.annotation.NonNull;
+//import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import dtg.dogretriever.Presenter.MainActivity;
 
 public class FirebaseAdapter {

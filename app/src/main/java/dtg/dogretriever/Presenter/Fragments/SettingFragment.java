@@ -2,18 +2,18 @@ package dtg.dogretriever.Presenter.Fragments;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+//import android.support.v4.app.Fragment;
+//import android.preference.PreferenceFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.preference.PreferenceFragment;
+import androidx.preference.PreferenceFragmentCompat;
 import dtg.dogretriever.R;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class SettingFragment extends PreferenceFragment {
+
+public class SettingFragment extends PreferenceFragmentCompat{
 
 
     public SettingFragment() {
