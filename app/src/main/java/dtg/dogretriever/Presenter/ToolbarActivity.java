@@ -14,11 +14,12 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+
+//import android.support.annotation.NonNull;
+//import android.support.v4.app.ActivityCompat;
+//import android.support.v4.app.FragmentManager;
+//import android.support.v4.app.FragmentTransaction;
+//import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,6 +36,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+//import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentTransaction;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.FakeDataBaseGenerator;
 import dtg.dogretriever.Model.FirebaseAdapter;
@@ -288,7 +294,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void OnClickHomeButton(View view) {
-        Toast.makeText(this, "clicked Home Button", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "clicked Home Button", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         startActivity(intent);
@@ -296,18 +302,18 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void OnClickAboutButton(View view) {
-        Toast.makeText(this, "clicked About Button", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "clicked About Button", Toast.LENGTH_SHORT).show();
         startAboutFragment();
     }
 
     public void OnClickSettingsButton(View view) {
-        Toast.makeText(this, "clicked Settings Button", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "clicked Settings Button", Toast.LENGTH_SHORT).show();
         startSettingFragment();
 
     }
 
     public void OnClickProfileButton(View view) {
-        Toast.makeText(this, "clicked Profile Button", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "clicked Profile Button", Toast.LENGTH_SHORT).show();
         if(firebaseAdapter.isUserConnected()){
             if(firebaseAdapter.isUserDataReadyNow()){
                 startProfileFragment();
@@ -371,7 +377,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void locationChanged(Location location) {
-        Toast.makeText(this, "Location Updated At ToolBarActivity", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "Location Updated At ToolBarActivity", Toast.LENGTH_SHORT).show();
         if(location!=null)
             if(location.getLongitude()!=0 && location.getLatitude()!=0)
                 showProgress(false);

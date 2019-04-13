@@ -5,9 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.*;
-import android.support.v7.app.AppCompatActivity;
+
+//import android.support.annotation.NonNull;
+//import android.support.design.widget.*;
+//import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
@@ -41,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import dtg.dogretriever.R;
 
 import static android.Manifest.permission.READ_CONTACTS;

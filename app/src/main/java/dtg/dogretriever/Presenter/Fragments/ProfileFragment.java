@@ -4,7 +4,7 @@ package dtg.dogretriever.Presenter.Fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+//import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import java.util.ArrayList;
 import java.util.Map;
 
+import androidx.fragment.app.Fragment;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Profile;

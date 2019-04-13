@@ -2,7 +2,7 @@ package dtg.dogretriever.Model;
 
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.support.annotation.NonNull;
+//import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import dtg.dogretriever.Presenter.MainActivity;
 
 public class FirebaseAdapter {
@@ -48,6 +49,10 @@ public class FirebaseAdapter {
     //Listeners
     private ProfileDataListener profileDataListener;
 
+    //For Type histogram
+    Map<String,Integer> histogramOfPlacesMap;
+    boolean isHistogramReady;
+
     private FirebaseAdapter() {
         //listeners
         this.profileDataListener = null;
@@ -65,6 +70,10 @@ public class FirebaseAdapter {
         ProfilesFromDataBaseList = new ArrayList<Profile>(); //This is where the list of profiles will be after it get it from firebase
         profile = new Profile();
         mAuth = FirebaseAuth.getInstance();
+
+        //init histogram array
+        histogramOfPlacesMap = new HashMap<String,Integer>();
+        isHistogramReady = false;
 
         //Firebase Listeners
 /*
@@ -95,7 +104,7 @@ public class FirebaseAdapter {
                     Log.d("onChildAdded", "dog:" + dog.getName());
                     DogsFromDataBaseList.add(dog);
                 }
-
+                generatePlacesHistogram();
             }
 
 
@@ -242,6 +251,40 @@ public class FirebaseAdapter {
             }
         }
         return tempMapOfScans;
+    }
+
+    public void generatePlacesHistogram(){
+        final Map<String,Scan> tempMapOfScans = getAllScanOfAllDogs();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                for(Scan scan : tempMapOfScans.values()){
+                    if(scan.getPlaces()!=null) {
+                        for (String place : scan.getPlaces()) {
+                            if (histogramOfPlacesMap.get(place) != null) {
+                                histogramOfPlacesMap.put(place, histogramOfPlacesMap.get(place) + 1);
+                            } else {
+                                histogramOfPlacesMap.put(place, 1);
+                            }
+                        }
+                    }
+                }
+                isHistogramReady = true;
+            }
+        })
+.start();
+
+
+    }
+
+    public boolean isHistogramReady(){
+        return isHistogramReady;
+    }
+
+    public Map<String,Integer> getPlacesHistogram(){
+        return histogramOfPlacesMap;
     }
 
     public boolean isUserConnected(){

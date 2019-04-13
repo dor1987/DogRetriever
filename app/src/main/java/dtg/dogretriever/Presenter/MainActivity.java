@@ -9,10 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+//import android.support.v4.app.ActivityCompat;
+//import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Random;
 
 
+import androidx.appcompat.app.AppCompatActivity;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
 
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+
 
     }
 
@@ -420,10 +423,19 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 //LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
 
                 try {
+
                     Scan tempScan = new Scan(new Coordinate(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude()));
                     //getPlaceType(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude());
-
                     firebaseAdapter.addScanToDog(tempDog, tempScan);
+
+                  /*
+                  //used to generate random scans around your location - do not use
+                  for(int i =0 ; i<200;i++) {
+                      LatLng locationToReturn = getRandomLocation((new LatLng(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude())), 4000);
+                      Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
+                      firebaseAdapter.addScanToDog(tempDog, tempScan);
+                  }
+                */
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -485,7 +497,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
         return randomPoints.get(indexOfNearestPointToCentre);
     }
-
+/*
     public void getPlaceType(double latitide, double longitude){
         //Getting Lat Long and get type list from google api
         Object transferData[] = new Object[1];
@@ -510,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
         return googleURL.toString();
     }
-
+*/
     @Override
     public void locationChanged(Location location) {
         Toast.makeText(this, "Location Updated At MainActivity", Toast.LENGTH_SHORT).show();
