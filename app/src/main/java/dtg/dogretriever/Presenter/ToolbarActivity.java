@@ -46,6 +46,7 @@ import dtg.dogretriever.Model.FakeDataBaseGenerator;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Scan;
 import dtg.dogretriever.Presenter.Fragments.AboutFragment;
+import dtg.dogretriever.Presenter.Fragments.NotificationFragment;
 import dtg.dogretriever.Presenter.Fragments.ProfileFragment;
 import dtg.dogretriever.Presenter.Fragments.SettingFragment;
 import dtg.dogretriever.Presenter.LearningAlgoTemp.LearningAlgo;
@@ -62,6 +63,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     SettingFragment settingFragment;
     AboutFragment aboutFragment;
     ProfileFragment profileFragment;
+    NotificationFragment notificationFragment;
 
     FakeDataBaseGenerator fakeDataBaseGenerator = new FakeDataBaseGenerator(2); //dont forget to remove
 
@@ -80,7 +82,8 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     private MyLocationService.MylocalBinder mBinder;
     private Location userCurrentLocation;
     private MyLocationService myLocationService;
-
+    Double latitude = 0.0;
+    Double longitude = 0.0;
 
 
     @Override
@@ -90,6 +93,9 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         Bundle extras = getIntent().getExtras();
        // userCurrentLocation = new Location("");
         userCurrentLocation = getIntent().getExtras().getParcelable("currentLocation");
+        latitude = getIntent().getExtras().getDouble("latitude");
+        longitude = getIntent().getExtras().getDouble("longitude");
+
         Log.d("DorCheck","Location At ToolBar OnCreate: "+ userCurrentLocation+"");
 
         Intent intent = new Intent(this, MyLocationService.class);
@@ -100,6 +106,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         algorithmFragment = new AlgorithmFragment();
         aboutFragment = new AboutFragment();
         profileFragment = new ProfileFragment();
+        notificationFragment = new NotificationFragment();
 
         mFragmentContinerView = findViewById(R.id.fragment_container);
 
@@ -124,7 +131,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
                         dogId = null;
                     } else {
                         dogId = extras.getString("DOG_ID");
-                    }
+                        }
                 }
 
                 else {
@@ -147,6 +154,10 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
                 //open about fragment
                 startProfileFragment();
                 break;
+
+            case 4:
+                //open notification fragment
+                startNotificationFragment(latitude,longitude);
 
 
         }
@@ -173,6 +184,17 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         startAlgoMapFragment(dogId);
         */
     }
+
+    private void startNotificationFragment(Double latitude, Double longitude) {
+        bundle.putDouble("lat",latitude);
+        bundle.putDouble("lng",longitude);
+        notificationFragment.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, notificationFragment);
+        fragmentTransaction.commit();
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -390,6 +412,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         //used for fragment to get inital value
         return userCurrentLocation;
     }
+
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override

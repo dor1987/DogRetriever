@@ -14,8 +14,11 @@ import android.os.Build;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 
 import androidx.core.app.NotificationCompat;
@@ -46,6 +49,7 @@ public class MyMessagingService extends FirebaseMessagingService {
 
         if(isNotificationOn) {
             showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+
         }
     }
 
@@ -73,16 +77,34 @@ public class MyMessagingService extends FirebaseMessagingService {
             }
         }
 
+
+            //breaking msg to lat and long
+            String[] parts = message.split(" ");
+
+        Intent intent = new Intent(this, MainActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        intent.putExtra("latitude",parts[1])
+                .putExtra("longitude",parts[3]);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                     .setContentTitle(title)
                     .setSmallIcon(R.drawable.ic_launcher_background)
                     .setAutoCancel(true)
-                    .setContentText(message);
+                    .setContentText(message)
+                    .setContentIntent(pendingIntent);
 
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addNextIntent(new Intent(this, MainActivity.class));
-            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(resultPendingIntent);
+            //TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            //stackBuilder.addNextIntent((new Intent(this, MainActivity.class).putExtra("latitude",parts[1]).putExtra("longitude",parts[3])));
+
+            //PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+
+            //builder.setContentIntent(resultPendingIntent);
 
             notificationManager.notify(notificationId, builder.build());
 

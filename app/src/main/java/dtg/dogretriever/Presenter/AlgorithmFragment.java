@@ -350,6 +350,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                 switch (tab.getPosition()) {
                     case 0:
                         //Show all scan of selected dog
+
                         mapOfScans.clear();
                         mapOfScans.putAll(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId)));
 
@@ -357,6 +358,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
                         for (Scan scan : mapOfScans.values())
                             coordinatesToShow.add(scan.getCoordinate());
+
+
                         updateMapUI();
                         break;
 

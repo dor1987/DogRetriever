@@ -22,7 +22,8 @@ public class Scan {
         setCurrentWeather(weather.getCurrentWeather());
 
         Place place  = new Place(coordinate.toString());
-        setPlaces(new ArrayList<>(place.getPlaceType()));
+        if(place.getPlaceType()!=null)
+            setPlaces(new ArrayList<>(place.getPlaceType()));
 
     }
 

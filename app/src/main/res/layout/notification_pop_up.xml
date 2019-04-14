@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/notification_layout_popup"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/light_blue"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/notification__popup_layout_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:text="Your dog has been scanned:"
+        android:padding="20dp"/>
+
+
+    <ScrollView
+        android:id="@+id/notification__popup_layout_title_popup_layout_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:id="@+id/notification_popup_layout_sublinarlayout_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
+            <Button
+            android:id="@+id/notification_popup_layout_show_info_button"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:text="Show me where"
+            android:onClick="openMapWithNotificationCords"
+                />
+
+            <Button
+                android:id="@+id/notification_popup_layout_cancel"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textStyle="bold"
+                android:text="close"
+                android:onClick="closeNotificationPopUp"
+                />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+
+</LinearLayout>

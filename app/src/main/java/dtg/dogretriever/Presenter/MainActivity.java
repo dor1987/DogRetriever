@@ -1,6 +1,5 @@
 package dtg.dogretriever.Presenter;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
 //import android.support.v4.app.ActivityCompat;
@@ -44,7 +42,6 @@ import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Scan;
-import dtg.dogretriever.Presenter.GooglePlaces.GetNearbyPlaces;
 import dtg.dogretriever.R;
 import dtg.dogretriever.View.DogNamesAdapter;
 
@@ -57,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private TextView userWelcomeTextView;
     //debug
     private PopupWindow fakeScanPopUp = null;
+    private PopupWindow notificationPopUp = null;
     private EditText dogIdFromFakeScanTextView;
 
     //use current location
@@ -69,13 +67,21 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private Location userCurrentLocation;
     private MyLocationService myLocationService;
 
+    //notification pop up
+    Double latitude;
+    Double longitude;
+    boolean isNotifcationPopShowenBefore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mProgressView = findViewById(R.id.loading_progress);
         mMainMenuFormView = findViewById(R.id.mainMenuForm);
         userWelcomeTextView = findViewById(R.id.userWelcome);
+
+
 
         //permissionCheck();//If permission is ok it will start a get current location sequence
 
@@ -95,7 +101,28 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
 
+        isNotifcationPopShowenBefore = false;
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //start the service
+        showProgress(true);
+        Intent intent = new Intent(this, MyLocationService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isBound) {
+            mBinder.DeleteLocationListener(MainActivity.this);
+            unbindService(mConnection);
+            isBound = false;
+        }
     }
 
     @Override
@@ -390,6 +417,31 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         }
     }
 
+    private void startNotificationPopUp() {
+        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View layout = layoutInflater.inflate(R.layout.notification_pop_up, null);
+        notificationPopUp = new PopupWindow(this);
+        notificationPopUp.setContentView(layout);
+        notificationPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        notificationPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        notificationPopUp.setFocusable(true);
+        notificationPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
+
+    }
+    public void openMapWithNotificationCords(View view) {
+        Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+        intent.putExtra("TAG", "notificatonFragment");
+        intent.putExtra("fragmentToOpen", 4);
+        intent.putExtra("latitude",latitude );
+        intent.putExtra("longitude", longitude);
+        intent.putExtra("currentLocation", userCurrentLocation);
+        startActivity(intent);
+
+    }
+
+    public void closeNotificationPopUp(View view) {
+        notificationPopUp.dismiss();
+    }
     private void createPopUpFakeScan(){
         //for debug
 
@@ -526,12 +578,44 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     @Override
     public void locationChanged(Location location) {
         Toast.makeText(this, "Location Updated At MainActivity", Toast.LENGTH_SHORT).show();
-        showProgress(false);
+        while(mProgressView.getVisibility()==View.VISIBLE) {
+            showProgress(false);
+        }
+
 
         userCurrentLocation = location;
+
+        if(!isNotifcationPopShowenBefore)
+            showNotificationPop();
+
     }
 
+    public void showNotificationPop(){
+        isNotifcationPopShowenBefore = true;
+        Intent extras = getIntent();
+        if(extras.getStringExtra("latitude") != null){
 
+            latitude = Double.valueOf(extras.getStringExtra("latitude")) ;
+            longitude = Double.valueOf(extras.getStringExtra("longitude")) ;
+
+            startNotificationPopUp();
+        }
+/*
+        else if(getIntent().getExtras() != null){
+            Bundle bundle = getIntent().getExtras();
+            if(bundle != null) {
+                if(bundle.getString("latitude") != null) {
+                    latitude = Double.valueOf(bundle.getString("latitude"));
+                    longitude = Double.valueOf(bundle.getString("longitude"));
+                    startNotificationPopUp();
+                }
+            }
+        }
+  */
+        else{
+            Toast.makeText(this, "Got Nothing", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
 
@@ -578,5 +662,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             isBound = false;
         }
     };
+
 
 }
