@@ -15,9 +15,9 @@ public class Profile {
     private String address;
    // private ArrayList<String> dogsIDArrayList;
     private Map<String,String> dogsIDMap;
-    private Bitmap profileImage;
+    //private Bitmap profileImage;
     private String token;
-
+    private String mImageUrl;
 
     public Profile() { }
 
@@ -31,7 +31,8 @@ public class Profile {
         setAddress(profileBuilder.address);
         //setDogsIDArrayList(profileBuilder.dogArrayList);
         setDogsIDMap(profileBuilder.dogIDMap);
-        setProfileImage(profileBuilder.profileImage);
+        //setProfileImage(profileBuilder.profileImage);
+        setmImageUrl(profileBuilder.imageUrl);
     }
     
 
@@ -128,13 +129,21 @@ public class Profile {
     public void setDogsIDMap(Map<String,String> dogsIDMap) {
         this.dogsIDMap = dogsIDMap;
     }
-
+/*
     public Bitmap getProfileImage() {
         return profileImage;
     }
 
     public void setProfileImage(Bitmap profileImage) {
         this.profileImage = profileImage;
+    }
+*/
+    public String getmImageUrl() {
+        return mImageUrl;
+    }
+
+    public void setmImageUrl(String mImageUrl) {
+        this.mImageUrl = mImageUrl;
     }
 
     public static class ProfileBuilder{
@@ -151,8 +160,10 @@ public class Profile {
         private String address;
       //  private ArrayList<String> dogArrayList;
         private Map<String,String> dogIDMap;
-        private Bitmap profileImage;
+        //private Bitmap profileImage;
         private String token;
+        private String imageUrl;
+
 
         public ProfileBuilder(String id, String userName, String fullName, String password, String eMail) {
             this.id = id;
@@ -201,9 +212,14 @@ public class Profile {
 //            this.dogArrayList = dogArrayList;
 //            return this;
 //        }
-
+/*
         public ProfileBuilder setProfileImage(Bitmap profileImage) {
             this.profileImage = profileImage;
+            return this;
+        }
+*/
+        public ProfileBuilder setImageUrl(String mImageUrl) {
+            this.imageUrl = mImageUrl;
             return this;
         }
 

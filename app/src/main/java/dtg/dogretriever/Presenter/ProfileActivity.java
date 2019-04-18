@@ -129,6 +129,14 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
 
     }
 
+    public void onEditImage(View view) {
+        //dogsList.add(new Dog("test"));
+        // dogsListAdapter.notifyDataSetChanged();
+        createPopUpAddNewDog();
+
+
+    }
+
     private void createPopUpAddNewDog(){
 
         LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

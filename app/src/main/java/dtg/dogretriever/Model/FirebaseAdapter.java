@@ -1,35 +1,49 @@
 package dtg.dogretriever.Model;
 
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.location.Location;
-//import android.support.annotation.NonNull;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import android.webkit.MimeTypeMap;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import androidx.annotation.NonNull;
-import dtg.dogretriever.Presenter.MainActivity;
+
+//import android.support.annotation.NonNull;
 
 public class FirebaseAdapter {
     //singleton
     private static FirebaseAdapter instance;
+
 
     //Firebase refrences
     FirebaseDatabase dataBase;
@@ -48,19 +62,27 @@ public class FirebaseAdapter {
 
     //Listeners
     private ProfileDataListener profileDataListener;
+    private ImageUploadListener imageUploadListener;
 
     //For Type histogram
     Map<String,Integer> histogramOfPlacesMap;
     boolean isHistogramReady;
 
+    //Firebase StorageRefs
+    private StorageReference mStorageRef;
+    private StorageTask mUploadTask;
+    private StorageReference oldImageUrl;
+
     private FirebaseAdapter() {
         //listeners
         this.profileDataListener = null;
-
+        this.imageUploadListener = null;
 
 
         //Init FireBase
         dataBase = FirebaseDatabase.getInstance();
+
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
 
         //Referenecs for both tables
         dogTableRef = dataBase.getReference().child("Dogs");
@@ -158,6 +180,8 @@ public class FirebaseAdapter {
 
 
     }
+
+
 
     public static FirebaseAdapter getInstanceOfFireBaseAdapter(){
         if(instance == null){
@@ -313,6 +337,9 @@ public class FirebaseAdapter {
             profile.seteMail((String) mainDataSnapshot[0].child(userID).child("eMail").getValue());
         if (mainDataSnapshot[0].child(userID).hasChild("dogsIDArrayList"))
             profile.setDogsIDMap((Map<String, String>) mainDataSnapshot[0].child(userID).child("dogsIDArrayList").getValue());
+        if (mainDataSnapshot[0].child(userID).hasChild("image"))
+            profile.setmImageUrl((String) mainDataSnapshot[0].child(userID).child("image").child("mImageUrl").getValue());
+
     }
 
     catch (NullPointerException e){
@@ -353,6 +380,14 @@ public class FirebaseAdapter {
         this.profileDataListener = null;
     }
 
+    public void registerImageUploadListener(ImageUploadListener imageUploadListener){
+        this.imageUploadListener =  imageUploadListener;
+    }
+
+    public void removeImageUploadListener(){
+        this.imageUploadListener = null;
+    }
+
     public Boolean isUserDataReadyNow(){
         if(mainDataSnapshot[0]!=null){
             return true;
@@ -360,8 +395,126 @@ public class FirebaseAdapter {
         else
             return false;
     }
+
+    public interface ImageUploadListener{
+        public void onUploadFinish(String url);
+        public void onUploadProgress(double progress);
+    }
+
     public interface ProfileDataListener {
         public void onDataReady();
     }
 
+    //Image upload download Functions
+
+    public String getFileExtension(Context context, Uri uri){
+        //Used to get the file extension (jpg, bitmap, etc..)
+
+        ContentResolver cR = context.getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    public boolean isThereAnOnGoingImageUploadTask(){
+        if(mUploadTask !=null && mUploadTask.isInProgress()){
+            return true;
+        }
+        return false;
+    }
+
+    public void uploadFile(Context context, Uri mImageUri, final String imageName){
+        if(mImageUri != null){
+            oldImageUrl = getOldImageUrl();
+
+          final StorageReference fileRefrence = mStorageRef.child(System.currentTimeMillis()+"."+getFileExtension(context,mImageUri));
+
+            try {//Compress Image before upload
+                Bitmap bmp = MediaStore.Images.Media.getBitmap(context.getContentResolver(),mImageUri);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG,25,baos);
+                byte[] data = baos.toByteArray();
+
+
+
+
+           // mUploadTask = fileRefrence.putFile(mImageUri)
+            mUploadTask = fileRefrence.putBytes(data)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    //todo think a way to pass success to the fragment
+                        fileRefrence.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Upload upload = new Upload(imageName.trim(),uri.toString());
+                                userID = mAuth.getCurrentUser().getUid();//maybe redundant, need 2 check if already init in constructor
+
+                                DatabaseReference currentUserRef = usersTableRef.child(userID).child("image");
+                                //String uploadId = currentUserRef.push().getKey();
+                                currentUserRef.setValue(upload);
+                                Log.e("UPLOADSUCCESS"," UPLOADSUCCESS");
+                                imageUploadListener.onUploadProgress(0.0);
+                                imageUploadListener.onUploadFinish(uri.toString());
+                                profile.setmImageUrl(uri.toString());
+                                deleteOldPicture();
+                            }
+                        });
+
+                    }
+
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    //todo think of a way to pass fail to the fragment
+                        Log.e("UPLOADFAIL"," UPLOADFAIL");
+
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                        //todo think of a way to pass progress to the fragment
+                        imageUploadListener.onUploadProgress(progress);
+                    }
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    private StorageReference getOldImageUrl() {
+        if(profile.getmImageUrl()!=null && !profile.getmImageUrl().trim().isEmpty()) {
+            StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(profile.getmImageUrl());
+        return oldImageRef;
+        }
+        return null;
+    }
+
+    public void cancelAnUpload(){
+        if(mUploadTask!=null) {
+            if (!mUploadTask.isComplete()) {
+                //Upload is not complete yet, let's cancel
+                mUploadTask.cancel();
+            }
+        }
+    }
+
+    public void deleteOldPicture(){
+       if(oldImageUrl!=null && !oldImageUrl.toString().trim().isEmpty()) {
+         //  StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(profile.getmImageUrl());
+           oldImageUrl.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+               @Override
+               public void onSuccess(Void aVoid) {
+                   oldImageUrl = null;
+               }
+           });
+       }
+    }
 }

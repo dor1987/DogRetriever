@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
@@ -46,10 +47,14 @@ public class MyMessagingService extends FirebaseMessagingService {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean isNotificationOn = sharedPreferences.getBoolean("notification_pre",true);
 
-
+        //TODO Adjust to work when app is not on the background
         if(isNotificationOn) {
             showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+//            Map<String, String> data = remoteMessage.getData();
 
+  //          String temp = remoteMessage.getData().get("title").toString();
+    //        String temp2 =  remoteMessage.getData().get("body");
+      //      showNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("body"));
         }
     }
 

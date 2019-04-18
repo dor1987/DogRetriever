@@ -1,6 +1,8 @@
 package dtg.dogretriever.Presenter;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,6 +18,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 /*
@@ -33,9 +36,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
@@ -129,6 +134,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
     SharedPreferences sharedPreferences;
 
+    private int currentTab;
 
     public AlgorithmFragment() {
         // Required empty public constructor
@@ -346,11 +352,12 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                currentTab = tab.getPosition();
                 String dogId = getArguments().getString("dogId");
                 switch (tab.getPosition()) {
                     case 0:
                         //Show all scan of selected dog
-
+                        ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
                         mapOfScans.clear();
                         mapOfScans.putAll(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId)));
 
@@ -365,7 +372,9 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
                     case 1:
                         //show algo1 result for selected dog
+                        showHotZonesAlgoMarkersOnMap();
 
+                        /*
                         coordinatesToShow.clear();
                        // coordinatesToShow.addAll(learningAlgo.learningAlgo(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
                         coordinatesToShow.addAll(hotZonesAlgoResult);
@@ -373,11 +382,14 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                         if(coordinatesToShow.size() == 0){
                             Toast.makeText(getContext(), "Not enough information", Toast.LENGTH_SHORT).show();
                         }
+                        */
                         break;
 
                     case 2:
                         //show algo2 result for selected dog
                         //Right now will show ll scans of all dogs
+                        ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
+
                         mapOfScans.clear();
                         mapOfScans.putAll(firebaseAdapter.getAllScanOfAllDogs());
                         coordinatesToShow.clear();
@@ -569,6 +581,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
 // The Lambda function invocation results in a network call.
 // Make sure it is not called from the main thread.
+try {
+
 
         new AsyncTask<RequestClass, Void, ResponseClass>() {
             @Override
@@ -579,6 +593,10 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                     return myInterface.AndroidBackendLambdaFunction(params[0]);
                 } catch (LambdaFunctionException lfe) {
                     Log.e("Tag", "Failed to invoke echo", lfe);
+                    return null;
+                }
+                catch (AmazonServiceException e){
+                    Log.e("Tag", "request time out",e);
                     return null;
                 }
             }
@@ -593,12 +611,17 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                 //Toast.makeText(MainActivity.this, result.getGreetings(), Toast.LENGTH_LONG).show();
                 hotZonesAlgoResult.addAll(convertClusterArrayListToCoordiante(result.getClustersList()));
                 Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
-
+                if(currentTab==1) {
+                   tabLayout.selectTab(tabLayout.getTabAt(1));
+                }
             }
         }.execute(request);
 
         //End testing lambda
-
+}
+catch (Exception e){
+    e.printStackTrace();
+}
     }
     public ArrayList<Point> convretMapOfScansToPoint(Map<String,Scan> scansMap){
         ArrayList<Point> pointsArrayList = new ArrayList<>();
@@ -622,4 +645,22 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         }
         return coordinatesArrayList;
     }
+
+    public void showHotZonesAlgoMarkersOnMap(){
+        coordinatesToShow.clear();
+        // coordinatesToShow.addAll(learningAlgo.learningAlgo(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
+        coordinatesToShow.addAll(hotZonesAlgoResult);
+        updateMapUI();
+        if(coordinatesToShow.size() == 0){
+            ((ToolbarActivity)getActivity()).showSmalProgressBar(true);
+            Toast.makeText(getContext(), "Not enough information", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
+
+        }
+    }
+
+
+
 }

@@ -84,7 +84,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     private MyLocationService myLocationService;
     Double latitude = 0.0;
     Double longitude = 0.0;
-
+    private View smallProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +101,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         Intent intent = new Intent(this, MyLocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         mProgressView = findViewById(R.id.loading_progress_toolbar);
-
+        smallProgressBar = findViewById(R.id.tool_bar_activity_small_progres_bar);
         settingFragment = new SettingFragment();
         algorithmFragment = new AlgorithmFragment();
         aboutFragment = new AboutFragment();
@@ -110,7 +110,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
 
         mFragmentContinerView = findViewById(R.id.fragment_container);
 
-        showProgress(true);
+        //showProgress(true);
 
         //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         learningAlgo = new LearningAlgo();
@@ -317,7 +317,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
 
     public void OnClickHomeButton(View view) {
        // Toast.makeText(this, "clicked Home Button", Toast.LENGTH_SHORT).show();
-
+        showSmalProgressBar(false);
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         startActivity(intent);
 
@@ -325,17 +325,20 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
 
     public void OnClickAboutButton(View view) {
        // Toast.makeText(this, "clicked About Button", Toast.LENGTH_SHORT).show();
+        showSmalProgressBar(false);
         startAboutFragment();
     }
 
     public void OnClickSettingsButton(View view) {
         //Toast.makeText(this, "clicked Settings Button", Toast.LENGTH_SHORT).show();
+        showSmalProgressBar(false);
         startSettingFragment();
 
     }
 
     public void OnClickProfileButton(View view) {
        // Toast.makeText(this, "clicked Profile Button", Toast.LENGTH_SHORT).show();
+        showSmalProgressBar(false);
         if(firebaseAdapter.isUserConnected()){
             if(firebaseAdapter.isUserDataReadyNow()){
                 startProfileFragment();
@@ -365,7 +368,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
+    public void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
@@ -422,9 +425,10 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
             myLocationService = mBinder.getMyLocationService();
             isBound = true;
 
-            if(myLocationService.isFirstTimeRuning()){
-                showProgress(true);
-            }
+            //No need this lines coz progressbar starts from maina ctivity
+           // if(myLocationService.isFirstTimeRuning()){
+                //showProgress(true);
+            //}
         }
 
         @Override
@@ -433,4 +437,24 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         }
     };
 
+
+    public void showSmalProgressBar(final Boolean toShow){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            smallProgressBar.setVisibility(toShow ? View.VISIBLE : View.GONE);
+            smallProgressBar.animate().setDuration(shortAnimTime).alpha(
+                    toShow ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    smallProgressBar.setVisibility(toShow ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            smallProgressBar.setVisibility(toShow ? View.VISIBLE : View.GONE);
+        }
+    }
 }
