@@ -173,11 +173,11 @@ public class MyLocationService extends Service implements LocationListener {
                 return;
             }
             if (gps_enabled) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, MyLocationService.this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 200, 0, MyLocationService.this);
             }
 
             if(network_enabled) {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, MyLocationService.this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 200, 0, MyLocationService.this);
             }
 
             Criteria crit = new Criteria();
