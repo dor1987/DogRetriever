@@ -40,6 +40,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
@@ -117,6 +118,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private ArrayList<Coordinate> coordinatesToShow;
     private Location currentLocation;
     private ArrayList<Coordinate> hotZonesAlgoResult;
+    private ArrayList<Cluster> hotZonesAlgoResultAsCluster;
 
     private OnFragmentInteractionListener mListener;
     final Map<String, Scan> mapOfScans = new HashMap<>();
@@ -244,10 +246,15 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
 //        ArrayList<Coordinate> coordinates = getLearningAlgoCoordsList();
 
-        if(!coordinatesToShow.isEmpty()) {
-            for (Coordinate coordinate : coordinatesToShow) {
-                createMarker(coordinate.getLatitude(), coordinate.getLongitude(), "bla bla", "bla bla");
+        if(currentTab==0) {
+            if (!coordinatesToShow.isEmpty()) {
+                for (Coordinate coordinate : coordinatesToShow) {
+                    createMarker(coordinate.getLatitude(), coordinate.getLongitude(), "bla bla", "bla bla");
+                }
             }
+        }
+        else if (currentTab==1){
+                showRadiusArea(hotZonesAlgoResultAsCluster);
         }
         // showRadiusArea(getCoordinatesToShow(), getRandomRadius(getCoordinatesToShow().size()));
      /*
@@ -319,7 +326,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         tabLayout = view.findViewById(R.id.tablayout);
         coordinatesToShow = new ArrayList<>();
         hotZonesAlgoResult = new ArrayList<>();
-
+        hotZonesAlgoResultAsCluster = new ArrayList<>();
         //learningAlgo = new LearningAlgo();
         hotZonesAlgo();
 
@@ -455,11 +462,37 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private void showRadiusArea(ArrayList<Coordinate> centerList, ArrayList<Double> radiusList) {
 
         for (int i = 0; i < centerList.size(); i++) {
-            //      mMap.addCircle(new CircleOptions().center(centerList.get(i).get)
-            //              .radius(radiusList.get(i)).fillColor(getRandomColor()));
+
+                  //mMap.addCircle(new CircleOptions().center(centerList.get(i).get)
+                    //      .radius(radiusList.get(i)).fillColor(getRandomColor()));
         }
     }
 
+    private void showRadiusArea(ArrayList<Cluster> arrayOfClusters){
+        int totalAmountOfPoints = 0;
+
+        for(Cluster cluster : arrayOfClusters){
+            totalAmountOfPoints+= cluster.getNumOfPoints();
+        }
+        for(Cluster cluster : arrayOfClusters){
+            mMap.addCircle(new CircleOptions().center(new LatLng(cluster.getCenterLat(),cluster.getCenterLong())).radius(cluster.getDiameter()/6).fillColor(getColorOfCircle(totalAmountOfPoints,cluster.getNumOfPoints())));
+        }
+
+    }
+    private int getColorOfCircle(int totalAmountOfPoints,int clusterAmountOfPoints){
+    double ratio = (double)clusterAmountOfPoints/(double)totalAmountOfPoints;
+
+        if(ratio<=0.1){
+            return 0x22ff0000;
+        }
+        else if(ratio<=0.6){
+            return 0x22FFFF00;
+        }
+        else{
+        return 0x2200FF00;
+        }
+
+    }
     private int getRandomColor() {
         Random rnd = new Random();
         return Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
@@ -568,8 +601,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         // Create an instance of CognitoCachingCredentialsProvider
         CognitoCachingCredentialsProvider cognitoProvider = new CognitoCachingCredentialsProvider(
                 this.getActivity().getApplicationContext(), "us-east-1:0843e7a0-4eaa-4d94-8450-29790fb2faf0", Regions.US_EAST_1);
-
 // Create LambdaInvokerFactory, to be used to instantiate the Lambda proxy.
+
         LambdaInvokerFactory factory = new LambdaInvokerFactory(this.getActivity().getApplicationContext(),
                 Regions.US_EAST_1, cognitoProvider);
 
@@ -599,6 +632,10 @@ try {
                     Log.e("Tag", "request time out",e);
                     return null;
                 }
+                catch (AmazonClientException e){
+                    Log.e("Tag","request time out");
+                    return null;
+                }
             }
 
             @Override
@@ -609,8 +646,10 @@ try {
 
                 // Do a toast
                 //Toast.makeText(MainActivity.this, result.getGreetings(), Toast.LENGTH_LONG).show();
-                hotZonesAlgoResult.addAll(convertClusterArrayListToCoordiante(result.getClustersList()));
-                Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
+               // hotZonesAlgoResult.addAll(convertClusterArrayListToCoordiante(result.getClustersList()));
+               hotZonesAlgoResultAsCluster.addAll(result.getClustersList());
+
+                //Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
                 if(currentTab==1) {
                    tabLayout.selectTab(tabLayout.getTabAt(1));
                 }
@@ -649,9 +688,10 @@ catch (Exception e){
     public void showHotZonesAlgoMarkersOnMap(){
         coordinatesToShow.clear();
         // coordinatesToShow.addAll(learningAlgo.learningAlgo(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
-        coordinatesToShow.addAll(hotZonesAlgoResult);
+
+        //coordinatesToShow.addAll(hotZonesAlgoResult);
         updateMapUI();
-        if(coordinatesToShow.size() == 0){
+        if(hotZonesAlgoResultAsCluster.size() == 0){
             ((ToolbarActivity)getActivity()).showSmalProgressBar(true);
             Toast.makeText(getContext(), "Not enough information", Toast.LENGTH_SHORT).show();
         }

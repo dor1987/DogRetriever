@@ -49,12 +49,17 @@ public class MyMessagingService extends FirebaseMessagingService {
 
         //TODO Adjust to work when app is not on the background
         if(isNotificationOn) {
-            showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
-//            Map<String, String> data = remoteMessage.getData();
+            Map<String, String> data = remoteMessage.getData();
+            if(data!=null){
+                String temp1 = data.get("lat");
+                String temp2 = data.get("long");
+                showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody(),temp1,temp2);
 
-  //          String temp = remoteMessage.getData().get("title").toString();
-    //        String temp2 =  remoteMessage.getData().get("body");
-      //      showNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("body"));
+            }
+            //String temp = remoteMessage.getData().get("title");
+            //String temp2 =  remoteMessage.getData().get("body");
+
+            //showNotification(temp1,temp2);
         }
     }
 
@@ -70,7 +75,7 @@ public class MyMessagingService extends FirebaseMessagingService {
     }
 
 
-    public void showNotification(String title,String message){
+    public void showNotification(String title,String message,String latitude, String logitude){
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -84,14 +89,15 @@ public class MyMessagingService extends FirebaseMessagingService {
 
 
             //breaking msg to lat and long
-            String[] parts = message.split(" ");
+
+            //String[] parts = message.split(" ");
 
         Intent intent = new Intent(this, MainActivity.class);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        intent.putExtra("latitude",parts[1])
-                .putExtra("longitude",parts[3]);
+        intent.putExtra("lat",latitude)
+                .putExtra("long",logitude);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
 

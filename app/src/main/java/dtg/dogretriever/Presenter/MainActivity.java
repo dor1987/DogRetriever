@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -83,15 +84,15 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     Double latitude;
     Double longitude;
     boolean isNotifcationPopShowenBefore;
-    Intent extras;
-
+    //Intent extras;
+    Bundle bundle;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        extras = getIntent();
+        bundle = getIntent().getExtras();
         mProgressView = findViewById(R.id.loading_progress);
         mSmallProgressBarView = findViewById(R.id.main_menu_small_progres_bar);
         mMainMenuFormView = findViewById(R.id.mainMenuForm);
@@ -367,6 +368,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                    showProgress(true);
+                    popupWindow.dismiss();
+
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -378,8 +382,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                             startActivity(intent);
                         }
                     }).start();
-                    showProgress(true);
-                    popupWindow.dismiss();
+
                 }
             });
 
@@ -610,27 +613,42 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     @Override
     public void locationChanged(Location location) {
         Toast.makeText(this, "Location Updated At MainActivity", Toast.LENGTH_SHORT).show();
-        while(mProgressView.getVisibility()==View.VISIBLE) {
-            showProgress(false);
-        }
+        showProgress(false);
+
 
 
         userCurrentLocation = location;
 
-        if(!isNotifcationPopShowenBefore)
-            showNotificationPop();
-
+        if(mProgressView.getVisibility()!=View.VISIBLE) {
+            if (!isNotifcationPopShowenBefore)
+                showNotificationPop();
+        }
     }
 
     public void showNotificationPop(){
         isNotifcationPopShowenBefore = true;
         //Intent extras = getIntent();
-        if(extras.getStringExtra("latitude") != null){
+        if(bundle!=null){
+           for(String key : bundle.keySet()){
+               if(key.equals("lat"))
+                   latitude = Double.parseDouble(bundle.getString(key));
 
-            latitude = Double.valueOf(extras.getStringExtra("latitude")) ;
-            longitude = Double.valueOf(extras.getStringExtra("longitude")) ;
+               else if (key.equals("long"))
+                   longitude = Double.parseDouble(bundle.getString(key));
+           }
+           if(latitude!=null && latitude!=0.0
+                   && longitude != null && longitude != 0.0)
+                startNotificationPopUp();
+
+            /*
+        if(extras.getStringExtra("latitude") != null) {
+
+            latitude = Double.valueOf(extras.getStringExtra("latitude"));
+            longitude = Double.valueOf(extras.getStringExtra("longitude"));
 
             startNotificationPopUp();
+        }
+        */
         }
 /*
         else if(getIntent().getExtras() != null){
