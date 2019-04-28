@@ -89,6 +89,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_toolbar);
         Bundle extras = getIntent().getExtras();
        // userCurrentLocation = new Location("");
@@ -425,6 +426,9 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
             myLocationService = mBinder.getMyLocationService();
             isBound = true;
 
+            if(!myLocationService.isFirstTimeRuning()){
+                userCurrentLocation = myLocationService.getUserCurrentLocation();
+            }
             //No need this lines coz progressbar starts from maina ctivity
            // if(myLocationService.isFirstTimeRuning()){
                 //showProgress(true);
