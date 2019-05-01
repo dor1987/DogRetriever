@@ -133,6 +133,9 @@ public class MyLocationService extends Service implements LocationListener {
         return provider1.equals(provider2);
     }
 
+    public Location getUserCurrentLocation() {
+        return userCurrentLocation;
+    }
 
 
     public class MylocalBinder extends Binder {
