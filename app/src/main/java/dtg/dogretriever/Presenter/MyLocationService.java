@@ -10,6 +10,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Binder;
@@ -17,7 +18,13 @@ import android.os.Binder;
 //import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 import androidx.core.app.ActivityCompat;
+import dtg.dogretriever.Model.Coordinate;
+import dtg.dogretriever.Model.Dog;
+import dtg.dogretriever.Model.FirebaseAdapter;
+import dtg.dogretriever.Model.Scan;
 
 
 public class MyLocationService extends Service implements LocationListener {
@@ -30,6 +37,7 @@ public class MyLocationService extends Service implements LocationListener {
     private boolean gps_enabled = false;
     private boolean network_enabled = false;
     private boolean isFirstTimeRuning = true;
+    private FirebaseAdapter firebaseAdapter;
 
     public MyLocationService() {
     }
@@ -43,7 +51,7 @@ public class MyLocationService extends Service implements LocationListener {
     public void onCreate() {
         super.onCreate();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
+        firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
        // Toast.makeText(this, "new Service Created", Toast.LENGTH_SHORT).show();
 
 
@@ -53,10 +61,43 @@ public class MyLocationService extends Service implements LocationListener {
 
     }
 
+    public void addScanToDataBase(final Dog dog){
+        new AsyncTask<Dog,Void,Scan>(){
+
+
+            @Override
+            protected Scan doInBackground(Dog... dogs) {
+                while(isFirstTimeRuning);
+                try {
+                    Scan tempScan = new Scan(new Coordinate(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude()));
+                    return  tempScan;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+            }
+
+            @Override
+            protected void onPostExecute(Scan scan) {
+                super.onPostExecute(scan);
+                firebaseAdapter.addScanToDog(dog, scan);
+
+            }
+        }.execute();
+
+
+
+
+    }
+
     public Boolean isFirstTimeRuning(){
         return isFirstTimeRuning;
     }
 
+    public Location getUserCurrentLocation(){
+        return userCurrentLocation;
+    }
     @Override
     public void onLocationChanged(Location location) {
         isFirstTimeRuning = false;

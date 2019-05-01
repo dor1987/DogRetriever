@@ -353,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
 
     private void createPopUpChooseDogName(){
-
         LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.choose_dog_popup, null);
 
@@ -368,21 +367,30 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                    showProgress(true);
+                  //  showProgress(true);
+                    showSmalProgressBar(true);
                     popupWindow.dismiss();
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
-                            intent.putExtra("TAG", "AlgorithmFragment");
-                            intent.putExtra("fragmentToOpen", "0");
-                            intent.putExtra("DOG_ID", createDogsList().get(i).getCollarId());
-                            intent.putExtra("currentLocation", userCurrentLocation);
-                            startActivity(intent);
-                        }
-                    }).start();
 
+
+                new AsyncTask<Void,Void,Intent>(){
+
+                    @Override
+                    protected Intent doInBackground(Void... voids) {
+                        Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+                        intent.putExtra("TAG", "AlgorithmFragment");
+                        intent.putExtra("fragmentToOpen", "0");
+                        intent.putExtra("DOG_ID", createDogsList().get(i).getCollarId());
+                        intent.putExtra("currentLocation", userCurrentLocation);
+                    return intent;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Intent intent) {
+                        super.onPostExecute(intent);
+                        startActivity(intent);
+                    }
+                }.execute();
                 }
             });
 
@@ -503,28 +511,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         if(tempDog!= null) {
                 //LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
             final Dog finalTempDog = tempDog;
-            new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
 
-                            Scan tempScan = new Scan(new Coordinate(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude()));
-                            //getPlaceType(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude());
-                            firebaseAdapter.addScanToDog(finalTempDog, tempScan);
-
-                  /*
-                  //used to generate random scans around your location - do not use
-                  for(int i =0 ; i<200;i++) {
-                      LatLng locationToReturn = getRandomLocation((new LatLng(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude())), 4000);
-                      Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
-                      firebaseAdapter.addScanToDog(tempDog, tempScan);
-                  }
-                */
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+            myLocationService.addScanToDataBase(finalTempDog);
 
             fakeScanPopUp.dismiss();
 
@@ -612,12 +600,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 */
     @Override
     public void locationChanged(Location location) {
-        Toast.makeText(this, "Location Updated At MainActivity", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Location Updated At MainActivity", Toast.LENGTH_SHORT).show();
+
         showProgress(false);
 
-
-
         userCurrentLocation = location;
+        Log.d("DorCheck","Location At MainActivity: userCurrentLocation: "+ userCurrentLocation+" location from function "+location );
 
         if(mProgressView.getVisibility()!=View.VISIBLE) {
             if (!isNotifcationPopShowenBefore)
@@ -701,10 +689,11 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             mBinder.registerLocationListener(MainActivity.this);
             myLocationService = mBinder.getMyLocationService();
             isBound = true;
-
+/*
             if(myLocationService.isFirstTimeRuning()){
                 showProgress(true);
             }
+*/
         }
 
         @Override

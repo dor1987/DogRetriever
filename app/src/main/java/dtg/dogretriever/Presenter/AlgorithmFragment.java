@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentTabHost;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 */
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +69,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -115,7 +118,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private GoogleMap mMap;
     private SupportMapFragment smFragment;
     private FragmentTabHost mTabHost;
-    private ArrayList<Coordinate> coordinatesToShow;
+   // private ArrayList<Coordinate> coordinatesToShow;
     private Location currentLocation;
     private ArrayList<Coordinate> hotZonesAlgoResult;
     private ArrayList<Cluster> hotZonesAlgoResultAsCluster;
@@ -137,6 +140,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     SharedPreferences sharedPreferences;
 
     private int currentTab;
+    private SimpleDateFormat sdf = new SimpleDateFormat("'Date:' dd.MM.yy ' Time:'HH:mm:ss");
 
     public AlgorithmFragment() {
         // Required empty public constructor
@@ -148,7 +152,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         checkForPermissions();
         displayLocationSettingsRequest(getContext());
         mMap.setOnMarkerClickListener(this);
-
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        mMap.setPadding(0,0,0,150);
         //currentLocation = getLastKnownLocation();
         //currentLocation = ((ToolbarActivity) getActivity()).getUserCurrentLocation();
         currentLocation = ((ToolbarActivity)getActivity()).getCurrentLocation();
@@ -246,10 +251,18 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
 //        ArrayList<Coordinate> coordinates = getLearningAlgoCoordsList();
 
-        if(currentTab==0) {
+        if(currentTab==0 || currentTab ==2) {
+            /*
             if (!coordinatesToShow.isEmpty()) {
                 for (Coordinate coordinate : coordinatesToShow) {
                     createMarker(coordinate.getLatitude(), coordinate.getLongitude(), "bla bla", "bla bla");
+                }
+            }
+            */
+
+            if(mapOfScans!= null &&!mapOfScans.isEmpty()){
+                for(Scan scan : mapOfScans.values()){
+                    createMarker(scan.getCoordinate().getLatitude(),scan.getCoordinate().getLongitude(),sdf.format(scan.getTimeStamp()),scan.getCoordinate().getLatitude()+","+scan.getCoordinate().getLongitude());
                 }
             }
         }
@@ -324,7 +337,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         View view = inflater.inflate(R.layout.fragment_algorithm, container, false);
         ViewPager viewPager = view.findViewById(R.id.viewpager);
         tabLayout = view.findViewById(R.id.tablayout);
-        coordinatesToShow = new ArrayList<>();
+        //coordinatesToShow = new ArrayList<>();
         hotZonesAlgoResult = new ArrayList<>();
         hotZonesAlgoResultAsCluster = new ArrayList<>();
         //learningAlgo = new LearningAlgo();
@@ -350,7 +363,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
         smFragment.getMapAsync(this);
 
-
     }
 
     @Override
@@ -366,13 +378,15 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                         //Show all scan of selected dog
                         ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
                         mapOfScans.clear();
-                        mapOfScans.putAll(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId)));
-
+                        //if dog got no scans than get empty map else use map from firebase
+                        mapOfScans.putAll(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId))==null ?
+                                new HashMap<String,Scan>() :
+                                firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId)) );
+/*
                         coordinatesToShow.clear();
-
                         for (Scan scan : mapOfScans.values())
                             coordinatesToShow.add(scan.getCoordinate());
-
+*/
 
                         updateMapUI();
                         break;
@@ -399,11 +413,13 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
                         mapOfScans.clear();
                         mapOfScans.putAll(firebaseAdapter.getAllScanOfAllDogs());
+
+                       /*
                         coordinatesToShow.clear();
 
                         for (Scan scan : mapOfScans.values())
                             coordinatesToShow.add(scan.getCoordinate());
-
+                        */
                         updateMapUI();
                         break;
                 }
@@ -520,13 +536,9 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         if(isMapReady) {
 
             if (isFirstTimeLocationSet) {
-
-
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 15));
-
                 isFirstTimeLocationSet = false;
-
-        }
+            }
           /*
                 else
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
@@ -686,7 +698,7 @@ catch (Exception e){
     }
 
     public void showHotZonesAlgoMarkersOnMap(){
-        coordinatesToShow.clear();
+       // coordinatesToShow.clear();
         // coordinatesToShow.addAll(learningAlgo.learningAlgo(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
 
         //coordinatesToShow.addAll(hotZonesAlgoResult);
@@ -700,7 +712,4 @@ catch (Exception e){
 
         }
     }
-
-
-
 }
