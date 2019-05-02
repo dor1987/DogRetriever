@@ -500,6 +500,37 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
     }
 
+    public void scanDogForDebug(View view){
+        //Used to put data in data base, dont use without asking dor
+        Dog tempDog = null;
+        String collarId = dogIdFromFakeScanTextView.getText().toString();
+
+        if(!collarId.equals(""))
+            tempDog  = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
+
+        if(tempDog!= null) {
+            final Dog finalTempDog = tempDog;
+            for(int i = 0; i< 100 ; i++){
+                LatLng locationToReturn = getRandomLocation((new LatLng(32.113575, 34.818100)), 5000);
+                try {
+                    Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude,locationToReturn.longitude));
+                    firebaseAdapter.addScanToDog(finalTempDog,tempScan);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            fakeScanPopUp.dismiss();
+            Toast.makeText(myLocationService, "Scan accepted", Toast.LENGTH_SHORT).show();
+
+        }
+
+        else{
+            dogIdFromFakeScanTextView.setText("Id not found in Database");
+        }
+
+    }
+
     public void scanDog(View view) {
         //for debug
         Dog tempDog = null;
@@ -511,10 +542,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         if(tempDog!= null) {
                 //LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
             final Dog finalTempDog = tempDog;
-
             myLocationService.addScanToDataBase(finalTempDog);
-
             fakeScanPopUp.dismiss();
+            Toast.makeText(myLocationService, "Scan accepted", Toast.LENGTH_SHORT).show();
 
         }
 

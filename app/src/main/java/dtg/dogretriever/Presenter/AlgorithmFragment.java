@@ -39,6 +39,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.amazonaws.AmazonClientException;
@@ -141,6 +142,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
     private int currentTab;
     private SimpleDateFormat sdf = new SimpleDateFormat("'Date:' dd.MM.yy ' Time:'HH:mm:ss");
+    private LinearLayout colorExplainLayout;
+
 
     public AlgorithmFragment() {
         // Required empty public constructor
@@ -337,6 +340,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         View view = inflater.inflate(R.layout.fragment_algorithm, container, false);
         ViewPager viewPager = view.findViewById(R.id.viewpager);
         tabLayout = view.findViewById(R.id.tablayout);
+        colorExplainLayout = view.findViewById(R.id.algo_fragment_color_explain);
         //coordinatesToShow = new ArrayList<>();
         hotZonesAlgoResult = new ArrayList<>();
         hotZonesAlgoResultAsCluster = new ArrayList<>();
@@ -381,7 +385,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                         //if dog got no scans than get empty map else use map from firebase
                         mapOfScans.putAll(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId))==null ?
                                 new HashMap<String,Scan>() :
-                                firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId)) );
+                        firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId)) );
+                        colorExplainLayout.setVisibility(View.INVISIBLE);
 /*
                         coordinatesToShow.clear();
                         for (Scan scan : mapOfScans.values())
@@ -394,6 +399,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                     case 1:
                         //show algo1 result for selected dog
                         showHotZonesAlgoMarkersOnMap();
+                        colorExplainLayout.setVisibility(View.VISIBLE);
 
                         /*
                         coordinatesToShow.clear();
@@ -413,6 +419,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
                         mapOfScans.clear();
                         mapOfScans.putAll(firebaseAdapter.getAllScanOfAllDogs());
+                        colorExplainLayout.setVisibility(View.INVISIBLE);
 
                        /*
                         coordinatesToShow.clear();

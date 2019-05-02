@@ -42,14 +42,64 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <fragment
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/mapView"
-        tools:context=".ui.activities.GoogleMapsActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    </fragment>
+        <fragment
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/mapView"
+            tools:context=".ui.activities.GoogleMapsActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </fragment>
+        <LinearLayout
+            android:id="@+id/algo_fragment_color_explain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:background="@color/whiteTrans"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="50dp"
+            android:gravity="bottom|center"
+            android:visibility="invisible"
+
+            >
+
+
+            <TextView
+                android:id="@+id/explain_red"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Small chance"
+                android:textColor="@color/red"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/explain_yellow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/yellow"
+                android:text="Medium chance"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:layout_below="@+id/explain_red"
+                />
+            <TextView
+                android:id="@+id/explain_green"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/green"
+                android:text="High chance"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_below="@+id/explain_yellow"
+                />
+        </LinearLayout>
+    </RelativeLayout>
+
 </LinearLayout>
 
