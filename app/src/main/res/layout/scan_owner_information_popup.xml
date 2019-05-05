@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/scan_owner_info_layout_popup"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/light_blue"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical"
+    android:layout_margin="10dp"
+    >
+
+    <TextView
+        android:id="@+id/scan_owner_info_popup_layout_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:text="Scan completed"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:text="We sent a message to the owner.
+Here is some contact information:"
+        android:lines="2"
+        android:padding="10dp"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ProgressBar
+            android:id="@+id/scan_small_progres_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            style="?android:attr/progressBarStyle"
+            android:visibility="invisible"
+            />
+
+
+        <ScrollView
+            android:id="@+id/scan_popup_layout_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/scan_pop_up_owner_info_image"
+                    android:layout_width="170dp"
+                    android:layout_height="170dp"
+                    android:src="@drawable/profile"
+                    app:civ_border_width="5dp"
+                    app:civ_border_color="@color/light_blue"
+                    />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/scan_pop_up_owner_info_name_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name: "
+            android:textStyle="bold"
+
+            />
+
+        <TextView
+            android:id="@+id/scan_pop_up_owner_info_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Default Name"
+            android:layout_toRightOf="@+id/scan_pop_up_owner_info_name_description"
+            />
+
+    </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/scan_pop_up_owner_info_number_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Number: "
+                        android:textStyle="bold"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/scan_pop_up_owner_info_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default Number"
+                        android:layout_toRightOf="@+id/scan_pop_up_owner_info_number_description"
+                        />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/scan_pop_up_owner_info_address_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Address: "
+                        android:textStyle="bold"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/scan_pop_up_owner_info_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default Address"
+                        android:layout_toRightOf="@+id/scan_pop_up_owner_info_address_description"
+                        />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/scan_pop_up_owner_info_mail_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mail: "
+                        android:textStyle="bold"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/scan_pop_up_owner_info_mail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default Mail"
+                        android:layout_toRightOf="@+id/scan_pop_up_owner_info_mail_description"
+                        />
+
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/scan_pop_up_owner_info_sublinarlayout_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/scan_pop_up_owner_info_call_button"
+                        style="?android:textAppearanceSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textStyle="bold"
+                        android:text="Call Owner"
+                        android:onClick="onCallOwnerClicked"
+                        />
+
+                    <Button
+                        android:id="@+id/scan_pop_up_owner_info_cancel"
+                        style="?android:textAppearanceSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textStyle="bold"
+                        android:text="Close"
+                        android:onClick="onClosedOwnerInfoClicked"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+        </ScrollView>
+
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

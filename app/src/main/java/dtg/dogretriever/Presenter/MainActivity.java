@@ -1,5 +1,6 @@
 package dtg.dogretriever.Presenter;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -8,7 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,24 +47,28 @@ import java.util.Map;
 import java.util.Random;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
+import dtg.dogretriever.Model.Profile;
 import dtg.dogretriever.Model.Scan;
 import dtg.dogretriever.R;
 import dtg.dogretriever.View.DogNamesAdapter;
+import dtg.dogretriever.View.DogScanListAdapter;
 
 import static dtg.dogretriever.Presenter.MyMessagingService.SHARED_PREFS;
 
 //import android.support.v4.app.ActivityCompat;
 //import android.support.v7.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity implements MyLocationService.LocationListener {
+public class MainActivity extends AppCompatActivity implements MyLocationService.LocationListener, DogScanListFunctionalityInterface {
 
     private PopupWindow popupWindow = null;
     private FirebaseAdapter firebaseAdapter;
-    private View mProgressView,mSmallProgressBarView;
+    private View mProgressView, mSmallProgressBarView;
     private View mMainMenuFormView;
     private TextView userWelcomeTextView;
     private CircleImageView profilePicView;
@@ -70,9 +77,19 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private PopupWindow notificationPopUp = null;
     private EditText dogIdFromFakeScanTextView;
 
+    //real scan debug
+
+    private PopupWindow scanPopUp = null;
+    private RecyclerView.Adapter dogScanListAdapter;
+    private ArrayList<Dog> listOfDogScanned;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerView;
+    private PopupWindow ownerInfoPopUp = null;
+    private TextView ownerPhoneTextView;
+
     //use current location
-   // private FusedLocationProviderClient fusedLocationClient;
-   // private LocationManager locationManager;
+    // private FusedLocationProviderClient fusedLocationClient;
+    // private LocationManager locationManager;
 
     //Location Service
     boolean isBound = false;
@@ -106,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
         initWelcomeTextview();
         setTokenListener();
-       // fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        // fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         userCurrentLocation = new Location("");
 
@@ -116,10 +133,10 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
 
-
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
 
         isNotifcationPopShowenBefore = false;
+
 
     }
 
@@ -175,12 +192,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     }
 */
 
-/*
-    private void permissionCheck() {
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+    /*
+        private void permissionCheck() {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
-    }
-*/
+        }
+    */
 /*
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -219,41 +236,41 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 */
     public void clickScanner(View view) {
         //temp implementation for debugging
-        createPopUpFakeScan();
+        //createPopUpFakeScan();
+        createPopUpScan();
 
     }
-    public void initWelcomeTextview(){
-        if(firebaseAdapter.isUserConnected()) {
 
-            if(firebaseAdapter.isUserDataReadyNow()){
-                userWelcomeTextView.setText("Hello "+firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
+    public void initWelcomeTextview() {
+        if (firebaseAdapter.isUserConnected()) {
+
+            if (firebaseAdapter.isUserDataReadyNow()) {
+                userWelcomeTextView.setText("Hello " + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
                 initProfilePic();
 
-            }
-            else {
+            } else {
 
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
                     @Override
                     public void onDataReady() {
                         firebaseAdapter.removeProfileDataListener();
-                        userWelcomeTextView.setText("Hello "+firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
+                        userWelcomeTextView.setText("Hello " + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
                         initProfilePic();
                     }
                 });
             }
-        }
-        else {
+        } else {
 
             userWelcomeTextView.setText("Hello Guest");
         }
     }
-    public void clickFindMyDog(View view) {
-        if(firebaseAdapter.isUserConnected()) {
 
-            if(firebaseAdapter.isUserDataReadyNow()){
+    public void clickFindMyDog(View view) {
+        if (firebaseAdapter.isUserConnected()) {
+
+            if (firebaseAdapter.isUserDataReadyNow()) {
                 createPopUpChooseDogName();
-            }
-            else {
+            } else {
                 //showProgress(true);
                 showSmalProgressBar(true);
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
@@ -266,8 +283,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                     }
                 });
             }
-        }
-        else {
+        } else {
 
             Intent i = new Intent(getBaseContext(), LoginActivity.class);
             startActivity(i);
@@ -287,14 +303,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
         Toast.makeText(this, "Clicked Profile", Toast.LENGTH_SHORT).show();
 
-        if(firebaseAdapter.isUserConnected()){
-            if(firebaseAdapter.isUserDataReadyNow()){
+        if (firebaseAdapter.isUserConnected()) {
+            if (firebaseAdapter.isUserDataReadyNow()) {
                 Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
                 intent.putExtra("fragmentToOpen", 3);
                 startActivity(intent);
-            }
-
-            else {
+            } else {
                 showProgress(true);
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
                     @Override
@@ -309,9 +323,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 });
             }
 
-        }
-        else{
-            Intent i = new Intent(getBaseContext(),LoginActivity.class);
+        } else {
+            Intent i = new Intent(getBaseContext(), LoginActivity.class);
             startActivity(i);
         }
 
@@ -352,28 +365,27 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     }
 
 
-    private void createPopUpChooseDogName(){
-        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    private void createPopUpChooseDogName() {
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.choose_dog_popup, null);
 
         ListView listView = layout.findViewById(R.id.popup_dog_name_list_view);
         Button cancelBtn = layout.findViewById(R.id.popup_layout_cancel);
         TextView errorMessage = layout.findViewById(R.id.popup_layout_errorMessage);
 
-            DogNamesAdapter dogNamesAdapter = new DogNamesAdapter(createDogsList(), this);
-            listView.setAdapter(dogNamesAdapter);
-        Log.d("DorCheck","Location At MainMenu: "+ userCurrentLocation+"");
+        DogNamesAdapter dogNamesAdapter = new DogNamesAdapter(createDogsList(), this);
+        listView.setAdapter(dogNamesAdapter);
+        Log.d("DorCheck", "Location At MainMenu: " + userCurrentLocation + "");
 
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                  //  showProgress(true);
-                    showSmalProgressBar(true);
-                    popupWindow.dismiss();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                //  showProgress(true);
+                showSmalProgressBar(true);
+                popupWindow.dismiss();
 
 
-
-                new AsyncTask<Void,Void,Intent>(){
+                new AsyncTask<Void, Void, Intent>() {
 
                     @Override
                     protected Intent doInBackground(Void... voids) {
@@ -382,7 +394,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                         intent.putExtra("fragmentToOpen", "0");
                         intent.putExtra("DOG_ID", createDogsList().get(i).getCollarId());
                         intent.putExtra("currentLocation", userCurrentLocation);
-                    return intent;
+                        return intent;
                     }
 
                     @Override
@@ -391,13 +403,13 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                         startActivity(intent);
                     }
                 }.execute();
-                }
-            });
-
-            if(dogNamesAdapter.getCount()==0){
-                errorMessage.setVisibility(View.VISIBLE);
-                listView.setVisibility(View.GONE);
             }
+        });
+
+        if (dogNamesAdapter.getCount() == 0) {
+            errorMessage.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
 
         popupWindow = new PopupWindow(this);
         popupWindow.setContentView(layout);
@@ -407,11 +419,10 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
 
-
     }
 
 
-    private ArrayList<Dog> createDogsList(){
+    private ArrayList<Dog> createDogsList() {
         firebaseAdapter.getCurrentUserProfileFromFireBase();
         return firebaseAdapter.getListOfDogsOwnedByCurrentUser();
     }
@@ -455,7 +466,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     }
 
     private void startNotificationPopUp() {
-        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = layoutInflater.inflate(R.layout.notification_pop_up, null);
         notificationPopUp = new PopupWindow(this);
         notificationPopUp.setContentView(layout);
@@ -465,11 +476,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         notificationPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
     }
+
     public void openMapWithNotificationCords(View view) {
         Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
         intent.putExtra("TAG", "notificatonFragment");
         intent.putExtra("fragmentToOpen", 4);
-        intent.putExtra("latitude",latitude );
+        intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
         intent.putExtra("currentLocation", userCurrentLocation);
         startActivity(intent);
@@ -479,15 +491,15 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void closeNotificationPopUp(View view) {
         notificationPopUp.dismiss();
     }
-    private void createPopUpFakeScan(){
+
+    private void createPopUpFakeScan() {
         //for debug
 
-        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.fake_scan_debug, null);
 
         //Button cancelBtn = layout.findViewById(R.id.fake_scan__popup_layout_cancel);
         //Button scanBtn = layout.findViewById(R.id.fake_scan__popup_layout_add_dog_button);
-
 
 
         fakeScanPopUp = new PopupWindow(this);
@@ -500,21 +512,21 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
     }
 
-    public void scanDogForDebug(View view){
+    public void scanDogForDebug(View view) {
         //Used to put data in data base, dont use without asking dor
         Dog tempDog = null;
         String collarId = dogIdFromFakeScanTextView.getText().toString();
 
-        if(!collarId.equals(""))
-            tempDog  = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
+        if (!collarId.equals(""))
+            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
 
-        if(tempDog!= null) {
+        if (tempDog != null) {
             final Dog finalTempDog = tempDog;
-            for(int i = 0; i< 100 ; i++){
+            for (int i = 0; i < 100; i++) {
                 LatLng locationToReturn = getRandomLocation((new LatLng(32.113575, 34.818100)), 5000);
                 try {
-                    Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude,locationToReturn.longitude));
-                    firebaseAdapter.addScanToDog(finalTempDog,tempScan);
+                    Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
+                    firebaseAdapter.addScanToDog(finalTempDog, tempScan);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -523,43 +535,147 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             fakeScanPopUp.dismiss();
             Toast.makeText(myLocationService, "Scan accepted", Toast.LENGTH_SHORT).show();
 
-        }
-
-        else{
+        } else {
             dogIdFromFakeScanTextView.setText("Id not found in Database");
         }
 
     }
-
+/*
     public void scanDog(View view) {
         //for debug
+
         Dog tempDog = null;
         String collarId = dogIdFromFakeScanTextView.getText().toString();
 
-        if(!collarId.equals(""))
-            tempDog  = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
+        if (!collarId.equals(""))
+            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
 
-        if(tempDog!= null) {
-                //LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
+        if (tempDog != null) {
+            //LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
             final Dog finalTempDog = tempDog;
             myLocationService.addScanToDataBase(finalTempDog);
             fakeScanPopUp.dismiss();
             Toast.makeText(myLocationService, "Scan accepted", Toast.LENGTH_SHORT).show();
 
-        }
-
-        else{
+        } else {
             dogIdFromFakeScanTextView.setText("Id not found in Database");
         }
 
     }
+*/
 
     public void cancelScanPopUp(View view) {
         //for debug
-        fakeScanPopUp.dismiss();
+        //fakeScanPopUp.dismiss();
+        scanPopUp.dismiss();
     }
 
 
+    private void createPopUpScan() {
+        //real implementation
+
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.scan_popup, null);
+
+        //Button cancelBtn = layout.findViewById(R.id.fake_scan__popup_layout_cancel);
+        //Button scanBtn = layout.findViewById(R.id.fake_scan__popup_layout_add_dog_button);
+
+
+        scanPopUp = new PopupWindow(this);
+        //scan pop up
+        listOfDogScanned = new ArrayList<>();
+
+        scanPopUp.setContentView(layout);
+        scanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        scanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        scanPopUp.setFocusable(true);
+        scanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
+
+        recyclerView = layout.findViewById(R.id.scan_popup_layout_recyclerview);
+
+        recyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        listOfDogScanned.clear();
+        listOfDogScanned.addAll(firebaseAdapter.getAllDogs());
+        dogScanListAdapter = new DogScanListAdapter(listOfDogScanned, MainActivity.this, this);
+        recyclerView.setAdapter(dogScanListAdapter);
+
+
+        //dogIdFromFakeScanTextView = layout.findViewById(R.id.scan_layout_popup);
+
+    }
+
+    public void scanRefresh(View view) {
+        //TODO add bluetooth refresh functionality
+        Toast.makeText(myLocationService, "clicked Refresh", Toast.LENGTH_SHORT).show();
+
+        listOfDogScanned.clear();
+        listOfDogScanned.addAll(firebaseAdapter.getAllDogs());
+        dogScanListAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void showOwnerInformation(String ownerId) {
+        showInfo(firebaseAdapter.getUserById(ownerId));
+    }
+
+    @Override
+    public void scanDog(Dog dog) {
+    //Called from the dogscanlist adapter
+      myLocationService.addScanToDataBase(dog);
+    }
+
+    public void showInfo(Profile ownerProfile) {
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.scan_owner_information_popup, null);
+
+        //Button cancelBtn = layout.findViewById(R.id.fake_scan__popup_layout_cancel);
+        //Button scanBtn = layout.findViewById(R.id.fake_scan__popup_layout_add_dog_button);
+
+        ownerInfoPopUp = new PopupWindow(this);
+        ownerInfoPopUp.setContentView(layout);
+        ownerInfoPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        ownerInfoPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        ownerInfoPopUp.setFocusable(true);
+        ownerInfoPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
+
+
+        TextView ownerNameTextView = layout.findViewById(R.id.scan_pop_up_owner_info_name);
+        ownerPhoneTextView = layout.findViewById(R.id.scan_pop_up_owner_info_number);
+        TextView ownerAddressTextView = layout.findViewById(R.id.scan_pop_up_owner_info_address);
+        TextView ownerMailTextView = layout.findViewById(R.id.scan_pop_up_owner_info_mail);
+        CircleImageView ownerPicView = layout.findViewById(R.id.scan_pop_up_owner_info_image);
+        Button ownerInfoCallButton = layout.findViewById(R.id.scan_pop_up_owner_info_call_button);
+
+        ownerNameTextView.setText(ownerProfile.getFullName() == null ? "Not available" : ownerProfile.getFullName());
+        ownerPhoneTextView.setText(ownerProfile.getPhoneNumber()== null ? "Not available" : ownerProfile.getPhoneNumber());
+        ownerAddressTextView.setText(ownerProfile.getAddress()== null ? "Not available" : ownerProfile.getAddress());
+        ownerMailTextView.setText(ownerProfile.geteMail()== null ? "Not available" : ownerProfile.geteMail());
+
+        if(ownerPhoneTextView.getText().toString().equals("Not available")){
+            ownerInfoCallButton.setVisibility(View.INVISIBLE);
+        }
+
+        Picasso.get()
+                .load(ownerProfile.getmImageUrl())
+                .placeholder(R.drawable.asset6h)
+                .error(R.drawable.asset6h)
+                .into(ownerPicView);
+    }
+
+
+    public void onCallOwnerClicked(View view) {
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + ownerPhoneTextView.getText().toString()));
+        startActivity(intent);
+    }
+
+    public void onClosedOwnerInfoClicked(View view) {
+        ownerInfoPopUp.dismiss();
+    }
 
     public LatLng getRandomLocation(LatLng point, int radius) {
         //get random location in a predefined radius
@@ -787,5 +903,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             //mMainMenuFormView.setVisibility(toShow ? View.GONE : View.VISIBLE);
         }
     }
+
+
 
 }

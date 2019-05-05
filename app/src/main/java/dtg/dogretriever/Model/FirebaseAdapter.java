@@ -240,6 +240,7 @@ public class FirebaseAdapter {
         currentDogRef.child(hashCode).setValue(scan);
     }
 
+
     public Map<String,Scan> getAllScanOfSpecificDog(Dog dog){
         //Get dog and give back all his scans as map
         return getDogByCollarIdFromFireBase(dog.getCollarId()).getScans();
@@ -255,6 +256,45 @@ public class FirebaseAdapter {
             }
         }
         return tempMapOfScans;
+    }
+
+    public ArrayList<Dog> getAllDogs(){
+        //just for debug
+        ArrayList<Dog> arrayOfDogs = new ArrayList<>();
+
+        for(Dog dog : DogsFromDataBaseList){
+            if(dog !=null){
+                arrayOfDogs.add(dog);
+            }
+        }
+        return arrayOfDogs;
+    }
+
+    public Profile getUserById(String userId){
+        Profile owner = new Profile();
+        try {
+//            if (mainDataSnapshot[0].child(userID).hasChild("id")) ;
+//            owner.setId((String) mainDataSnapshot[0].child(userID).child("id").getValue());
+            if (mainDataSnapshot[0].child(userId).hasChild("fullName"))
+                owner.setFullName((String) mainDataSnapshot[0].child(userId).child("fullName").getValue());
+            if (mainDataSnapshot[0].child(userId).hasChild("phoneNumber"))
+                owner.setPhoneNumber((String) mainDataSnapshot[0].child(userId).child("phoneNumber").getValue());
+            if (mainDataSnapshot[0].child(userId).hasChild("address"))
+                owner.setAddress((String) mainDataSnapshot[0].child(userId).child("address").getValue());
+            if (mainDataSnapshot[0].child(userId).hasChild("eMail"))
+                owner.seteMail((String) mainDataSnapshot[0].child(userId).child("eMail").getValue());
+//            if (mainDataSnapshot[0].child(userID).hasChild("dogsIDArrayList"))
+//                owner.setDogsIDMap((Map<String, String>) mainDataSnapshot[0].child(userID).child("dogsIDArrayList").getValue());
+            if (mainDataSnapshot[0].child(userId).hasChild("image"))
+                owner.setmImageUrl((String) mainDataSnapshot[0].child(userId).child("image").child("mImageUrl").getValue());
+
+        }
+
+        catch (NullPointerException e){
+            return null;
+        }
+
+        return owner;
     }
 
     public Map<String,Scan> getAllScanOfAllDogsInNamedRadius(Location currentLocation,float radius){

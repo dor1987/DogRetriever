@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp"
+    android:id="@+id/scan_list_item_parent_layout"
+    >
+
+<de.hdodenhof.circleimageview.CircleImageView
+    android:layout_height="80dp"
+    android:layout_width="80dp"
+    android:id="@+id/scan_list_item_image"
+    android:src="@mipmap/ic_launcher"
+    />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name:"
+        android:id="@+id/scan_list_item_name"
+        android:layout_toRightOf="@id/scan_list_item_image"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Color:"
+        android:id="@+id/scan_list_item_color"
+        android:layout_toRightOf="@id/scan_list_item_image"
+        android:layout_centerVertical="true"
+        android:layout_below="@id/scan_list_item_name"
+        android:layout_marginLeft="30dp"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Breed:"
+        android:id="@+id/scan_list_item_breed"
+        android:layout_toRightOf="@id/scan_list_item_image"
+        android:layout_centerVertical="true"
+        android:layout_below="@id/scan_list_item_color"
+        android:layout_marginLeft="30dp"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        />
+
+</RelativeLayout>
