@@ -347,7 +347,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         //learningAlgo = new LearningAlgo();
         hotZonesAlgo();
 
-
+        //predicationAlgo();
         return view;
     }
 
@@ -681,6 +681,71 @@ catch (Exception e){
     e.printStackTrace();
 }
     }
+
+    @SuppressLint("StaticFieldLeak")
+    public void predicationAlgo(){
+
+        // Create an instance of CognitoCachingCredentialsProvider
+        CognitoCachingCredentialsProvider cognitoProvider = new CognitoCachingCredentialsProvider(
+                this.getActivity().getApplicationContext(), "us-east-1:f03c6ed8-afad-4497-9a9b-a4024e891a21", Regions.US_EAST_1);
+// Create LambdaInvokerFactory, to be used to instantiate the Lambda proxy.
+
+        LambdaInvokerFactory factory = new LambdaInvokerFactory(this.getActivity().getApplicationContext(),
+                Regions.US_EAST_1, cognitoProvider);
+
+// Create the Lambda proxy object with a default Json data binder.
+// You can provide your own data binder by implementing
+// LambdaDataBinder.
+        final PredicationAlgoInterface predicationAlgoInterface = factory.build(PredicationAlgoInterface.class);
+       // RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
+          PredictionRequestClass request = new PredictionRequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 4000)),currentWeather.name());
+
+
+// The Lambda function invocation results in a network call.
+// Make sure it is not called from the main thread.
+        try {
+
+
+            new AsyncTask<PredictionRequestClass, Void, PredictionResponseClass>() {
+                @Override
+                protected PredictionResponseClass doInBackground(PredictionRequestClass... params) {
+                    // invoke "echo" method. In case it fails, it will throw a
+                    // LambdaFunctionException.
+                    try {
+                        return predicationAlgoInterface.LambdaPrediction(params[0]);
+                    } catch (LambdaFunctionException lfe) {
+                        Log.e("Tag", "Failed to invoke echo", lfe);
+                        return null;
+                    }
+                    catch (AmazonServiceException e){
+                        Log.e("Tag", "request time out",e);
+                        return null;
+                    }
+                    catch (AmazonClientException e){
+                        Log.e("Tag","request time out");
+                        return null;
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(PredictionResponseClass result) {
+                    if (result == null) {
+                        return;
+                    }
+
+                    // Do a toast
+
+                    Log.e("PredicationAlgo","Latitude: "+result.getLatitude()+"Longitude: "+ result.getLongitude());
+                }
+            }.execute(request);
+
+            //End testing lambda
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public ArrayList<Point> convretMapOfScansToPoint(Map<String,Scan> scansMap){
         ArrayList<Point> pointsArrayList = new ArrayList<>();
 

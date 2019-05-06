@@ -69,8 +69,10 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
         currentLocation = ((ToolbarActivity)getActivity()).getCurrentLocation();
 
 
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(coordinate.getLatitude(),coordinate.getLongitude()),15));
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),15));
+       // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),15));
+
         isMapReady= true;
     }
 

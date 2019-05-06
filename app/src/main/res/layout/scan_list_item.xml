@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name:"
+        android:text="Name: Default text"
         android:id="@+id/scan_list_item_name"
         android:layout_toRightOf="@id/scan_list_item_image"
         android:layout_marginLeft="30dp"
@@ -28,7 +28,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Color:"
+        android:text="Color: Default text"
         android:id="@+id/scan_list_item_color"
         android:layout_toRightOf="@id/scan_list_item_image"
         android:layout_centerVertical="true"
@@ -41,7 +41,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Breed:"
+        android:text="Breed: Default text"
         android:id="@+id/scan_list_item_breed"
         android:layout_toRightOf="@id/scan_list_item_image"
         android:layout_centerVertical="true"
