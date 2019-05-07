@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.support.v4.app.Fragment;
@@ -15,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -79,6 +83,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     private EditText breedTextView;
     private EditText notesTextView;
     private EditText collarIdTextView;
+    private ImageView dogProfileImage;
+
     private ImageButton editImageButton;
     private ImageView profilePicture;
 
@@ -116,7 +122,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         editImageButton = view.findViewById(R.id.profileFragmentImageEditButton);
         profilePicture = view.findViewById(R.id.profileFragmentImage);
         dogsList = new ArrayList<Dog>();
-
         updateProfileViews();
 
 
@@ -132,7 +137,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
         addDogToListButton.setOnClickListener(this);
         editImageButton.setOnClickListener(this);
-
         // Inflate the layout for this fragment
         return view;
     }
@@ -161,10 +165,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
 
     private void createPopUpAddNewDog(){
-
         LayoutInflater layoutInflater = (LayoutInflater)this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.add_dog_popup, null);
-
         Spinner spinner = layout.findViewById(R.id.add_dog_popup_layout_size_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
                 R.array.size, android.R.layout.simple_spinner_item);
@@ -173,21 +175,28 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+        Button dogImageUpLoadButton = layout.findViewById(R.id.profileDogAdd_ImageUpLoadButton);
         Button addDogButton = layout.findViewById(R.id.add_dog_popup_layout_add_dog_button);
         Button addDogPopUpcancel = layout.findViewById(R.id.add_dog_popup_layout_cancel);
-
         addDogButton.setOnClickListener(this);
         addDogPopUpcancel.setOnClickListener(this);
-
+        dogImageUpLoadButton.setOnClickListener(this);
         popupWindow = new PopupWindow(this.getActivity());
         popupWindow.setContentView(layout);
+
         popupWindow.setWindowLayoutMode(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(1);
         popupWindow.setWidth(1);
+        //one of this made the corners transprent
+        popupWindow.setClippingEnabled(true);
+        popupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+        //
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
+
+
 
         //popup  data
         dogNameTextView = layout.findViewById(R.id.add_dog_popup_layout_dog_name);
@@ -195,7 +204,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         breedTextView = layout.findViewById(R.id.add_dog_popup_layout_breed);
         notesTextView = layout.findViewById(R.id.add_dog_popup_layout_notes);
         collarIdTextView = layout.findViewById(R.id.add_dog_popup_layout_collarid);
-
+        dogProfileImage = layout.findViewById(R.id.profileDogAdd_PopImage);
 
 
     }
@@ -311,6 +320,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
                 break;
 
+            case R.id.profileDogAdd_ImageUpLoadButton:
+                 openFileChooser();
+            break;
         }
 
     }
@@ -340,9 +352,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         popupWindow.setWidth(1);
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
-
-
-
     }
 
     private void openFileChooser(){
@@ -352,30 +361,32 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null){
-            mImageUri = data.getData();
-            Picasso.get().load(mImageUri).into(imageBeforeUploadView);
+                && data != null && data.getData() != null) {
 
-            String uriString = mImageUri.toString();
-            File myFile = new File(uriString);
+                mImageUri = data.getData();
+                Picasso.get().load(mImageUri).into(imageBeforeUploadView);
 
-            if (uriString.startsWith("content://")) {
-                Cursor cursor = null;
-                try {
-                    cursor = getActivity().getContentResolver().query(mImageUri, null, null, null, null);
-                    if (cursor != null && cursor.moveToFirst()) {
-                        imageNameEditText.setText(cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
+                String uriString = mImageUri.toString();
+                File myFile = new File(uriString);
+
+                if (uriString.startsWith("content://")) {
+                    Cursor cursor = null;
+                    try {
+                        cursor = getActivity().getContentResolver().query(mImageUri, null, null, null, null);
+                        if (cursor != null && cursor.moveToFirst()) {
+                            imageNameEditText.setText(cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
+                        }
+                    } finally {
+                        cursor.close();
                     }
-                } finally {
-                    cursor.close();
+                } else if (uriString.startsWith("file://")) {
+                    imageNameEditText.setText(myFile.getName());
                 }
-            } else if (uriString.startsWith("file://")) {
-                imageNameEditText.setText(myFile.getName());
-            }
 
 
 

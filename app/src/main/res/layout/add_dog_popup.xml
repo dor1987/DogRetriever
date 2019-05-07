@@ -4,9 +4,12 @@
     android:id="@+id/dog_add_layout_popup"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/light_blue"
+    android:background="@drawable/pop_bg"
+
+
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical"
+
     >
 
     <TextView
@@ -17,24 +20,32 @@
         android:textStyle="bold"
         android:textSize="24dp"
         android:text="Add new Dog"
-        android:padding="40dp"/>
+        android:padding="10dp"/>
 
 
     <ScrollView
         android:id="@+id/add_dog_popup_layout_form"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         >
 
         <LinearLayout
             android:id="@+id/add_dog_popup_layout_sublinarlayout_form"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_do_popup_layout_text_input_holder"
+                >
 
                 <AutoCompleteTextView
                     android:id="@+id/add_dog_popup_layout_dog_name"
@@ -51,7 +62,8 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/add_do_popup_layout_text_input_holder">
 
                 <AutoCompleteTextView
                     android:id="@+id/add_dog_popup_layout_color"
@@ -60,23 +72,50 @@
                     android:hint="@string/add_dog_popup_dog_color"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+
+                    />
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_width="140dp"
+                android:layout_height="match_parent"
+
+                >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Size"
+                        android:textSize="19sp"/>
+
+
 
 
                 <Spinner
                     android:id="@+id/add_dog_popup_layout_size_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:tooltipText="@string/add_dog_popup_dog_size"/>
-
+                    android:tooltipText="@string/add_dog_popup_dog_size"
+                    />
+                </LinearLayout>
 
             </com.google.android.material.textfield.TextInputLayout>
+
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -92,9 +131,15 @@
                     android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content">
+
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
@@ -125,9 +170,47 @@
                      />
 
             </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
 
 
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                >
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/profileDogAdd_PopImage"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/profile"
+                    app:civ_border_width="5dp"
+                    app:civ_border_color="@color/light_blue"
+                    android:layout_marginLeft="30dp"
+                    />
+
+                <Button
+                    android:id="@+id/profileDogAdd_ImageUpLoadButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:layout_toRightOf="@+id/profileDogAdd_PopImage"
+                    android:text="Upload Image"
+                    android:textAllCaps="false"
+                    android:layout_marginLeft="30dp"
+                    />
+            </RelativeLayout>
+
+            <ProgressBar
+                android:id="@+id/add_dog_image_upload_progressbar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/image_upload_popup_layout_imageviewbeforeupload"
+                >
+            </ProgressBar>
 
             <Button
             android:id="@+id/add_dog_popup_layout_add_dog_button"
@@ -137,7 +220,6 @@
             android:layout_marginTop="16dp"
             android:textStyle="bold"
             android:text="Save"
-            android:onClick="saveDog"
                 />
 
             <Button
@@ -148,7 +230,6 @@
                 android:layout_marginTop="2dp"
                 android:textStyle="bold"
                 android:text="Cancel"
-                android:onClick="cancelPopUp"
                 />
 
         </LinearLayout>

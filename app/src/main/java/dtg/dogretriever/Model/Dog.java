@@ -16,6 +16,7 @@ public class Dog {
     //private ArrayList<Coordinate> scannedCoords;
     private String hashCode;  //Because the dog id is save at profile inside hashmap , i saved the hash related with this dog to be able to identify it later
     private Map<String,Scan> scans;
+    private String mImageUrl;
 
     public Dog(){}
 
@@ -29,6 +30,7 @@ public class Dog {
         setSize(dogBuilder.size);
         setNotes(dogBuilder.notes);
         setScans(scans);
+        setmImageUrl(dogBuilder.imageUrl);
 
     }
 
@@ -123,6 +125,14 @@ public class Dog {
         this.scans = scans;
     }
 
+    public String getmImageUrl() {
+        return mImageUrl;
+    }
+
+    public void setmImageUrl(String mImageUrl) {
+        this.mImageUrl = mImageUrl;
+    }
+
     public static class DogBuilder {
         //required
         private String collarId;
@@ -138,6 +148,7 @@ public class Dog {
         //private ArrayList<Coordinate> scannedCoords;
         //private Map<String,Coordinate> scannedCoords;
         private Map<String,Scan> scans;
+        private String imageUrl;
 
         public DogBuilder(String collarId, String ownerId) {
             this.collarId = collarId;
@@ -175,6 +186,11 @@ public class Dog {
 
         public DogBuilder setNotes(String notes) {
             this.notes = notes;
+            return this;
+        }
+
+        public DogBuilder setImageUrl(String mImageUrl) {
+            this.imageUrl = mImageUrl;
             return this;
         }
 

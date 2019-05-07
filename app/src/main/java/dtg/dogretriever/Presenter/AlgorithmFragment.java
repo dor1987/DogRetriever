@@ -344,10 +344,10 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         //coordinatesToShow = new ArrayList<>();
         hotZonesAlgoResult = new ArrayList<>();
         hotZonesAlgoResultAsCluster = new ArrayList<>();
-        //learningAlgo = new LearningAlgo();
+        learningAlgo = new LearningAlgo();
         hotZonesAlgo();
 
-        //predicationAlgo();
+        predicationAlgo();
         return view;
     }
 
@@ -711,6 +711,8 @@ catch (Exception e){
                 protected PredictionResponseClass doInBackground(PredictionRequestClass... params) {
                     // invoke "echo" method. In case it fails, it will throw a
                     // LambdaFunctionException.
+                    Log.e("Tag", "Starting lambda");
+
                     try {
                         return predicationAlgoInterface.LambdaPrediction(params[0]);
                     } catch (LambdaFunctionException lfe) {

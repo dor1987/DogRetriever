@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     protected void onResume() {
         super.onResume();
         //start the service
-        showProgress(true);
+        //showProgress(true);
         Intent intent = new Intent(this, MyLocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
@@ -309,11 +309,11 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 intent.putExtra("fragmentToOpen", 3);
                 startActivity(intent);
             } else {
-                showProgress(true);
+                showSmalProgressBar(true);
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
                     @Override
                     public void onDataReady() {
-                        showProgress(false);
+                        showSmalProgressBar(false);
                         Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
                         intent.putExtra("fragmentToOpen", 3);
                         firebaseAdapter.removeProfileDataListener();

@@ -1,5 +1,5 @@
 package dtg.dogretriever.Presenter;
-
+/*
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -224,4 +224,6 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
     public void cancelPopUp(View view) {
         popupWindow.dismiss();
     }
+
 }
+*/

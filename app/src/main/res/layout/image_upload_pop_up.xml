@@ -4,7 +4,7 @@
     android:id="@+id/image_upload_layout_popup"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/light_blue"
+    android:background="@drawable/pop_bg"
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical">
 
