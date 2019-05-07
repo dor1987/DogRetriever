@@ -344,7 +344,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         //coordinatesToShow = new ArrayList<>();
         hotZonesAlgoResult = new ArrayList<>();
         hotZonesAlgoResultAsCluster = new ArrayList<>();
-        learningAlgo = new LearningAlgo();
+        //learningAlgo = new LearningAlgo();
         hotZonesAlgo();
 
         predicationAlgo();
@@ -698,7 +698,7 @@ catch (Exception e){
 // LambdaDataBinder.
         final PredicationAlgoInterface predicationAlgoInterface = factory.build(PredicationAlgoInterface.class);
        // RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
-          PredictionRequestClass request = new PredictionRequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 4000)),currentWeather.name());
+          final PredictionRequestClass request = new PredictionRequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 4000)),currentWeather.name());
 
 
 // The Lambda function invocation results in a network call.
@@ -711,8 +711,6 @@ catch (Exception e){
                 protected PredictionResponseClass doInBackground(PredictionRequestClass... params) {
                     // invoke "echo" method. In case it fails, it will throw a
                     // LambdaFunctionException.
-                    Log.e("Tag", "Starting lambda");
-
                     try {
                         return predicationAlgoInterface.LambdaPrediction(params[0]);
                     } catch (LambdaFunctionException lfe) {
@@ -737,7 +735,8 @@ catch (Exception e){
 
                     // Do a toast
 
-                    Log.e("PredicationAlgo","Latitude: "+result.getLatitude()+"Longitude: "+ result.getLongitude());
+
+                    Log.e("PredicationAlgo","Latitude: "+result.getX()+"Longitude: "+ result.getY());
                 }
             }.execute(request);
 

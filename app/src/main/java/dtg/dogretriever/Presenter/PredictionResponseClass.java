@@ -1,50 +1,34 @@
 package dtg.dogretriever.Presenter;
 
-import java.util.ArrayList;
-
-import dtg.dogretriever.Presenter.LearningAlgoTemp.Cluster;
 
 public class PredictionResponseClass {
 
-    Double latitude;
-    Double longitude;
+    double x;
+    double y;
 
 
     public PredictionResponseClass() {
     }
-
-    public Double getLatitude() {
-        return latitude;
+    public PredictionResponseClass(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
+    public double getX() {
+        return x;
     }
 
-    public Double getLongitude() {
-        return longitude;
+    public void setX(double x) {
+        this.y = x;
     }
 
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
+    public double getY() {
+        return y;
     }
 
-/*
-    String greetings;
-
-    public String getGreetings() {
-        return greetings;
+    public void setY(double y) {
+        this.y = y;
     }
 
-    public void setGreetings(String greetings) {
-        this.greetings = greetings;
-    }
 
-    public ResponseClass(String greetings) {
-        this.greetings = greetings;
-    }
-
-    public ResponseClass() {
-    }
-    */
 }
