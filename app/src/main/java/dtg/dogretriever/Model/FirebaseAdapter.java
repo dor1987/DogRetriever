@@ -439,6 +439,8 @@ public class FirebaseAdapter {
     public interface ImageUploadListener{
         public void onUploadFinish(String url);
         public void onUploadProgress(double progress);
+        public void onDogImageUploadFinish(String url);
+        public void onDogImageUploadProgress(double progress);
     }
 
     public interface ProfileDataListener {
@@ -556,5 +558,104 @@ public class FirebaseAdapter {
                }
            });
        }
+    }
+
+    public void uploadDogFile(Context context, Uri mImageUri,final String imageName,final String myDogId){
+        if(mImageUri != null){
+            oldImageUrl = getOldDogImageUrl(myDogId);
+
+            final StorageReference fileRefrence = mStorageRef.child(System.currentTimeMillis()+"."+getFileExtension(context,mImageUri));
+
+            try {//Compress Image before upload
+                Bitmap bmp = MediaStore.Images.Media.getBitmap(context.getContentResolver(),mImageUri);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG,25,baos);
+                byte[] data = baos.toByteArray();
+
+
+
+
+                // mUploadTask = fileRefrence.putFile(mImageUri)
+                mUploadTask = fileRefrence.putBytes(data)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                //todo think a way to pass success to the fragment
+                                fileRefrence.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        Upload upload = new Upload(imageName.trim(),uri.toString());
+
+                                        DatabaseReference currentDogRef = dogTableRef.child(myDogId).child("image");
+                                        //String uploadId = currentUserRef.push().getKey();
+                                        currentDogRef.setValue(upload);
+                                        Log.e("UPLOADSUCCESS"," UPLOADSUCCESS");
+                                        imageUploadListener.onDogImageUploadProgress(0.0);
+                                        imageUploadListener.onDogImageUploadFinish(uri.toString());
+                                        //profile.setmImageUrl(uri.toString());
+                                        deleteOldDogPicture();
+                                    }
+                                });
+
+                            }
+
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                //todo think of a way to pass fail to the fragment
+                                Log.e("UPLOADFAIL"," UPLOADFAIL");
+
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                                //todo think of a way to pass progress to the fragment
+                                imageUploadListener.onUploadProgress(progress);
+                            }
+                        });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    private StorageReference getOldDogImageUrl(String myDogId) {
+       /*
+        if(profile.getmImageUrl()!=null && !profile.getmImageUrl().trim().isEmpty()) {
+            StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(profile.getmImageUrl());
+            return oldImageRef;
+        }
+        */
+
+       StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(getDogByCollarIdFromFireBase(myDogId).getmImageUrl());
+
+       return oldImageRef;
+    }
+
+    public void cancelAnUploadDogImage(){
+        if(mUploadTask!=null) {
+            if (!mUploadTask.isComplete()) {
+                //Upload is not complete yet, let's cancel
+                mUploadTask.cancel();
+            }
+        }
+    }
+
+    public void deleteOldDogPicture(){
+        if(oldImageUrl!=null && !oldImageUrl.toString().trim().isEmpty()) {
+            //  StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(profile.getmImageUrl());
+            oldImageUrl.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    oldImageUrl = null;
+                }
+            });
+        }
     }
 }

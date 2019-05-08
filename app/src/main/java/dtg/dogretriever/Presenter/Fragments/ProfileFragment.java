@@ -54,6 +54,7 @@ import static android.app.Activity.RESULT_OK;
 public class ProfileFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
     public static final String SHARED_PREFS = "sharedPrefs";
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int PICK_DOG_IMAGE_REQUEST = 2;
 
 
     private ArrayList<Dog> dogsList;
@@ -305,6 +306,16 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                    public void onUploadProgress(double progress) {
                        imageUploadProgressBar.setProgress((int) progress);
                    }
+
+                       @Override
+                       public void onDogImageUploadFinish(String url) {
+                           //ignore
+                       }
+
+                       @Override
+                       public void onDogImageUploadProgress(double progress) {
+                           //ignore
+                       }
                    });
                   // firebaseAdapter.uploadFile(this.getActivity().getBaseContext(), mImageUri, imageNameEditText.getText().toString());
                }
@@ -316,12 +327,12 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 break;
 
             case R.id.image_upload_layout_choose_file_button:
-                openFileChooser();
+                openFileChooser(PICK_IMAGE_REQUEST);
 
                 break;
 
             case R.id.profileDogAdd_ImageUpLoadButton:
-                 openFileChooser();
+                 openFileChooser(PICK_DOG_IMAGE_REQUEST);
             break;
         }
 
@@ -354,11 +365,11 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
     }
 
-    private void openFileChooser(){
+    private void openFileChooser(int src){
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        startActivityForResult(intent, src);
     }
 
 
@@ -387,9 +398,75 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 } else if (uriString.startsWith("file://")) {
                     imageNameEditText.setText(myFile.getName());
                 }
+        }
+        else if(requestCode == PICK_DOG_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null){
+            mImageUri = data.getData();
+            Picasso.get().load(mImageUri).into(dogProfileImage);
 
+            String uriString = mImageUri.toString();
+            File myFile = new File(uriString);
+            String name="";
+            if (uriString.startsWith("content://")) {
+                Cursor cursor = null;
+                try {
+                    cursor = getActivity().getContentResolver().query(mImageUri, null, null, null, null);
+                    if (cursor != null && cursor.moveToFirst()) {
+                        name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            } else if (uriString.startsWith("file://")) {
+                name = myFile.getName();
+            }
 
+            uploadDogImage(name);
+        }
+    }
 
+    private void uploadDogImage(String name) {
+        if(firebaseAdapter.isThereAnOnGoingImageUploadTask()){
+            Toast.makeText(getActivity(), "Please wait until upload is done", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            firebaseAdapter.uploadFile(this.getActivity().getBaseContext(), mImageUri, name);
+
+            firebaseAdapter.registerImageUploadListener(new FirebaseAdapter.ImageUploadListener() {
+
+                @Override
+                public void onUploadFinish(String url) {
+                //ignore
+
+                }
+
+                @Override
+                public void onUploadProgress(double progress) {
+                    //ignore
+
+                    //imageUploadProgressBar.setProgress((int) progress);
+                }
+
+                @Override
+                public void onDogImageUploadFinish(String url) {
+                    //TODO update image when upload finish
+                    /*
+                    firebaseAdapter.removeImageUploadListener();
+                    Picasso.get()
+                            .load(url)
+                            .placeholder(R.drawable.asset6h)
+                            .error(R.drawable.asset6h)
+                            .into(profilePicture);
+                            */
+                }
+
+                @Override
+                public void onDogImageUploadProgress(double progress) {
+                    //TODO update progress bar at popup
+
+                }
+            });
+            // firebaseAdapter.uploadFile(this.getActivity().getBaseContext(), mImageUri, imageNameEditText.getText().toString());
         }
     }
 }

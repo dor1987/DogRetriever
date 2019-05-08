@@ -238,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         //temp implementation for debugging
         //createPopUpFakeScan();
         createPopUpScan();
+       // scanDogForDebug(view);
 
     }
 
@@ -515,15 +516,15 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void scanDogForDebug(View view) {
         //Used to put data in data base, dont use without asking dor
         Dog tempDog = null;
-        String collarId = dogIdFromFakeScanTextView.getText().toString();
+       // String collarId = dogIdFromFakeScanTextView.getText().toString();
 
-        if (!collarId.equals(""))
-            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
+        //if (!collarId.equals(""))
+            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase("55555");
 
         if (tempDog != null) {
             final Dog finalTempDog = tempDog;
-            for (int i = 0; i < 100; i++) {
-                LatLng locationToReturn = getRandomLocation((new LatLng(32.113575, 34.818100)), 5000);
+            for (int i = 0; i < 30; i++) {
+                LatLng locationToReturn = getRandomLocation((new LatLng(32.067629, 34.824628)), 5000);
                 try {
                     Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
                     firebaseAdapter.addScanToDog(finalTempDog, tempScan);
