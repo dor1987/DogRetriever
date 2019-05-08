@@ -9,7 +9,7 @@
 
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical"
-
+    android:padding="10dp"
     >
 
     <TextView
@@ -173,45 +173,6 @@
             </LinearLayout>
 
 
-
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="4dp"
-                >
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/profileDogAdd_PopImage"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/profile"
-                    app:civ_border_width="5dp"
-                    app:civ_border_color="@color/light_blue"
-                    android:layout_marginLeft="30dp"
-                    />
-
-                <Button
-                    android:id="@+id/profileDogAdd_ImageUpLoadButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100dp"
-                    android:layout_toRightOf="@+id/profileDogAdd_PopImage"
-                    android:text="Upload Image"
-                    android:textAllCaps="false"
-                    android:layout_marginLeft="30dp"
-                    />
-            </RelativeLayout>
-
-            <ProgressBar
-                android:id="@+id/add_dog_image_upload_progressbar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/image_upload_popup_layout_imageviewbeforeupload"
-                >
-            </ProgressBar>
-
             <Button
             android:id="@+id/add_dog_popup_layout_add_dog_button"
             style="?android:textAppearanceSmall"
@@ -219,7 +180,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:textStyle="bold"
-            android:text="Save"
+            android:text="Next"
                 />
 
             <Button

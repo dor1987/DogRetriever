@@ -8,6 +8,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -44,6 +46,12 @@ public class DogScanListAdapter extends  RecyclerView.Adapter<DogScanListAdapter
         holder.nameTextView.setText("Name:"+mDogList.get(position).getName());
         holder.colorTextView.setText("Color: "+mDogList.get(position).getColor());
         holder.breedTextView.setText("Breed: "+mDogList.get(position).getBreed());
+
+        Picasso.get()
+                .load(mDogList.get(position).getmImageUrl())
+                .placeholder(R.drawable.asset21h)
+                .error(R.drawable.asset6h)
+                .into(holder.imageView);
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
 

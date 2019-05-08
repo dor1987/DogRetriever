@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         //temp implementation for debugging
         //createPopUpFakeScan();
         createPopUpScan();
-       // scanDogForDebug(view);
+        //scanDogForDebug(view);
 
     }
 
@@ -288,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
             Intent i = new Intent(getBaseContext(), LoginActivity.class);
             startActivity(i);
+            showSmalProgressBar(false);
         }
     }
 
@@ -524,7 +525,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         if (tempDog != null) {
             final Dog finalTempDog = tempDog;
             for (int i = 0; i < 30; i++) {
-                LatLng locationToReturn = getRandomLocation((new LatLng(32.067629, 34.824628)), 5000);
+                LatLng locationToReturn = getRandomLocation((new LatLng(32.3059034, 35.0037211)), 5000);
                 try {
                     Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
                     firebaseAdapter.addScanToDog(finalTempDog, tempScan);

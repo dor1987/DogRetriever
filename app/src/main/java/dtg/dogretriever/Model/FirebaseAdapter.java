@@ -124,6 +124,10 @@ public class FirebaseAdapter {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Dog dog = postSnapshot.getValue(Dog.class);
                     Log.d("onChildAdded", "dog:" + dog.getName());
+
+                    if (postSnapshot.hasChild("image"))
+                        dog.setmImageUrl((String) postSnapshot.child("image").child("mImageUrl").getValue());
+
                     DogsFromDataBaseList.add(dog);
                 }
                 generatePlacesHistogram();
@@ -612,8 +616,7 @@ public class FirebaseAdapter {
                             @Override
                             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                                 double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                                //todo think of a way to pass progress to the fragment
-                                imageUploadListener.onUploadProgress(progress);
+                                imageUploadListener.onDogImageUploadProgress(progress);
                             }
                         });
 
@@ -632,9 +635,13 @@ public class FirebaseAdapter {
             return oldImageRef;
         }
         */
-
-       StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(getDogByCollarIdFromFireBase(myDogId).getmImageUrl());
-
+        StorageReference oldImageRef = null;
+        try {
+            oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(getDogByCollarIdFromFireBase(myDogId).getmImageUrl());
+        }
+        catch (IllegalArgumentException e){
+            return null;
+        }
        return oldImageRef;
     }
 

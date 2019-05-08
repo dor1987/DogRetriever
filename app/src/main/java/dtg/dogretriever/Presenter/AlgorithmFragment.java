@@ -123,6 +123,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private Location currentLocation;
     private ArrayList<Coordinate> hotZonesAlgoResult;
     private ArrayList<Cluster> hotZonesAlgoResultAsCluster;
+    private Coordinate predictionAlgoResult;
 
     private OnFragmentInteractionListener mListener;
     final Map<String, Scan> mapOfScans = new HashMap<>();
@@ -162,7 +163,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         currentLocation = ((ToolbarActivity)getActivity()).getCurrentLocation();
         Log.d("DorCheck","Location At AlgoFragment onMapReady: "+ currentLocation+"");
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),15));
+        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),15));
         tabLayout.getTabAt(0).select();
         isMapReady= true;
     }
@@ -254,7 +255,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
 //        ArrayList<Coordinate> coordinates = getLearningAlgoCoordsList();
 
-        if(currentTab==0 || currentTab ==2) {
+        if(currentTab==0) {
             /*
             if (!coordinatesToShow.isEmpty()) {
                 for (Coordinate coordinate : coordinatesToShow) {
@@ -268,9 +269,19 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                     createMarker(scan.getCoordinate().getLatitude(),scan.getCoordinate().getLongitude(),sdf.format(scan.getTimeStamp()),scan.getCoordinate().getLatitude()+","+scan.getCoordinate().getLongitude());
                 }
             }
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),8));
+
         }
         else if (currentTab==1){
                 showRadiusArea(hotZonesAlgoResultAsCluster);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),13));
+
+        }
+
+        else if(currentTab ==2) {
+            showRadiusArea(predictionAlgoResult);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(predictionAlgoResult.getLatitude(),predictionAlgoResult.getLongitude()),17));
+
         }
         // showRadiusArea(getCoordinatesToShow(), getRandomRadius(getCoordinatesToShow().size()));
      /*
@@ -481,6 +492,12 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         void onFragmentInteraction(Uri uri);
     }
 
+    private void showRadiusArea(Coordinate coord) {
+    //TODO radius is now fixed size Tal how to determne radius?
+        double radius = 50;
+        mMap.addCircle(new CircleOptions().center(new LatLng(coord.getLatitude(),coord.getLongitude())).radius(radius).fillColor(0x22249ACF));
+
+    }
 
     private void showRadiusArea(ArrayList<Coordinate> centerList, ArrayList<Double> radiusList) {
 
@@ -543,7 +560,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         if(isMapReady) {
 
             if (isFirstTimeLocationSet) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 15));
+                //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 15));
                 isFirstTimeLocationSet = false;
             }
           /*
@@ -731,6 +748,14 @@ catch (Exception e){
                 protected void onPostExecute(PredictionResponseClass result) {
                     if (result == null) {
                         return;
+                    }
+
+                    //hotZonesAlgoResultAsCluster.addAll(result.getClustersList());
+                    predictionAlgoResult = new Coordinate(result.getY(),result.getX());
+
+                    //Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
+                    if(currentTab==2) {
+                        tabLayout.selectTab(tabLayout.getTabAt(2));
                     }
 
                     // Do a toast

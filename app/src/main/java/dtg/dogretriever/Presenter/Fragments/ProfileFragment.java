@@ -95,6 +95,13 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     private EditText imageNameEditText;
     private ProgressBar imageUploadProgressBar;
 
+
+    //edit dog image popup
+    private ImageView dogImageBeforeUploadView;
+    private EditText dogImageNameEditText;
+    private ProgressBar dogImageUploadProgressBar;
+    private String currentDogId;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -176,12 +183,12 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
-        Button dogImageUpLoadButton = layout.findViewById(R.id.profileDogAdd_ImageUpLoadButton);
+       // Button dogImageUpLoadButton = layout.findViewById(R.id.profileDogAdd_ImageUpLoadButton);
         Button addDogButton = layout.findViewById(R.id.add_dog_popup_layout_add_dog_button);
         Button addDogPopUpcancel = layout.findViewById(R.id.add_dog_popup_layout_cancel);
         addDogButton.setOnClickListener(this);
         addDogPopUpcancel.setOnClickListener(this);
-        dogImageUpLoadButton.setOnClickListener(this);
+        //dogImageUpLoadButton.setOnClickListener(this);
         popupWindow = new PopupWindow(this.getActivity());
         popupWindow.setContentView(layout);
 
@@ -205,7 +212,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         breedTextView = layout.findViewById(R.id.add_dog_popup_layout_breed);
         notesTextView = layout.findViewById(R.id.add_dog_popup_layout_notes);
         collarIdTextView = layout.findViewById(R.id.add_dog_popup_layout_collarid);
-        dogProfileImage = layout.findViewById(R.id.profileDogAdd_PopImage);
 
 
     }
@@ -255,6 +261,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         dogsList.add(tempDog);
         dogsListAdapter.notifyDataSetChanged();
         popupWindow.dismiss();
+        createPopEditDogImage();
+        currentDogId = collarId;//used to temp save the dog id for image upload
     }
 
     public void cancelPopUp(View view) {
@@ -328,12 +336,61 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
             case R.id.image_upload_layout_choose_file_button:
                 openFileChooser(PICK_IMAGE_REQUEST);
-
                 break;
 
-            case R.id.profileDogAdd_ImageUpLoadButton:
-                 openFileChooser(PICK_DOG_IMAGE_REQUEST);
-            break;
+
+                //
+            case R.id.dog_image_upload_popup_layout_next_button:
+                firebaseAdapter.cancelAnUpload();
+                cancelPopUp(view);
+                break;
+
+            case R.id.dog_image_upload_layout_choose_file_button:
+                openFileChooser(PICK_DOG_IMAGE_REQUEST);
+                break;
+
+            case R.id.dog_image_upload_popup_layout_upload_button:
+                if(firebaseAdapter.isThereAnOnGoingImageUploadTask()){
+                    Toast.makeText(getActivity(), "Please wait until upload is done", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    firebaseAdapter.uploadDogFile(this.getActivity().getBaseContext(), mImageUri, dogImageNameEditText.getText().toString(),currentDogId);
+
+                    firebaseAdapter.registerImageUploadListener(new FirebaseAdapter.ImageUploadListener() {
+
+                        @Override
+                        public void onUploadFinish(String url) {
+                            //ignore
+                        }
+
+                        @Override
+                        public void onUploadProgress(double progress) {
+                            //ignore
+                        }
+
+                        @Override
+                        public void onDogImageUploadFinish(String url) {
+                            firebaseAdapter.removeImageUploadListener();
+                            cancelPopUp(view);
+
+                            //TODO displa image somwhere maybe dog profile
+                            /*
+                            Picasso.get()
+                                    .load(url)
+                                    .placeholder(R.drawable.asset6h)
+                                    .error(R.drawable.asset6h)
+                                    .into(profilePicture);
+                        */
+                        }
+
+                        @Override
+                        public void onDogImageUploadProgress(double progress) {
+                            dogImageUploadProgressBar.setProgress((int) progress);
+                        }
+                    });
+                }
+                break;
+
         }
 
     }
@@ -399,74 +456,58 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                     imageNameEditText.setText(myFile.getName());
                 }
         }
+
         else if(requestCode == PICK_DOG_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null){
+                && data != null && data.getData() != null) {
+
             mImageUri = data.getData();
-            Picasso.get().load(mImageUri).into(dogProfileImage);
+            Picasso.get().load(mImageUri).into(dogImageBeforeUploadView);
 
             String uriString = mImageUri.toString();
             File myFile = new File(uriString);
-            String name="";
+
             if (uriString.startsWith("content://")) {
                 Cursor cursor = null;
                 try {
                     cursor = getActivity().getContentResolver().query(mImageUri, null, null, null, null);
                     if (cursor != null && cursor.moveToFirst()) {
-                        name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                        dogImageNameEditText.setText(cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
                     }
                 } finally {
                     cursor.close();
                 }
             } else if (uriString.startsWith("file://")) {
-                name = myFile.getName();
+                dogImageNameEditText.setText(myFile.getName());
             }
-
-            uploadDogImage(name);
         }
+
+    }
+    private void createPopEditDogImage() {
+        LayoutInflater layoutInflater = (LayoutInflater)this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.dog_image_upload_pop_up, null);
+
+        Button uploadDogImageButton = layout.findViewById(R.id.dog_image_upload_popup_layout_upload_button);
+        Button NextImageUploadButton = layout.findViewById(R.id.dog_image_upload_popup_layout_next_button);
+        Button chooseDogImageUploadButton = layout.findViewById(R.id.dog_image_upload_layout_choose_file_button);
+        dogImageBeforeUploadView = layout.findViewById(R.id.dog_image_upload_popup_layout_imageviewbeforeupload);
+        dogImageNameEditText = layout.findViewById(R.id.dog_image_upload_layout_choose_file_edittext);
+        dogImageUploadProgressBar =layout.findViewById(R.id.dog_image_upload_progressbar);
+
+        uploadDogImageButton.setOnClickListener(this);
+        NextImageUploadButton.setOnClickListener(this);
+        chooseDogImageUploadButton.setOnClickListener(this);
+
+
+        popupWindow = new PopupWindow(this.getActivity());
+        popupWindow.setContentView(layout);
+        popupWindow.setWindowLayoutMode(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setHeight(1);
+        popupWindow.setWidth(1);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
     }
 
-    private void uploadDogImage(String name) {
-        if(firebaseAdapter.isThereAnOnGoingImageUploadTask()){
-            Toast.makeText(getActivity(), "Please wait until upload is done", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            firebaseAdapter.uploadFile(this.getActivity().getBaseContext(), mImageUri, name);
 
-            firebaseAdapter.registerImageUploadListener(new FirebaseAdapter.ImageUploadListener() {
-
-                @Override
-                public void onUploadFinish(String url) {
-                //ignore
-
-                }
-
-                @Override
-                public void onUploadProgress(double progress) {
-                    //ignore
-
-                    //imageUploadProgressBar.setProgress((int) progress);
-                }
-
-                @Override
-                public void onDogImageUploadFinish(String url) {
-                    //TODO update image when upload finish
-                    /*
-                    firebaseAdapter.removeImageUploadListener();
-                    Picasso.get()
-                            .load(url)
-                            .placeholder(R.drawable.asset6h)
-                            .error(R.drawable.asset6h)
-                            .into(profilePicture);
-                            */
-                }
-
-                @Override
-                public void onDogImageUploadProgress(double progress) {
-                    //TODO update progress bar at popup
-
-                }
-            });
-            // firebaseAdapter.uploadFile(this.getActivity().getBaseContext(), mImageUri, imageNameEditText.getText().toString());
-        }
-    }
 }
