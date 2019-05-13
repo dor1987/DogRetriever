@@ -41,9 +41,12 @@ public class DogScanListAdapter extends  RecyclerView.Adapter<DogScanListAdapter
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         //TODO add image implantation
 
-        holder.nameTextView.setText("Name:"+mDogList.get(position).getName());
-        holder.colorTextView.setText("Color: "+mDogList.get(position).getColor());
-        holder.breedTextView.setText("Breed: "+mDogList.get(position).getBreed());
+        String name = mDogList.get(position).getName();
+        holder.nameTextView.setText("Name: "+ (name==null?"":name));
+        String color = mDogList.get(position).getColor();
+        holder.colorTextView.setText("Color: "+ (color==null?"":color));
+        String breed = mDogList.get(position).getBreed();
+        holder.breedTextView.setText("Breed: "+ (breed==null?"":breed));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
 
