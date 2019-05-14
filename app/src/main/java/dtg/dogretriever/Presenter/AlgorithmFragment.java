@@ -269,7 +269,10 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                     createMarker(scan.getCoordinate().getLatitude(),scan.getCoordinate().getLongitude(),sdf.format(scan.getTimeStamp()),scan.getCoordinate().getLatitude()+","+scan.getCoordinate().getLongitude());
                 }
             }
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),8));
+            //if(currentLocation!=null)
+              //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),8));
+            //else//if doesnt have a current location just zoom to the center to israel
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.686378,35.017207),8));
 
         }
         else if (currentTab==1){
@@ -279,9 +282,10 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         }
 
         else if(currentTab ==2) {
-            showRadiusArea(predictionAlgoResult);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(predictionAlgoResult.getLatitude(),predictionAlgoResult.getLongitude()),17));
-
+            if(predictionAlgoResult!=null) {
+                showRadiusArea(predictionAlgoResult);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(predictionAlgoResult.getLatitude(), predictionAlgoResult.getLongitude()), 17));
+            }
         }
         // showRadiusArea(getCoordinatesToShow(), getRandomRadius(getCoordinatesToShow().size()));
      /*
@@ -388,6 +392,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
             public void onTabSelected(TabLayout.Tab tab) {
                 currentTab = tab.getPosition();
                 String dogId = getArguments().getString("dogId");
+
                 switch (tab.getPosition()) {
                     case 0:
                         //Show all scan of selected dog
@@ -515,7 +520,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
             totalAmountOfPoints+= cluster.getNumOfPoints();
         }
         for(Cluster cluster : arrayOfClusters){
-            mMap.addCircle(new CircleOptions().center(new LatLng(cluster.getCenterLat(),cluster.getCenterLong())).radius(cluster.getDiameter()/6).fillColor(getColorOfCircle(totalAmountOfPoints,cluster.getNumOfPoints())));
+            mMap.addCircle(new CircleOptions().center(new LatLng(cluster.getCenterLat(),cluster.getCenterLong())).radius(cluster.getDiameter()/2).fillColor(getColorOfCircle(totalAmountOfPoints,cluster.getNumOfPoints())));
         }
 
     }
@@ -648,6 +653,9 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         final MyInterface myInterface = factory.build(MyInterface.class);
         int radius = Integer.parseInt(sharedPreferences.getString("hot_zones_algo_radius","4000"));
         RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
+        //String dogId = getArguments().getString("dogId");
+
+       // RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId))),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
 // The Lambda function invocation results in a network call.
 // Make sure it is not called from the main thread.
 try {
@@ -715,7 +723,8 @@ catch (Exception e){
 // LambdaDataBinder.
         final PredicationAlgoInterface predicationAlgoInterface = factory.build(PredicationAlgoInterface.class);
        // RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
-          final PredictionRequestClass request = new PredictionRequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 4000)),currentWeather.name());
+        String dogId = getArguments().getString("dogId");
+        final PredictionRequestClass request = new PredictionRequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId))),currentWeather.name());
 
 
 // The Lambda function invocation results in a network call.

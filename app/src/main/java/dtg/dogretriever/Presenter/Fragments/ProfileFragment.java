@@ -418,8 +418,11 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(1);
         popupWindow.setWidth(1);
+        popupWindow.setClippingEnabled(true);
+        popupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
+
     }
 
     private void openFileChooser(int src){
@@ -505,8 +508,11 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(1);
         popupWindow.setWidth(1);
+        popupWindow.setClippingEnabled(true);
+        popupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
+
     }
 
 

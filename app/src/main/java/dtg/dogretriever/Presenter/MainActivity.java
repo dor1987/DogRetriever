@@ -547,21 +547,38 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
        // String collarId = dogIdFromFakeScanTextView.getText().toString();
 
         //if (!collarId.equals(""))
-            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase("55555");
+            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase("999333");
 
         if (tempDog != null) {
             final Dog finalTempDog = tempDog;
-            for (int i = 0; i < 30; i++) {
-                LatLng locationToReturn = getRandomLocation((new LatLng(32.3059034, 35.0037211)), 5000);
-                try {
-                    Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
-                    firebaseAdapter.addScanToDog(finalTempDog, tempScan);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            new Thread(new Runnable() {
+                public void run(){
+                    for (int i = 0; i < 2; i++) {
+                        LatLng locationToReturn = getRandomLocation((new LatLng(32.304578, 35.004626)), 2);
+                        try {
+                            Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
+                            firebaseAdapter.addScanToDog(finalTempDog, tempScan);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-            fakeScanPopUp.dismiss();
+                    for (int i = 0; i < 1; i++) {
+                        LatLng locationToReturn = getRandomLocation((new LatLng(32.304352, 35.003685)), 2);
+                        try {
+                            Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
+                            firebaseAdapter.addScanToDog(finalTempDog, tempScan);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+            }).start();
+
+
+
+            //fakeScanPopUp.dismiss();
             Toast.makeText(myLocationService, "Scan accepted", Toast.LENGTH_SHORT).show();
 
         } else {

@@ -440,6 +440,12 @@ public class FirebaseAdapter {
             return false;
     }
 
+    public Boolean isDogsDataReadyNow(){
+        if(DogsFromDataBaseList!=null && DogsFromDataBaseList.isEmpty()){
+            return true;
+        }
+        else return false;
+    }
     public interface ImageUploadListener{
         public void onUploadFinish(String url);
         public void onUploadProgress(double progress);
