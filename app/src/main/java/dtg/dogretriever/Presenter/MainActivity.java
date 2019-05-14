@@ -4,6 +4,8 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -25,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -50,6 +54,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
+import dtg.dogretriever.Model.Beacon;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
@@ -64,7 +69,9 @@ import static dtg.dogretriever.Presenter.MyMessagingService.SHARED_PREFS;
 //import android.support.v4.app.ActivityCompat;
 //import android.support.v7.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity implements MyLocationService.LocationListener, DogScanListFunctionalityInterface {
+public class MainActivity extends AppCompatActivity implements MyLocationService.LocationListener,
+        DogScanListFunctionalityInterface, BeaconScannerService.OnBeaconEventListener {
+    private static final String TAG = "MainActivity";
 
     private PopupWindow popupWindow = null;
     private FirebaseAdapter firebaseAdapter;
@@ -104,6 +111,14 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     //Intent extras;
     Bundle bundle;
 
+    //Bluetooth
+    private static final int BT_EXPIRE_TIMEOUT = 5000;
+    private static final int BT_EXPIRE_TASK_PERIOD = 1000;
+    private BeaconScannerService mBeaconService;
+    private DogScanListAdapter DogScanListAdapter;
+    private ArrayList <Beacon> mBeaconAdapterItems;
+    private boolean isBoundBeaconService = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
         isNotifcationPopShowenBefore = false;
 
+        mBeaconAdapterItems = new ArrayList<>();
 
     }
 
@@ -145,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         super.onResume();
         //start the service
         //showProgress(true);
+        //mHandler.post(mPruneTask);
         Intent intent = new Intent(this, MyLocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
@@ -158,6 +175,16 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             unbindService(mConnection);
             isBound = false;
         }
+
+        if(isBoundBeaconService) {
+            getApplicationContext().unbindService(mBeaconConnection);
+            isBoundBeaconService = false;
+        }
+
+        //mHandler.removeCallbacks(mPruneTask);
+
+        //mBeaconService.setBeaconEventListener(null);
+        //unbindService(this);
     }
 
     @Override
@@ -569,29 +596,71 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void cancelScanPopUp(View view) {
         //for debug
         //fakeScanPopUp.dismiss();
+//        mHandler.removeCallbacks(mPruneTask);
+//        mBeaconService.setBeaconEventListener(null);
+//        unbindService(this);
+        if(isBoundBeaconService) {
+            getApplicationContext().unbindService(mBeaconConnection);
+            isBoundBeaconService = false;
+        }
         scanPopUp.dismiss();
     }
 
+    private boolean checkBluetoothStatus() {
+        BluetoothManager manager =
+                (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        BluetoothAdapter adapter = manager.getAdapter();
+        /*
+         * We need to enforce that Bluetooth is first enabled, and take the
+         * user to settings to enable it if they have not done so.
+         */
+        if (adapter == null || !adapter.isEnabled()) {
+            //Bluetooth is disabled
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivity(enableBtIntent);
+            finish();
+            return false;
+        }
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, "No LE Support.", Toast.LENGTH_SHORT).show();
+            finish();
+            return false;
+        }
+
+        return true;
+    }
+//    private Handler mHandler = new Handler();
+//    private Runnable mPruneTask = new Runnable() {
+//        @Override
+//        public void run() {
+//            final ArrayList<Beacon> expiredBeacons = new ArrayList<>();
+//            final long now = System.currentTimeMillis();
+//            for (Beacon beacon : mBeaconAdapterItems) {
+//                long delta = now - beacon.getLastDetectedTimestamp();
+//                if (delta >= BT_EXPIRE_TIMEOUT) {
+//                    expiredBeacons.add(beacon);
+//                }
+//            }
+//
+//            if (!expiredBeacons.isEmpty()) {
+//                Log.d(TAG, "Found " + expiredBeacons.size() + " expired");
+//                mBeaconAdapterItems.removeAll(expiredBeacons);
+//                dogScanListAdapter.notifyDataSetChanged();
+//            }
+//
+//
+//        }
+//    };
+
 
     private void createPopUpScan() {
+
         //real implementation
+
+
 
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.scan_popup, null);
-
-        //Button cancelBtn = layout.findViewById(R.id.fake_scan__popup_layout_cancel);
-        //Button scanBtn = layout.findViewById(R.id.fake_scan__popup_layout_add_dog_button);
-
-
-        scanPopUp = new PopupWindow(this);
-        //scan pop up
-        listOfDogScanned = new ArrayList<>();
-
-        scanPopUp.setContentView(layout);
-        scanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        scanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        scanPopUp.setFocusable(true);
-        scanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
         recyclerView = layout.findViewById(R.id.scan_popup_layout_recyclerview);
 
@@ -600,23 +669,52 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        listOfDogScanned.clear();
-        listOfDogScanned.addAll(firebaseAdapter.getAllDogs());
+        //scan pop up
+        listOfDogScanned = new ArrayList<>();
+
         dogScanListAdapter = new DogScanListAdapter(listOfDogScanned, MainActivity.this, this);
         recyclerView.setAdapter(dogScanListAdapter);
 
+            //Button cancelBtn = layout.findViewById(R.id.fake_scan__popup_layout_cancel);
+            //Button scanBtn = layout.findViewById(R.id.fake_scan__popup_layout_add_dog_button);
+
+
+            scanPopUp = new PopupWindow(this);
+
+
+            scanPopUp.setContentView(layout);
+            scanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+            scanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+            scanPopUp.setFocusable(true);
+            scanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
+
+            scanPopUp.setOutsideTouchable(false);
+
+
+
+
+            // listOfDogScanned.clear();
+            // listOfDogScanned.addAll(firebaseAdapter.getAllDogs());
+
+        if(checkBluetoothStatus()) {
+            Log.i(TAG, "Start scanning...");
+            final Intent intent = new Intent(this, BeaconScannerService.class);
+            isBoundBeaconService =  getApplicationContext().bindService(intent, mBeaconConnection, BIND_AUTO_CREATE);
+
+        }
 
         //dogIdFromFakeScanTextView = layout.findViewById(R.id.scan_layout_popup);
-
     }
 
     public void scanRefresh(View view) {
         //TODO add bluetooth refresh functionality
-        Toast.makeText(myLocationService, "clicked Refresh", Toast.LENGTH_SHORT).show();
-
         listOfDogScanned.clear();
-        listOfDogScanned.addAll(firebaseAdapter.getAllDogs());
         dogScanListAdapter.notifyDataSetChanged();
+//        Toast.makeText(myLocationService, "clicked Refresh", Toast.LENGTH_SHORT).show();
+//
+//        listOfDogScanned.clear();
+//        listOfDogScanned.addAll(firebaseAdapter.getAllDogs());
+//        dogScanListAdapter.notifyDataSetChanged();
 
     }
 
@@ -905,6 +1003,42 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             //mMainMenuFormView.setVisibility(toShow ? View.GONE : View.VISIBLE);
         }
     }
+
+
+    @Override
+    public void onBeaconIdentifier(String deviceAddress, int rssi, String instanceId) {
+        Dog foundDog = firebaseAdapter.getDogByCollarIdFromFireBase(instanceId);
+        Log.i(TAG, "beacon with id " + instanceId + " was found");
+        if(foundDog != null) {
+            if (!listOfDogScanned.contains(foundDog)) {
+                Log.i(TAG, foundDog.getName() + "'s beacon was found");
+                listOfDogScanned.add(foundDog);
+                dogScanListAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    @Override
+    public void onBeaconTelemetry(String deviceAddress, float battery, float temperature) {
+
+    }
+
+
+    private ServiceConnection mBeaconConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.i(TAG, "Connected to scanner service");
+            mBeaconService = ((BeaconScannerService.LocalBinder)iBinder).getService();
+            mBeaconService.setBeaconEventListener(MainActivity.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.d(TAG, "Disconnected from scanner service");
+            mBeaconService = null;
+        }
+    };
 
 
 
