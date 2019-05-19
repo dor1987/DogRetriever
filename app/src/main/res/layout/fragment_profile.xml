@@ -18,7 +18,7 @@
             android:id="@+id/profileFragmentImage"
             android:layout_width="170dp"
             android:layout_height="170dp"
-            android:src="@drawable/profile"
+            android:src="@drawable/asset6h"
             app:civ_border_width="5dp"
             app:civ_border_color="@color/light_blue"
             android:layout_centerHorizontal="true"

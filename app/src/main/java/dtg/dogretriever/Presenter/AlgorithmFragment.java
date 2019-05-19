@@ -12,6 +12,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -34,12 +35,14 @@ import android.support.v4.view.ViewPager;
 */
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.amazonaws.AmazonClientException;
@@ -102,9 +105,10 @@ import com.google.android.material.tabs.TabLayout;
 //import static android.support.v4.content.ContextCompat.getSystemService;
 
 
-public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, View.OnClickListener {
     private static final String TAG = "AlgorithmFragment";
     public static final int MY_CODE_REQUEST = 123;
+
 
 
 
@@ -134,7 +138,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     TabLayout tabLayout;
     boolean isMapReady;
     boolean isFirstTimeLocationSet;
-
+    private PopupWindow notEnoughScansPopupWindow;
     //weather
     private Weather.weather currentWeather;
     private Weather weather;
@@ -144,7 +148,8 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private int currentTab;
     private SimpleDateFormat sdf = new SimpleDateFormat("'Date:' dd.MM.yy ' Time:'HH:mm:ss");
     private LinearLayout colorExplainLayout;
-
+    private boolean gotHotZoneAnswer;
+    private boolean gotPredictAlgoAnswer;
 
     public AlgorithmFragment() {
         // Required empty public constructor
@@ -360,8 +365,10 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         hotZonesAlgoResult = new ArrayList<>();
         hotZonesAlgoResultAsCluster = new ArrayList<>();
         //learningAlgo = new LearningAlgo();
-        hotZonesAlgo();
+        gotHotZoneAnswer = false;
+        gotPredictAlgoAnswer = false;
 
+        hotZonesAlgo();
         predicationAlgo();
         return view;
     }
@@ -432,18 +439,27 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                         //show algo2 result for selected dog
                         //Right now will show ll scans of all dogs
                         ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
-
+/*
                         mapOfScans.clear();
                         mapOfScans.putAll(firebaseAdapter.getAllScanOfAllDogs());
+  */
                         colorExplainLayout.setVisibility(View.INVISIBLE);
-
+                        showPredictAlgoMarkersOnMap();
                        /*
                         coordinatesToShow.clear();
 
                         for (Scan scan : mapOfScans.values())
                             coordinatesToShow.add(scan.getCoordinate());
                         */
+                       /*
+                       if(predictionAlgoResult==null && gotPredictAlgoAnswer){
+                            startNotificationPopUp();
+                       }
+                       else if(predictionAlgoResult == null && !gotPredictAlgoAnswer){
+
+                       }
                         updateMapUI();
+                        */
                         break;
                 }
             }
@@ -684,6 +700,7 @@ try {
 
             @Override
             protected void onPostExecute(ResponseClass result) {
+                gotHotZoneAnswer = true;
                 if (result == null) {
                     return;
                 }
@@ -724,7 +741,8 @@ catch (Exception e){
         final PredicationAlgoInterface predicationAlgoInterface = factory.build(PredicationAlgoInterface.class);
        // RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
         String dogId = getArguments().getString("dogId");
-        final PredictionRequestClass request = new PredictionRequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId))),currentWeather.name());
+
+        final PredictionRequestClass request = new PredictionRequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId))), currentWeather.name());
 
 
 // The Lambda function invocation results in a network call.
@@ -755,7 +773,10 @@ catch (Exception e){
 
                 @Override
                 protected void onPostExecute(PredictionResponseClass result) {
+                    gotPredictAlgoAnswer = true;
                     if (result == null) {
+                        if(currentTab==2)
+                            tabLayout.selectTab(tabLayout.getTabAt(2));
                         return;
                     }
 
@@ -783,15 +804,17 @@ catch (Exception e){
 
     public ArrayList<Point> convretMapOfScansToPoint(Map<String,Scan> scansMap){
         ArrayList<Point> pointsArrayList = new ArrayList<>();
-
-        for(Scan scan : scansMap.values()){
-            pointsArrayList.add(new Point(-1,scan.getCoordinate().getLatitude(),
+    try {
+        for (Scan scan : scansMap.values()) {
+            pointsArrayList.add(new Point(-1, scan.getCoordinate().getLatitude(),
                     scan.getCoordinate().getLongitude(),
                     scan.getCurrentWeather() == null ? Weather.weather.UNKNOWN.name() : scan.getCurrentWeather().name(),
                     scan.getTimeStamp().getTime(),
                     scan.getPlaces()));
         }
-
+    }catch (NullPointerException e){
+        return pointsArrayList;
+    }
         return pointsArrayList;
     }
 
@@ -810,13 +833,56 @@ catch (Exception e){
 
         //coordinatesToShow.addAll(hotZonesAlgoResult);
         updateMapUI();
-        if(hotZonesAlgoResultAsCluster.size() == 0){
+        if(hotZonesAlgoResultAsCluster.size() == 0 && !gotHotZoneAnswer){
             ((ToolbarActivity)getActivity()).showSmalProgressBar(true);
-            Toast.makeText(getContext(), "Not enough information", Toast.LENGTH_SHORT).show();
         }
-        else{
+        else if(hotZonesAlgoResultAsCluster.size() != 0){
             ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
+        }
+        else if(hotZonesAlgoResultAsCluster.size() == 0 && gotHotZoneAnswer){
+            startNotificationPopUp();
+        }
+    }
 
+    public void showPredictAlgoMarkersOnMap(){
+
+        updateMapUI();
+
+        if(predictionAlgoResult == null && !gotPredictAlgoAnswer){
+            ((ToolbarActivity)getActivity()).showSmalProgressBar(true);
+        }
+        else if(predictionAlgoResult != null){
+            ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
+        }
+        else if(predictionAlgoResult == null && gotPredictAlgoAnswer){
+            startNotificationPopUp();
+        }
+    }
+    private void startNotificationPopUp() {
+        LayoutInflater layoutInflater = (LayoutInflater) this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.not_enough_scans_pop_up, null);
+
+        Button closeBtn = layout.findViewById(R.id.not_enough_scans_popup_layout_close_button);
+
+        closeBtn.setOnClickListener(this);
+
+        notEnoughScansPopupWindow = new PopupWindow(this.getActivity());
+        notEnoughScansPopupWindow.setContentView(layout);
+        notEnoughScansPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        notEnoughScansPopupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        notEnoughScansPopupWindow.setClippingEnabled(true);
+        notEnoughScansPopupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+        notEnoughScansPopupWindow.setFocusable(true);
+        notEnoughScansPopupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
+
+    }
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.not_enough_scans_popup_layout_close_button:
+                notEnoughScansPopupWindow.dismiss();
+                tabLayout.selectTab(tabLayout.getTabAt(0));
+                break;
         }
     }
 }

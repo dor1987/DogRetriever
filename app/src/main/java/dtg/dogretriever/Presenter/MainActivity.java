@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -164,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         //mHandler.post(mPruneTask);
         Intent intent = new Intent(this, MyLocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        showSmalProgressBar(false);
 
     }
 
@@ -413,6 +416,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 showSmalProgressBar(true);
                 popupWindow.dismiss();
 
+                new AsyncToolBarActivityStart(createDogsList().get(i).getCollarId()).execute();
+/*
 
                 new AsyncTask<Void, Void, Intent>() {
 
@@ -429,9 +434,13 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                     @Override
                     protected void onPostExecute(Intent intent) {
                         super.onPostExecute(intent);
+                        Toast.makeText(getBaseContext(), "on post execute", Toast.LENGTH_SHORT).show();
+
                         startActivity(intent);
+                        showSmalProgressBar(false);
                     }
                 }.execute();
+                */
             }
         });
 
@@ -444,6 +453,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         popupWindow.setContentView(layout);
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setClippingEnabled(true);
+        popupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
@@ -501,6 +512,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         notificationPopUp.setContentView(layout);
         notificationPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         notificationPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        notificationPopUp.setClippingEnabled(true);
+        notificationPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         notificationPopUp.setFocusable(true);
         notificationPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
@@ -535,6 +548,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         fakeScanPopUp.setContentView(layout);
         fakeScanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         fakeScanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        fakeScanPopUp.setClippingEnabled(true);
+        fakeScanPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         fakeScanPopUp.setFocusable(true);
         fakeScanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
         dogIdFromFakeScanTextView = layout.findViewById(R.id.fake_scan__popup_layout_dog_id);
@@ -553,18 +568,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             final Dog finalTempDog = tempDog;
             new Thread(new Runnable() {
                 public void run(){
-                    for (int i = 0; i < 2; i++) {
-                        LatLng locationToReturn = getRandomLocation((new LatLng(32.304578, 35.004626)), 2);
-                        try {
-                            Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
-                            firebaseAdapter.addScanToDog(finalTempDog, tempScan);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
                     for (int i = 0; i < 1; i++) {
-                        LatLng locationToReturn = getRandomLocation((new LatLng(32.304352, 35.003685)), 2);
+                        LatLng locationToReturn = getRandomLocation((new LatLng(32.304578, 35.004626)), 2);
                         try {
                             Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
                             firebaseAdapter.addScanToDog(finalTempDog, tempScan);
@@ -702,6 +707,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             scanPopUp.setContentView(layout);
             scanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
             scanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+            scanPopUp.setClippingEnabled(true);
+            scanPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             scanPopUp.setFocusable(true);
             scanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
@@ -757,6 +764,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         ownerInfoPopUp.setContentView(layout);
         ownerInfoPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         ownerInfoPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        ownerInfoPopUp.setClippingEnabled(true);
+        ownerInfoPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         ownerInfoPopUp.setFocusable(true);
         ownerInfoPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
@@ -1058,5 +1067,33 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     };
 
 
+private class AsyncToolBarActivityStart extends AsyncTask<Void, Void, Intent>{
+    private String collarId;
+    private AsyncToolBarActivityStart(String collarId) {
+        this.collarId = collarId;
+    }
+
+    @Override
+    protected Intent doInBackground(Void... voids) {
+
+        Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+        intent.putExtra("TAG", "AlgorithmFragment");
+        intent.putExtra("fragmentToOpen", "0");
+        intent.putExtra("DOG_ID", collarId);
+        intent.putExtra("currentLocation", userCurrentLocation);
+
+
+        return intent;
+    }
+
+    @Override
+    protected void onPostExecute(Intent intent) {
+        super.onPostExecute(intent);
+        Toast.makeText(getBaseContext(), "on post execute", Toast.LENGTH_SHORT).show();
+
+        startActivity(intent);
+        //showSmalProgressBar(false);
+    }
+}
 
 }

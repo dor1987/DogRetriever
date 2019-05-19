@@ -39,6 +39,7 @@ public class MyLocationService extends Service implements LocationListener {
     private boolean isFirstTimeRuning = true;
     private FirebaseAdapter firebaseAdapter;
 
+
     public MyLocationService() {
     }
 

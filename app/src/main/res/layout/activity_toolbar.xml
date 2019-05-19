@@ -55,7 +55,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
                 android:orientation="vertical"
-                android:weightSum="1">
+                android:weightSum="1"
+                android:onClick="OnClickHomeButton"
+                >
 
                 <Button
                     android:id="@+id/toolbar_home_btn"
@@ -65,13 +67,16 @@
                     android:background="@drawable/ic_home_black"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:onClick="OnClickHomeButton"
-                  />
+
+                    />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/home_btn_text"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:onClick="OnClickHomeButton"
+                    />
 
             </LinearLayout>
 
@@ -83,7 +88,10 @@
                 android:orientation="vertical"
                 android:paddingEnd="3dp"
                 android:paddingStart="3dp"
-                android:weightSum="1">
+                android:weightSum="1"
+                android:onClick="OnClickAboutButton"
+
+                >
 
                 <Button
                     android:layout_width="32dp"
@@ -100,7 +108,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/about_toolbar_btn"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:onClick="OnClickAboutButton"
+
+                    />
 
             </LinearLayout>
 
@@ -112,7 +123,9 @@
                 android:orientation="vertical"
                 android:paddingEnd="3dp"
                 android:paddingStart="3dp"
-                android:weightSum="1">
+                android:weightSum="1"
+                android:onClick="OnClickSettingsButton"
+                >
 
                 <Button
                     android:layout_width="32dp"
@@ -129,7 +142,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/settings_toolbar_btn"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:onClick="OnClickSettingsButton"
+
+                    />
 
             </LinearLayout>
 
@@ -141,7 +157,9 @@
                 android:layout_weight="0.25"
                 android:orientation="vertical"
                 android:paddingEnd="3dp"
-                android:paddingStart="3dp">
+                android:paddingStart="3dp"
+                android:onClick="OnClickProfileButton"
+                >
 
                 <Button
                     android:layout_width="32dp"
@@ -150,7 +168,6 @@
                     android:layout_marginTop="3dp"
                     android:background="@drawable/ic_profile_black"
                     android:onClick="OnClickProfileButton"
-
                     />
 
                 <TextView
@@ -159,7 +176,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/profile_toolbar_btn"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:onClick="OnClickProfileButton"
+
+                    />
 
             </LinearLayout>
         </LinearLayout>
