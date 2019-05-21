@@ -8,8 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.R;
@@ -54,8 +57,15 @@ public class DogsListAdapter extends BaseAdapter {
         }
         TextView textViewDogName = (TextView)view.findViewById(R.id.profile_dog_List_Name);
         ImageView deleteDog = (ImageView)view.findViewById(R.id.profile_delete_dog);
+        CircleImageView dogImg = view.findViewById(R.id.profile_dog_img);
 
         textViewDogName.setText(dogsList.get(i).getName());
+        Picasso.get()
+                .load(dogsList.get(i).getmImageUrl())
+                .placeholder(R.drawable.asset21h)
+                .fit()
+                .error(R.drawable.asset21h)
+                .into(dogImg);
 
         deleteDog.setOnClickListener(new View.OnClickListener() {
             @Override

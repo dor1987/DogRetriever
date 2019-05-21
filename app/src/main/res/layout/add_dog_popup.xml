@@ -17,10 +17,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:textStyle="bold"
-        android:textSize="24dp"
+        android:fontFamily="@font/merienda_one"
+        android:padding="10dp"
         android:text="Add new Dog"
-        android:padding="10dp"/>
+        android:textSize="24dp"
+        android:textStyle="bold" />
 
 
     <ScrollView
@@ -51,6 +52,7 @@
                     android:id="@+id/add_dog_popup_layout_dog_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/add_dog_popup_dog_name"
                     android:inputType="text"
                     android:maxLines="1"
@@ -69,12 +71,12 @@
                     android:id="@+id/add_dog_popup_layout_color"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/add_dog_popup_dog_color"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true"
 
-                    />
+                    android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -96,11 +98,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     >
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/merienda_one"
                         android:text="Size"
-                        android:textSize="19sp"/>
+                        android:textSize="19sp" />
 
 
 
@@ -125,6 +129,7 @@
                     android:id="@+id/add_dog_popup_layout_breed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/add_dog_popup_dog_breed"
                     android:inputType="text"
                     android:maxLines="1"
@@ -146,11 +151,11 @@
                     android:id="@+id/add_dog_popup_layout_collarid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/add_dog_popup_collar_id"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true"
-                    />
+                    android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -164,34 +169,53 @@
                     android:id="@+id/add_dog_popup_layout_notes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/add_dog_popup_notes"
                     android:inputType="text"
-                    android:maxLines="3"
-                     />
+                    android:maxLines="3" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
             </LinearLayout>
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/add_dog_popup_layout_error_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ERROR"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="@color/design_default_color_error"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
             <Button
-            android:id="@+id/add_dog_popup_layout_add_dog_button"
-            style="?android:textAppearanceSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textStyle="bold"
-            android:text="Next"
-                />
+                android:id="@+id/add_dog_popup_layout_add_dog_button"
+                style="@android:style/Widget.Button"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/asset22h"
+                android:fontFamily="@font/merienda_one"
+                android:text="Next"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/add_dog_popup_layout_cancel"
-                style="?android:textAppearanceSmall"
+                style="@android:style/Widget.Button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:layout_marginTop="2dp"
-                android:textStyle="bold"
+                android:background="@drawable/asset22h"
+                android:fontFamily="@font/merienda_one"
                 android:text="Cancel"
-                />
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

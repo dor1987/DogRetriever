@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="3"
@@ -14,26 +15,32 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_dog_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
+            android:src="@drawable/asset21h" />
+
         <TextView
             android:id="@+id/profile_dog_List_Name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
+            android:layout_weight="1"
             android:gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="30sp"
             android:text="SampleName"
-            />
+            android:fontFamily="@font/merienda_one"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="24sp" />
 
         <ImageView
             android:id="@+id/profile_delete_dog"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
-            android:src="@drawable/delete_icon"
-            />
+            android:src="@drawable/delete_icon" />
 
     </TableRow>
 

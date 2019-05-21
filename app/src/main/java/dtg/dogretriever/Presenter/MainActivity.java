@@ -48,6 +48,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -267,8 +268,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void clickScanner(View view) {
         //temp implementation for debugging
         //createPopUpFakeScan();
-        createPopUpScan();
-        //scanDogForDebug(view);
+        //createPopUpScan();
+        scanDogForDebug(view);
 
     }
 
@@ -562,16 +563,16 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
        // String collarId = dogIdFromFakeScanTextView.getText().toString();
 
         //if (!collarId.equals(""))
-            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase("999333");
+            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase("7777777");
 
         if (tempDog != null) {
             final Dog finalTempDog = tempDog;
             new Thread(new Runnable() {
                 public void run(){
-                    for (int i = 0; i < 1; i++) {
-                        LatLng locationToReturn = getRandomLocation((new LatLng(32.304578, 35.004626)), 2);
+                    for (int i = 0; i < 20; i++) {
+                        LatLng locationToReturn = getRandomLocation((new LatLng(32.083729, 34.811020)), 2000);
                         try {
-                            Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude));
+                            Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude), new Date(1558372715000L + i*1000));
                             firebaseAdapter.addScanToDog(finalTempDog, tempScan);
                         } catch (IOException e) {
                             e.printStackTrace();

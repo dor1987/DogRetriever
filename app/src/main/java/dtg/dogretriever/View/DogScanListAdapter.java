@@ -52,8 +52,9 @@ public class DogScanListAdapter extends  RecyclerView.Adapter<DogScanListAdapter
 
         Picasso.get()
                 .load(mDogList.get(position).getmImageUrl())
-                .placeholder(R.drawable.asset21h)
+                .placeholder(R.drawable.asset16h)
                 .error(R.drawable.asset6h)
+                .fit()
                 .into(holder.imageView);
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
