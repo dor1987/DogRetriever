@@ -76,6 +76,8 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -369,6 +371,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         gotPredictAlgoAnswer = false;
 
         hotZonesAlgo();
+
         predicationAlgo();
         return view;
     }
@@ -741,8 +744,16 @@ catch (Exception e){
         final PredicationAlgoInterface predicationAlgoInterface = factory.build(PredicationAlgoInterface.class);
        // RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
         String dogId = getArguments().getString("dogId");
+        ArrayList<Point> points = convretMapOfScansToPoint(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId)));
 
-        final PredictionRequestClass request = new PredictionRequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId))), currentWeather.name());
+        Collections.sort(points, new Comparator<Point>() {
+            @Override
+            public int compare(Point point1, Point point2) {
+                return point1.getTimeStamp() > point2.getTimeStamp() ? 1 :point1.getTimeStamp() < point2.getTimeStamp()? -1:0;
+            }
+        });
+
+        final PredictionRequestClass request = new PredictionRequestClass(points,currentWeather.name());
 
 
 // The Lambda function invocation results in a network call.
@@ -791,7 +802,7 @@ catch (Exception e){
                     // Do a toast
 
 
-                    Log.e("PredicationAlgo","Latitude: "+result.getX()+"Longitude: "+ result.getY());
+                    Log.e("PredicationAlgo","Latitude: "+result.getY()+" Longitude: "+ result.getX());
                 }
             }.execute(request);
 

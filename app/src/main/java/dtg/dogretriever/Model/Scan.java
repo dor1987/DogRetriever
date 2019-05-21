@@ -27,6 +27,18 @@ public class Scan {
 
     }
 
+    public Scan(Coordinate coordinate, Date timeStamp) throws IOException {
+        this.coordinate = coordinate;
+        this.timeStamp = timeStamp;
+        Weather weather = new Weather(coordinate.toString());
+        setCurrentWeather(weather.getCurrentWeather());
+
+        Place place  = new Place(coordinate.toString());
+        if(place.getPlaceType()!=null)
+            setPlaces(new ArrayList<>(place.getPlaceType()));
+
+    }
+
 
     public ArrayList<String> getPlaces() {
         return places;

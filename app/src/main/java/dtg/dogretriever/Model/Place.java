@@ -108,7 +108,7 @@ public class Place {
                             String place = jsonArray.getJSONObject(0).
                                     getString("shortName");
                             venuesType.add(place);
-                            Log.d(TAG, "place type found : " + place);
+                         //   Log.d(TAG, "place type found : " + place);
 
                     }
 
