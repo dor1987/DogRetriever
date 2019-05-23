@@ -268,8 +268,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void clickScanner(View view) {
         //temp implementation for debugging
         //createPopUpFakeScan();
-        //createPopUpScan();
-        scanDogForDebug(view);
+        createPopUpScan();
+        //scanDogForDebug(view);
 
     }
 
@@ -641,7 +641,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             //Bluetooth is disabled
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivity(enableBtIntent);
-            finish();
+
             return false;
         }
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
