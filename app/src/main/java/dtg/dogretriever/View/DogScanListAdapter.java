@@ -6,18 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Presenter.DogScanListFunctionalityInterface;
-import dtg.dogretriever.Presenter.MainActivity;
 import dtg.dogretriever.R;
 
 public class DogScanListAdapter extends  RecyclerView.Adapter<DogScanListAdapter.ViewHolder>{
@@ -58,10 +53,8 @@ public class DogScanListAdapter extends  RecyclerView.Adapter<DogScanListAdapter
                 .into(holder.imageView);
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View view) {
-               // Toast.makeText(mContext, "OwnerId:"+mDogList.get(position).getOwnerId(), Toast.LENGTH_SHORT).show();
                 methodCaller.showOwnerInformation(mDogList.get(position).getOwnerId());
                 methodCaller.scanDog(mDogList.get(position));
             }

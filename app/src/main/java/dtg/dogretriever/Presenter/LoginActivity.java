@@ -85,10 +85,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = findViewById(R.id.email);
-        //populateAutoComplete();
-
-
-
         mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -119,57 +115,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
     private void populateAutoComplete() {
-        /*
-        if (!mayRequestContacts()) {
-            return;
-        }
-*/
+
         getLoaderManager().initLoader(0, null, this);
     }
-/*
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-*/
+
     /**
      * Callback received when a permissions request has been completed.
      */
-    /*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
-    }
-*/
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -208,10 +166,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             showProgress(true);
             userLogin(email,password);
-            /*
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
-        */
         }
     }
 
@@ -335,26 +289,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                           // Intent i = new Intent(getBaseContext(),ProfileActivity.class);
-                            //startActivity(i);
                             Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
                             intent.putExtra("fragmentToOpen", 3);
                             startActivity(intent);
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            //Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                             onPostExecute(false);
                         }
-
-                        // ...
                     }
                 });
-
-
-
     }
 
     protected void onPostExecute(final Boolean success) {
@@ -367,7 +313,5 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mPasswordView.requestFocus();
         }
     }
-
-
 }
 

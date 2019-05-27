@@ -65,14 +65,8 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
         checkForPermissions();
         displayLocationSettingsRequest(getContext());
         mMap.setOnMarkerClickListener(this);
-
         currentLocation = ((ToolbarActivity)getActivity()).getCurrentLocation();
-
-
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(coordinate.getLatitude(),coordinate.getLongitude()),15));
-
-       // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),15));
-
         isMapReady= true;
     }
 
@@ -83,22 +77,18 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
                 .anchor(0.5f, 0.5f)
                 .title(title)
                 .snippet(snippet));
-
     }
 
     private void displayLocationSettingsRequest(Context context) {
         GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API).build();
         googleApiClient.connect();
-
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(10000 / 2);
-
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
         builder.setAlwaysShow(true);
-
         PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
@@ -135,12 +125,6 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
 
         if (getContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && getContext().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             this.requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_CODE_REQUEST);
 
@@ -162,7 +146,6 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
         createMarker(coordinate.getLatitude(), coordinate.getLongitude(), "bla bla", "bla bla");
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(coordinate.getLatitude(),coordinate.getLongitude()),15));
         Toast.makeText(getContext(), "Created marker with cords: "+ coordinate.getLatitude()+" "+coordinate.getLongitude()+" ", Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -177,11 +160,7 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
                 } else {
                     Log.d(TAG, "Location permission denied");
                 }
-
-
         }
-
-
     }
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -208,10 +187,7 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
         // Inflate the layout for this fragment
         isMapReady = false;
         currentLocation = ((ToolbarActivity)getActivity()).getCurrentLocation();
-
-
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
-
         return view;
     }
 
@@ -228,8 +204,6 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
         }
 
         smFragment.getMapAsync(this);
-
-
     }
 
 

@@ -29,7 +29,6 @@ import dtg.dogretriever.R;
 
 public class MyMessagingService extends FirebaseMessagingService {
     public static final String SHARED_PREFS = "sharedPrefs";
-
     private FirebaseAdapter firebaseAdapter;
     private String token;
     int notificationId = createID();
@@ -54,12 +53,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 String temp1 = data.get("lat");
                 String temp2 = data.get("long");
                 showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody(),temp1,temp2);
-
             }
-            //String temp = remoteMessage.getData().get("title");
-            //String temp2 =  remoteMessage.getData().get("body");
-
-            //showNotification(temp1,temp2);
         }
     }
 
@@ -70,8 +64,6 @@ public class MyMessagingService extends FirebaseMessagingService {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("token",s+"");
         editor.commit();
-
-
     }
 
 
@@ -88,12 +80,9 @@ public class MyMessagingService extends FirebaseMessagingService {
         }
 
 
-            //breaking msg to lat and long
-
-            //String[] parts = message.split(" ");
+        //breaking msg to lat and long
 
         Intent intent = new Intent(this, MainActivity.class);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 
         intent.putExtra("lat",latitude)
@@ -107,26 +96,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                     .setAutoCancel(true)
                     .setContentText(message)
                     .setContentIntent(pendingIntent);
-
-            //TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            //stackBuilder.addNextIntent((new Intent(this, MainActivity.class).putExtra("latitude",parts[1]).putExtra("longitude",parts[3])));
-
-            //PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-
-            //builder.setContentIntent(resultPendingIntent);
-
             notificationManager.notify(notificationId, builder.build());
-
-
-
-            /*
-            NotificationManagerCompat manager = NotificationManagerCompat.from(this);
-            manager.notify(999, builder.build());
-*/
-
-
     }
     public int createID() {
         Date now = new Date();

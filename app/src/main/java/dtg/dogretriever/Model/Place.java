@@ -108,24 +108,14 @@ public class Place {
                             String place = jsonArray.getJSONObject(0).
                                     getString("shortName");
                             venuesType.add(place);
-                         //   Log.d(TAG, "place type found : " + place);
-
                     }
-
-
                 }
             }
-
             this.placeType = venuesType;
-
-
         }catch(Exception e){
 
             Log.e(TAG, "One or more fields not found in the JSON data");
         }
-
-
-
     }
 
     public HashSet<String> getPlaceType() {

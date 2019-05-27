@@ -15,11 +15,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.ParcelUuid;
 import android.util.Log;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 import dtg.dogretriever.Model.Beacon;
 
 

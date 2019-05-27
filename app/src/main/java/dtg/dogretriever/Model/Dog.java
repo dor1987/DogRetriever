@@ -13,7 +13,6 @@ public class Dog {
     private enumSize size;
     private String notes;
     private String ownerId;
-    //private ArrayList<Coordinate> scannedCoords;
     private String hashCode;  //Because the dog id is save at profile inside hashmap , i saved the hash related with this dog to be able to identify it later
     private Map<String,Scan> scans;
     private String mImageUrl;
@@ -97,25 +96,7 @@ public class Dog {
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
-/*
-    public ArrayList<Coordinate> getScannedCoords() {
-        return scannedCoords;
-    }
-*/
-/*
-    public void setScannedCoords(ArrayList<Coordinate> scannedCoords) {
-        this.scannedCoords = scannedCoords;
-    }
-*/
-/*
-    public Map<String, Coordinate> getScannedCoords() {
-        return scannedCoords;
-    }
 
-    public void setScannedCoords(Map<String, Coordinate> scannedCoords) {
-        this.scannedCoords = scannedCoords;
-    }
-*/
 
     public Map<String, Scan> getScans() {
         return scans;
@@ -145,8 +126,6 @@ public class Dog {
         private String color;
         private enumSize size;
         private String notes;
-        //private ArrayList<Coordinate> scannedCoords;
-        //private Map<String,Coordinate> scannedCoords;
         private Map<String,Scan> scans;
         private String imageUrl;
 
@@ -193,17 +172,6 @@ public class Dog {
             this.imageUrl = mImageUrl;
             return this;
         }
-
-        /*
-        public void setScannedCoords(ArrayList<Coordinate> scannedCoords) {
-            this.scannedCoords = scannedCoords;
-        }
-        */
-/*
-        public void setScannedCoords(Map<String,Coordinate> scannedCoords){
-            this.scannedCoords = scannedCoords;
-        }
-  */
 
         public void setScans(Map<String, Scan> scans) {
             this.scans = scans;

@@ -14,9 +14,6 @@ public class Beacon{
         this.latestRssi = rssi;
         this.id = identifier;
         this.lastDetectedTimestamp = lastDetectedTimestamp;
-
-       // this.battery = -1f;
-
     }
 
     public void update(String address, int rssi, long lastDetectedTimestamp) {

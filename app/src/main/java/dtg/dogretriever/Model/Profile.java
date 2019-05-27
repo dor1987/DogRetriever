@@ -1,6 +1,5 @@
 package dtg.dogretriever.Model;
 
-import android.graphics.Bitmap;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -13,9 +12,7 @@ public class Profile {
     private String eMail;
     private String phoneNumber;
     private String address;
-   // private ArrayList<String> dogsIDArrayList;
     private Map<String,String> dogsIDMap;
-    //private Bitmap profileImage;
     private String token;
     private String mImageUrl;
 
@@ -29,9 +26,7 @@ public class Profile {
         seteMail(profileBuilder.eMail);
         setPhoneNumber(profileBuilder.phoneNumber);
         setAddress(profileBuilder.address);
-        //setDogsIDArrayList(profileBuilder.dogArrayList);
         setDogsIDMap(profileBuilder.dogIDMap);
-        //setProfileImage(profileBuilder.profileImage);
         setmImageUrl(profileBuilder.imageUrl);
     }
     
@@ -92,11 +87,6 @@ public class Profile {
         this.address = address;
     }
 
-//    public ArrayList<String> getDogsIDArrayList() {
-//        return dogsIDArrayList;
-//    }
-
-
     public String getToken() {
         return token;
     }
@@ -121,23 +111,11 @@ public class Profile {
 
         return dogIDArrayList;
     }
-    /*
-    public void setDogsIDArrayList(ArrayList<String> dogsIDArrayList) {
-        this.dogsIDArrayList = dogsIDArrayList;
-    }
-*/
+
     public void setDogsIDMap(Map<String,String> dogsIDMap) {
         this.dogsIDMap = dogsIDMap;
     }
-/*
-    public Bitmap getProfileImage() {
-        return profileImage;
-    }
 
-    public void setProfileImage(Bitmap profileImage) {
-        this.profileImage = profileImage;
-    }
-*/
     public String getmImageUrl() {
         return mImageUrl;
     }
@@ -158,9 +136,7 @@ public class Profile {
         //optinal
         private String phoneNumber;
         private String address;
-      //  private ArrayList<String> dogArrayList;
         private Map<String,String> dogIDMap;
-        //private Bitmap profileImage;
         private String token;
         private String imageUrl;
 
@@ -208,16 +184,6 @@ public class Profile {
             return this;
         }
 
-//        public ProfileBuilder setDogArrayList(ArrayList dogArrayList) {
-//            this.dogArrayList = dogArrayList;
-//            return this;
-//        }
-/*
-        public ProfileBuilder setProfileImage(Bitmap profileImage) {
-            this.profileImage = profileImage;
-            return this;
-        }
-*/
         public ProfileBuilder setImageUrl(String mImageUrl) {
             this.imageUrl = mImageUrl;
             return this;

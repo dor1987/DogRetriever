@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-//import android.support.v4.app.Fragment;
 import android.provider.OpenableColumns;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -18,8 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -31,13 +27,10 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import dtg.dogretriever.Model.Dog;
@@ -45,7 +38,6 @@ import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Profile;
 import dtg.dogretriever.R;
 import dtg.dogretriever.View.DogsListAdapter;
-
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -63,13 +55,10 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     private FirebaseAdapter firebaseAdapter;
     private Profile profile;
 
-
     private EditText profileName;
     private EditText phoneNumber;
     private EditText address;
     private EditText email;
-
-
 
     //popup window for add new dog
     private PopupWindow popupWindow = null;
@@ -112,8 +101,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        //setContentView(R.layout.activity_profile);
         //for pop up window
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
         popupWidth = displayMetrics.widthPixels ;
@@ -183,12 +170,10 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
-       // Button dogImageUpLoadButton = layout.findViewById(R.id.profileDogAdd_ImageUpLoadButton);
         Button addDogButton = layout.findViewById(R.id.add_dog_popup_layout_add_dog_button);
         Button addDogPopUpcancel = layout.findViewById(R.id.add_dog_popup_layout_cancel);
         addDogButton.setOnClickListener(this);
         addDogPopUpcancel.setOnClickListener(this);
-        //dogImageUpLoadButton.setOnClickListener(this);
         popupWindow = new PopupWindow(this.getActivity());
         popupWindow.setContentView(layout);
 
@@ -307,9 +292,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                                    .placeholder(R.drawable.asset6h)
                                    .error(R.drawable.asset6h)
                                    .into(profilePicture);
-
                        }
-
                        @Override
                    public void onUploadProgress(double progress) {
                        imageUploadProgressBar.setProgress((int) progress);
@@ -325,7 +308,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                            //ignore
                        }
                    });
-                  // firebaseAdapter.uploadFile(this.getActivity().getBaseContext(), mImageUri, imageNameEditText.getText().toString());
                }
                 break;
 
@@ -338,8 +320,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 openFileChooser(PICK_IMAGE_REQUEST);
                 break;
 
-
-                //
             case R.id.dog_image_upload_popup_layout_next_button:
                 firebaseAdapter.cancelAnUpload();
                 cancelPopUp(view);
@@ -372,15 +352,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                         public void onDogImageUploadFinish(String url) {
                             firebaseAdapter.removeImageUploadListener();
                             cancelPopUp(view);
-
-                            //TODO displa image somwhere maybe dog profile
-                            /*
-                            Picasso.get()
-                                    .load(url)
-                                    .placeholder(R.drawable.asset6h)
-                                    .error(R.drawable.asset6h)
-                                    .into(profilePicture);
-                        */
                         }
 
                         @Override
@@ -390,9 +361,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                     });
                 }
                 break;
-
         }
-
     }
 
     private void createPopEditImage() {

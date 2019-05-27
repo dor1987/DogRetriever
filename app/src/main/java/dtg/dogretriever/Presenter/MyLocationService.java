@@ -14,12 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Binder;
-//import android.support.annotation.NonNull;
-//import android.support.v4.app.ActivityCompat;
-import android.widget.Toast;
-
 import java.io.IOException;
-
 import androidx.core.app.ActivityCompat;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
@@ -53,13 +48,6 @@ public class MyLocationService extends Service implements LocationListener {
         super.onCreate();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
-       // Toast.makeText(this, "new Service Created", Toast.LENGTH_SHORT).show();
-
-
-
-        //mLocationListener.locationChanged(userCurrentLocation);
-
-
     }
 
     public void addScanToDataBase(final Dog dog){
@@ -105,10 +93,10 @@ public class MyLocationService extends Service implements LocationListener {
 
         if (isBetterLocation(location, userCurrentLocation)) {
             userCurrentLocation = location;
-            mLocationListener.locationChanged(userCurrentLocation);
-
+            if(mLocationListener!= null) {
+                mLocationListener.locationChanged(userCurrentLocation);
+            }
         }
-
     }
 
     @Override
@@ -131,7 +119,6 @@ public class MyLocationService extends Service implements LocationListener {
         if (currentBestLocation == null) {
             return true;
         }
-
         // Check whether the new location fix is newer or older
         long timeDelta = location.getTime() - currentBestLocation.getTime();
         boolean isSignificantlyNewer = timeDelta > TWO_MINUTES;
@@ -190,10 +177,7 @@ public class MyLocationService extends Service implements LocationListener {
                                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                 100);
                         askedForPremmisions = true;
-
-
                     }
-                //return;
                 }
             }
 
@@ -228,44 +212,15 @@ public class MyLocationService extends Service implements LocationListener {
             if(userCurrentLocation!=null)
                 if(userCurrentLocation.getLongitude()!=0 && userCurrentLocation.getLatitude()!=0)
                     mLocationListener.locationChanged(userCurrentLocation);
-
-
         }
 
         void DeleteLocationListener(LocationListener listener){
             locationManager.removeUpdates(MyLocationService.this);
             mLocationListener = null;
         }
-
-
     }
 
     public interface LocationListener{
         void locationChanged(Location location);
     }
-
-
 }
-/*
-
-
-  @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-
-
-                    return;
-                } else {
-                    // permission denied, boo!
-                    //closing app
-                    System.exit(0);
-                }
-                break;
-
-        }
- */

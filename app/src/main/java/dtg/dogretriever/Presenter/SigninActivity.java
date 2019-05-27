@@ -32,7 +32,6 @@ import dtg.dogretriever.R;
 public class SigninActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-
     private EditText mUserNameView;
     private EditText mPasswordView;
     private EditText mReEnterPasswordView;
@@ -48,7 +47,6 @@ protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_signin);
 
-
     mUserNameView    = findViewById(R.id.signin_user_name);
     mPasswordView    = findViewById(R.id.signin_password);
     mReEnterPasswordView    = findViewById(R.id.signin_re_enter_password);
@@ -56,11 +54,8 @@ protected void onCreate(Bundle savedInstanceState) {
     mAddressView    = findViewById(R.id.signin_address);
     mPhoneNumberView    = findViewById(R.id.signin_phone_number);
     mEmailView    = findViewById(R.id.signin_email);
-
     firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
-
     mAuth = FirebaseAuth.getInstance();
-
     Button mSignInButton = findViewById(R.id.sign_in_button);
     mSignInButton.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -68,15 +63,11 @@ protected void onCreate(Bundle savedInstanceState) {
             attemptSignin();
         }
     });
-
     mSigninFormView = findViewById(R.id.signin_form);
     mProgressView = findViewById(R.id.signin_progress);
-
-
 }
 
     private void attemptSignin() {
-
         //Reset errors
         mUserNameView.setError(null);
         mPasswordView.setError(null);
@@ -109,8 +100,6 @@ protected void onCreate(Bundle savedInstanceState) {
             cancel = true;
         }
 
-
-
         // Check for a valid password.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password,reEnterPassword)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
@@ -128,43 +117,7 @@ protected void onCreate(Bundle savedInstanceState) {
             focusView = mFullNameView;
             cancel = true;
         }
-/*
-        //check if address name is valid
-        if (TextUtils.isEmpty(address)) {
-            mAddressView.setError(getString(R.string.error_field_required));
-            focusView = mAddressView;
-            cancel = true;
-        } else if (!isUserNameValid(address)) {
-            mAddressView.setError(getString(R.string.error_invalid_address));
-            focusView = mAddressView;
-            cancel = true;
-        }
-*/
-/*
-        //check if phone number is valid
-        if (TextUtils.isEmpty(phoneNumber)) {
-            mPhoneNumberView.setError(getString(R.string.error_field_required));
-            focusView = mPhoneNumberView;
-            cancel = true;
-        } else if (!isUserNameValid(phoneNumber)) {
-            mPhoneNumberView.setError(getString(R.string.error_invalid_phone));
-            focusView = mPhoneNumberView;
-            cancel = true;
-        }
-*/
 
-/*
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(eMail)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(eMail)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-*/
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -174,13 +127,7 @@ protected void onCreate(Bundle savedInstanceState) {
             // perform the user login attempt.
             showProgress(true);
             registerNewUser(userName,password,fullName,address,phoneNumber,eMail);
-            /*
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
-        */
         }
-
-
     }
 
     private boolean isEmailValid(String eMail){
@@ -227,9 +174,6 @@ protected void onCreate(Bundle savedInstanceState) {
                             firebaseAdapter.addUserToDataBase(tempProfile);
 
                             //TODO need to update preferences
-                           // updateUI(user);
-                           // Intent i = new Intent(getBaseContext(),ProfileActivity.class);
-                            //startActivity(i);
                             Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
                             intent.putExtra("fragmentToOpen", 3);
                             startActivity(intent);
@@ -240,15 +184,7 @@ protected void onCreate(Bundle savedInstanceState) {
                                 Toast.makeText(SigninActivity.this, "User with this email already exist.", Toast.LENGTH_SHORT).show();
                             }
                             onPostExecute(false);
-/*
-                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SigninActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-  */
-                            //updateUI(null);
                         }
-
-                        // ...
                     }
                 });
     }
@@ -295,12 +231,5 @@ protected void onCreate(Bundle savedInstanceState) {
         if (success) {
             finish();
         }
-        /*
-        else {
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            mPasswordView.requestFocus();
-        }
-*/
-
     }
 }

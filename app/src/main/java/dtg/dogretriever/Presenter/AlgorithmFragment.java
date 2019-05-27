@@ -1,50 +1,26 @@
 package dtg.dogretriever.Presenter;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-/*
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTabHost;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-*/
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.Toast;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
@@ -61,29 +37,21 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-//import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -96,26 +64,15 @@ import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.Scan;
 import dtg.dogretriever.Model.Weather;
 import dtg.dogretriever.Presenter.LearningAlgoTemp.Cluster;
-import dtg.dogretriever.Presenter.LearningAlgoTemp.LearningAlgo;
 import dtg.dogretriever.Presenter.LearningAlgoTemp.Point;
 import dtg.dogretriever.R;
-import com.amazonaws.mobileconnectors.lambdainvoker.*;
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
-import com.amazonaws.regions.Regions;
 import com.google.android.material.tabs.TabLayout;
-
-//import static android.support.v4.content.ContextCompat.getSystemService;
 
 
 public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, View.OnClickListener {
     private static final String TAG = "AlgorithmFragment";
     public static final int MY_CODE_REQUEST = 123;
-
-
-
-
     private enum algoType {DEFUALT, PREDICTION, LEARNING}
-
     private final double minRadius = 1000.0;
     private final double maxRadius = 5000.0;
     private ArrayList<Color> colors;
@@ -125,18 +82,15 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private GoogleMap mMap;
     private SupportMapFragment smFragment;
     private FragmentTabHost mTabHost;
-   // private ArrayList<Coordinate> coordinatesToShow;
     private Location currentLocation;
     private ArrayList<Coordinate> hotZonesAlgoResult;
     private ArrayList<Cluster> hotZonesAlgoResultAsCluster;
     private Coordinate predictionAlgoResult;
-
     private OnFragmentInteractionListener mListener;
     final Map<String, Scan> mapOfScans = new HashMap<>();
     FirebaseAdapter firebaseAdapter;
     private FusedLocationProviderClient fusedLocationClient;
     LocationManager mLocationManager;
-    LearningAlgo learningAlgo;
     TabLayout tabLayout;
     boolean isMapReady;
     boolean isFirstTimeLocationSet;
@@ -165,12 +119,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         mMap.setOnMarkerClickListener(this);
         mMap.getUiSettings().setMapToolbarEnabled(true);
         mMap.setPadding(0,0,0,150);
-        //currentLocation = getLastKnownLocation();
-        //currentLocation = ((ToolbarActivity) getActivity()).getUserCurrentLocation();
         currentLocation = ((ToolbarActivity)getActivity()).getCurrentLocation();
-        Log.d("DorCheck","Location At AlgoFragment onMapReady: "+ currentLocation+"");
-
-        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),15));
         tabLayout.getTabAt(0).select();
         isMapReady= true;
     }
@@ -234,72 +183,38 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         }
 
         if (getContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && getContext().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             this.requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_CODE_REQUEST);
-
-
         } else {
             updateMapUI();
             Log.d(TAG, "Location permission granted from manifest");
         }
-
     }
 
     @SuppressLint("MissingPermission")
     public void updateMapUI() {
         mMap.clear();
-
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(true);
-
-//        ArrayList<Coordinate> coordinates = getLearningAlgoCoordsList();
-
         if(currentTab==0) {
-            /*
-            if (!coordinatesToShow.isEmpty()) {
-                for (Coordinate coordinate : coordinatesToShow) {
-                    createMarker(coordinate.getLatitude(), coordinate.getLongitude(), "bla bla", "bla bla");
-                }
-            }
-            */
-
             if(mapOfScans!= null &&!mapOfScans.isEmpty()){
                 for(Scan scan : mapOfScans.values()){
                     createMarker(scan.getCoordinate().getLatitude(),scan.getCoordinate().getLongitude(),sdf.format(scan.getTimeStamp()),scan.getCoordinate().getLatitude()+","+scan.getCoordinate().getLongitude());
                 }
             }
-            //if(currentLocation!=null)
-              //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),8));
-            //else//if doesnt have a current location just zoom to the center to israel
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.686378,35.017207),8));
-
         }
         else if (currentTab==1){
                 showRadiusArea(hotZonesAlgoResultAsCluster);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),13));
-
         }
-
         else if(currentTab ==2) {
             if(predictionAlgoResult!=null) {
                 showRadiusArea(predictionAlgoResult);
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(predictionAlgoResult.getLatitude(), predictionAlgoResult.getLongitude()), 17));
             }
         }
-        // showRadiusArea(getCoordinatesToShow(), getRandomRadius(getCoordinatesToShow().size()));
-     /*
-        for (Scan scan : mapOfScans.values()) {
-            createMarker(scan.getCoordinate().getLatitude(), scan.getCoordinate().getLongitude(), "Time", scan.getTimeStamp() + "");
-        }
-    */
     }
 
     @Override
@@ -314,11 +229,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                 } else {
                     Log.d(TAG, "Location permission denied");
                 }
-
-
         }
-
-
     }
 
 
@@ -353,11 +264,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
         Log.d("DorCheck","Location At AlgoFragment OnCreateView: "+ currentLocation+"");
 
-     /*
-        currentLocation = new Location("");
-        currentLocation.setLongitude(0);
-        currentLocation.setLatitude(0);
-       */
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
         View view = inflater.inflate(R.layout.fragment_algorithm, container, false);
         ViewPager viewPager = view.findViewById(R.id.viewpager);
@@ -371,7 +277,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         gotPredictAlgoAnswer = false;
 
         hotZonesAlgo();
-
         predicationAlgo();
         return view;
     }
@@ -379,19 +284,13 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-
         FragmentManager fm = getActivity().getSupportFragmentManager();
         smFragment = (SupportMapFragment) fm.findFragmentById(R.id.mapView);
         if (smFragment == null) {
             smFragment = SupportMapFragment.newInstance();
             fm.beginTransaction().replace(R.id.mapView, smFragment).commit();
         }
-
-
-
         smFragment.getMapAsync(this);
-
     }
 
     @Override
@@ -413,12 +312,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                                 new HashMap<String,Scan>() :
                         firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId)) );
                         colorExplainLayout.setVisibility(View.INVISIBLE);
-/*
-                        coordinatesToShow.clear();
-                        for (Scan scan : mapOfScans.values())
-                            coordinatesToShow.add(scan.getCoordinate());
-*/
-
                         updateMapUI();
                         break;
 
@@ -427,42 +320,14 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                         showHotZonesAlgoMarkersOnMap();
                         colorExplainLayout.setVisibility(View.VISIBLE);
 
-                        /*
-                        coordinatesToShow.clear();
-                       // coordinatesToShow.addAll(learningAlgo.learningAlgo(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
-                        coordinatesToShow.addAll(hotZonesAlgoResult);
-                        updateMapUI();
-                        if(coordinatesToShow.size() == 0){
-                            Toast.makeText(getContext(), "Not enough information", Toast.LENGTH_SHORT).show();
-                        }
-                        */
                         break;
 
                     case 2:
                         //show algo2 result for selected dog
                         //Right now will show ll scans of all dogs
                         ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
-/*
-                        mapOfScans.clear();
-                        mapOfScans.putAll(firebaseAdapter.getAllScanOfAllDogs());
-  */
                         colorExplainLayout.setVisibility(View.INVISIBLE);
                         showPredictAlgoMarkersOnMap();
-                       /*
-                        coordinatesToShow.clear();
-
-                        for (Scan scan : mapOfScans.values())
-                            coordinatesToShow.add(scan.getCoordinate());
-                        */
-                       /*
-                       if(predictionAlgoResult==null && gotPredictAlgoAnswer){
-                            startNotificationPopUp();
-                       }
-                       else if(predictionAlgoResult == null && !gotPredictAlgoAnswer){
-
-                       }
-                        updateMapUI();
-                        */
                         break;
                 }
             }
@@ -520,16 +385,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     //TODO radius is now fixed size Tal how to determne radius?
         double radius = 50;
         mMap.addCircle(new CircleOptions().center(new LatLng(coord.getLatitude(),coord.getLongitude())).radius(radius).fillColor(0x22249ACF));
-
-    }
-
-    private void showRadiusArea(ArrayList<Coordinate> centerList, ArrayList<Double> radiusList) {
-
-        for (int i = 0; i < centerList.size(); i++) {
-
-                  //mMap.addCircle(new CircleOptions().center(centerList.get(i).get)
-                    //      .radius(radiusList.get(i)).fillColor(getRandomColor()));
-        }
     }
 
     private void showRadiusArea(ArrayList<Cluster> arrayOfClusters){
@@ -541,7 +396,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         for(Cluster cluster : arrayOfClusters){
             mMap.addCircle(new CircleOptions().center(new LatLng(cluster.getCenterLat(),cluster.getCenterLong())).radius(cluster.getDiameter()/2).fillColor(getColorOfCircle(totalAmountOfPoints,cluster.getNumOfPoints())));
         }
-
     }
     private int getColorOfCircle(int totalAmountOfPoints,int clusterAmountOfPoints){
     double ratio = (double)clusterAmountOfPoints/(double)totalAmountOfPoints;
@@ -577,82 +431,15 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         //activates from toolbar activity
         if(location!=null)
             currentLocation = location;
-        //currentLocation.setLatitude(location.getLatitude());
-        //currentLocation.setLongitude(location.getLongitude());
 
         Log.i(TAG, "Current location: Lat - " + currentLocation.getLatitude() + "Long - " + currentLocation.getLongitude());
         if(isMapReady) {
 
             if (isFirstTimeLocationSet) {
-                //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 15));
                 isFirstTimeLocationSet = false;
             }
-          /*
-                else
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
-        */
         }
     }
-    /*
-    @Override
-    public void onLocationChanged(Location location) {
-        currentLocation = location;
-        Log.i(TAG, "Current location: Lat - " + location.getLatitude() + "Long - " + location.getLongitude());
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getAltitude())));
-
-
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getAltitude())));
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-
-    }
-    */
-/*
-    private ArrayList<Coordinate> getLearningAlgoCoordsList() {
-        return getArguments().getParcelableArrayList("learningAlgo");
-    }
-*/
-/*
-    private Location getLastKnownLocation() {
-        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        List<String> providers = mLocationManager.getProviders(true);
-        Location bestLocation = null;
-        for (String provider : providers) {
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-            }
-            Location l = mLocationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
-            }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
-                bestLocation = l;
-            }
-        }
-        return bestLocation;
-    }
-    */
-
 
     @SuppressLint("StaticFieldLeak")
     public void hotZonesAlgo(){
@@ -672,9 +459,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         final MyInterface myInterface = factory.build(MyInterface.class);
         int radius = Integer.parseInt(sharedPreferences.getString("hot_zones_algo_radius","4000"));
         RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
-        //String dogId = getArguments().getString("dogId");
 
-       // RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId))),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
 // The Lambda function invocation results in a network call.
 // Make sure it is not called from the main thread.
 try {
@@ -707,20 +492,15 @@ try {
                 if (result == null) {
                     return;
                 }
-
-                // Do a toast
-                //Toast.makeText(MainActivity.this, result.getGreetings(), Toast.LENGTH_LONG).show();
-               // hotZonesAlgoResult.addAll(convertClusterArrayListToCoordiante(result.getClustersList()));
                hotZonesAlgoResultAsCluster.addAll(result.getClustersList());
 
-                //Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
                 if(currentTab==1) {
                    tabLayout.selectTab(tabLayout.getTabAt(1));
                 }
             }
         }.execute(request);
 
-        //End testing lambda
+        //End lambda
 }
 catch (Exception e){
     e.printStackTrace();
@@ -791,18 +571,10 @@ catch (Exception e){
                         return;
                     }
 
-                    //hotZonesAlgoResultAsCluster.addAll(result.getClustersList());
                     predictionAlgoResult = new Coordinate(result.getY(),result.getX());
-
-                    //Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
                     if(currentTab==2) {
                         tabLayout.selectTab(tabLayout.getTabAt(2));
                     }
-
-                    // Do a toast
-
-
-                    Log.e("PredicationAlgo","Latitude: "+result.getY()+" Longitude: "+ result.getX());
                 }
             }.execute(request);
 
@@ -839,10 +611,6 @@ catch (Exception e){
     }
 
     public void showHotZonesAlgoMarkersOnMap(){
-       // coordinatesToShow.clear();
-        // coordinatesToShow.addAll(learningAlgo.learningAlgo(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, 2000)));
-
-        //coordinatesToShow.addAll(hotZonesAlgoResult);
         updateMapUI();
         if(hotZonesAlgoResultAsCluster.size() == 0 && !gotHotZoneAnswer){
             ((ToolbarActivity)getActivity()).showSmalProgressBar(true);
@@ -885,7 +653,6 @@ catch (Exception e){
         notEnoughScansPopupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         notEnoughScansPopupWindow.setFocusable(true);
         notEnoughScansPopupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
-
     }
     @Override
     public void onClick(View view) {

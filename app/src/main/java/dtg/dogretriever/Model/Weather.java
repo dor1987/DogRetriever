@@ -43,7 +43,6 @@ public class Weather {
 
     public static JSONObject getJSON(String coord) throws IOException {
         //get json from weather API
-
         HttpsURLConnection connection = null;
         BufferedReader reader = null;
         try {

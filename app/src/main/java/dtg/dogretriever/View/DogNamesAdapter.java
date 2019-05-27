@@ -7,9 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.R;
 
@@ -21,7 +19,6 @@ public class DogNamesAdapter extends BaseAdapter {
     public DogNamesAdapter(ArrayList<Dog> dogsList, Context context){
         this.dogsList = dogsList;
         this.context = context;
-
     }
     @Override
     public int getCount() {
@@ -43,7 +40,6 @@ public class DogNamesAdapter extends BaseAdapter {
         inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         view = inflater.inflate(R.layout.dogs_name_item,
                 viewGroup, false);
-
         TextView dogName = view.findViewById(R.id.dog_name_text);
         dogName.setText(dogsList.get(i).getName());
 

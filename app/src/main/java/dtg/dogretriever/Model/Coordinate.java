@@ -26,15 +26,6 @@ public class Coordinate implements Parcelable {
     }
 
 
-
-/*
-    public LatLng getLocation() {
-        return new LatLng(latitude,longitude);
-    //    return location;
-    }
-*/
-
-
     protected Coordinate(Parcel in) {
         latitude = in.readDouble();
         longitude = in.readDouble();
@@ -63,14 +54,8 @@ public class Coordinate implements Parcelable {
     public void setLocation(double latitude, double longitude) {
        this.latitude = latitude;
        this.longitude = longitude;
-        //this.location = location;
     }
 
-/*
-    public LatLng getLatLng(){
-        return new LatLng(latitude,longitude);
-    }
-*/
 
     @Override
     public String toString() {

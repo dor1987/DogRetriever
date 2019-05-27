@@ -38,7 +38,6 @@ import java.util.concurrent.Executor;
 
 import androidx.annotation.NonNull;
 
-//import android.support.annotation.NonNull;
 
 public class FirebaseAdapter {
     //singleton
@@ -98,11 +97,7 @@ public class FirebaseAdapter {
         isHistogramReady = false;
 
         //Firebase Listeners
-/*
-        if(mAuth.getCurrentUser() != null){
-            userID = mAuth.getCurrentUser().getUid();
-        }
-*/
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -110,8 +105,6 @@ public class FirebaseAdapter {
                     userID = mAuth.getCurrentUser().getUid();
                 }
             }
-
-
         };
 
         dogTableRef.addValueEventListener(new ValueEventListener() {
@@ -145,35 +138,15 @@ public class FirebaseAdapter {
 
 
 
-          //  usersTableRef.orderByKey().equalTo(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
             usersTableRef.addValueEventListener(new ValueEventListener() {
 
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                   // ProfilesFromDataBaseList.clear();
-                    //profile = dataSnapshot.getValue(Profile.class);
                     mainDataSnapshot[0] = dataSnapshot;
 
                     if(profileDataListener != null){ //let main menu know that the profile data is ready
                         profileDataListener.onDataReady();
                     }
-             //       for (DataSnapshot temp: dataSnapshot.getChildren()){
-                    /*
-                        if(dataSnapshot.child(userID).hasChild("id"));
-                            profile.setId((String)dataSnapshot.child(userID).child("id").getValue());
-                        if(dataSnapshot.child(userID).hasChild("fullName"))
-                            profile.setFullName((String)dataSnapshot.child(userID).child("fullName").getValue());
-                        if(dataSnapshot.child(userID).hasChild("phoneNumber"))
-                            profile.setPhoneNumber((String)dataSnapshot.child(userID).child("phoneNumber").getValue());
-                        if(dataSnapshot.child(userID).hasChild("address"))
-                            profile.setAddress((String)dataSnapshot.child(userID).child("address").getValue());
-                        if(dataSnapshot.child(userID).hasChild("eMail"))
-                            profile.seteMail((String)dataSnapshot.child(userID).child("eMail").getValue());
-                        if(dataSnapshot.child(userID).hasChild("dogsIDArrayList"))
-                            profile.setDogsIDMap((Map<String,String>) dataSnapshot.child(userID).child("dogsIDArrayList").getValue());
-                 */
-                   // }
-
                 }
 
                 @Override
@@ -277,8 +250,6 @@ public class FirebaseAdapter {
     public Profile getUserById(String userId){
         Profile owner = new Profile();
         try {
-//            if (mainDataSnapshot[0].child(userID).hasChild("id")) ;
-//            owner.setId((String) mainDataSnapshot[0].child(userID).child("id").getValue());
             if (mainDataSnapshot[0].child(userId).hasChild("fullName"))
                 owner.setFullName((String) mainDataSnapshot[0].child(userId).child("fullName").getValue());
             if (mainDataSnapshot[0].child(userId).hasChild("phoneNumber"))
@@ -287,8 +258,6 @@ public class FirebaseAdapter {
                 owner.setAddress((String) mainDataSnapshot[0].child(userId).child("address").getValue());
             if (mainDataSnapshot[0].child(userId).hasChild("eMail"))
                 owner.seteMail((String) mainDataSnapshot[0].child(userId).child("eMail").getValue());
-//            if (mainDataSnapshot[0].child(userID).hasChild("dogsIDArrayList"))
-//                owner.setDogsIDMap((Map<String, String>) mainDataSnapshot[0].child(userID).child("dogsIDArrayList").getValue());
             if (mainDataSnapshot[0].child(userId).hasChild("image"))
                 owner.setmImageUrl((String) mainDataSnapshot[0].child(userId).child("image").child("mImageUrl").getValue());
 
@@ -490,7 +459,6 @@ public class FirebaseAdapter {
 
 
 
-           // mUploadTask = fileRefrence.putFile(mImageUri)
             mUploadTask = fileRefrence.putBytes(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -500,10 +468,9 @@ public class FirebaseAdapter {
                             @Override
                             public void onSuccess(Uri uri) {
                                 Upload upload = new Upload(imageName.trim(),uri.toString());
-                                userID = mAuth.getCurrentUser().getUid();//maybe redundant, need 2 check if already init in constructor
+                                userID = mAuth.getCurrentUser().getUid();
 
                                 DatabaseReference currentUserRef = usersTableRef.child(userID).child("image");
-                                //String uploadId = currentUserRef.push().getKey();
                                 currentUserRef.setValue(upload);
                                 Log.e("UPLOADSUCCESS"," UPLOADSUCCESS");
                                 imageUploadListener.onUploadProgress(0.0);
@@ -560,7 +527,6 @@ public class FirebaseAdapter {
 
     public void deleteOldPicture(){
        if(oldImageUrl!=null && !oldImageUrl.toString().trim().isEmpty()) {
-         //  StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(profile.getmImageUrl());
            oldImageUrl.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                @Override
                public void onSuccess(Void aVoid) {
@@ -582,10 +548,6 @@ public class FirebaseAdapter {
                 bmp.compress(Bitmap.CompressFormat.JPEG,25,baos);
                 byte[] data = baos.toByteArray();
 
-
-
-
-                // mUploadTask = fileRefrence.putFile(mImageUri)
                 mUploadTask = fileRefrence.putBytes(data)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -597,12 +559,10 @@ public class FirebaseAdapter {
                                         Upload upload = new Upload(imageName.trim(),uri.toString());
 
                                         DatabaseReference currentDogRef = dogTableRef.child(myDogId).child("image");
-                                        //String uploadId = currentUserRef.push().getKey();
                                         currentDogRef.setValue(upload);
                                         Log.e("UPLOADSUCCESS"," UPLOADSUCCESS");
                                         imageUploadListener.onDogImageUploadProgress(0.0);
                                         imageUploadListener.onDogImageUploadFinish(uri.toString());
-                                        //profile.setmImageUrl(uri.toString());
                                         deleteOldDogPicture();
                                     }
                                 });
@@ -635,12 +595,6 @@ public class FirebaseAdapter {
     }
 
     private StorageReference getOldDogImageUrl(String myDogId) {
-       /*
-        if(profile.getmImageUrl()!=null && !profile.getmImageUrl().trim().isEmpty()) {
-            StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(profile.getmImageUrl());
-            return oldImageRef;
-        }
-        */
         StorageReference oldImageRef = null;
         try {
             oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(getDogByCollarIdFromFireBase(myDogId).getmImageUrl());
@@ -662,7 +616,6 @@ public class FirebaseAdapter {
 
     public void deleteOldDogPicture(){
         if(oldImageUrl!=null && !oldImageUrl.toString().trim().isEmpty()) {
-            //  StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(profile.getmImageUrl());
             oldImageUrl.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {

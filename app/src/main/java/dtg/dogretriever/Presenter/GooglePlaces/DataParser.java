@@ -13,11 +13,7 @@ public class DataParser {
 
     private ArrayList<String> getSingleNearbyPlace(JSONObject googlePlaceJSON)
     {
-        //HashMap<String, String> googlePlaceMap = new HashMap<>();
-
         ArrayList<String> types = new ArrayList<>();
-
-
             if (!googlePlaceJSON.isNull("types"))
             {
                 try {
@@ -43,10 +39,7 @@ public class DataParser {
     private List<String> getAllNearbyPlaces(JSONArray jsonArray)
     {
         int counter = jsonArray.length();
-
         ArrayList<String> NearbyPlacesList = new ArrayList<>();
-
-        //ArrayList<String> NearbyPlaceList = null;
 
         for (int i=0; i<counter; i++)
         {
@@ -59,7 +52,6 @@ public class DataParser {
                 e.printStackTrace();
             }
         }
-
         return NearbyPlacesList;
     }
 

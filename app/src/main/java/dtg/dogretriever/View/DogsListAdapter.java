@@ -28,7 +28,6 @@ public class DogsListAdapter extends BaseAdapter {
         this.dogsList = dogs;
         this.context = context;
         firebaseAdapter = FirebaseAdapter.getInstanceOfFireBaseAdapter();
-
     }
 
     @Override

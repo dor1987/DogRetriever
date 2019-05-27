@@ -1,6 +1,5 @@
 package dtg.dogretriever.Presenter;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -19,9 +18,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,29 +27,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.squareup.picasso.Picasso;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,9 +59,6 @@ import dtg.dogretriever.View.DogNamesAdapter;
 import dtg.dogretriever.View.DogScanListAdapter;
 
 import static dtg.dogretriever.Presenter.MyMessagingService.SHARED_PREFS;
-
-//import android.support.v4.app.ActivityCompat;
-//import android.support.v7.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements MyLocationService.LocationListener,
         DogScanListFunctionalityInterface, BeaconScannerService.OnBeaconEventListener {
@@ -97,10 +85,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private PopupWindow ownerInfoPopUp = null;
     private TextView ownerPhoneTextView;
 
-    //use current location
-    // private FusedLocationProviderClient fusedLocationClient;
-    // private LocationManager locationManager;
-
     //Location Service
     boolean isBound = false;
     private MyLocationService.MylocalBinder mBinder;
@@ -111,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     Double latitude;
     Double longitude;
     boolean isNotifcationPopShowenBefore;
-    //Intent extras;
     Bundle bundle;
 
     //Bluetooth
@@ -133,42 +116,25 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         mMainMenuFormView = findViewById(R.id.mainMenuForm);
         userWelcomeTextView = findViewById(R.id.userWelcome);
         profilePicView = findViewById(R.id.profile_image);
-
-
-        //permissionCheck();//If permission is ok it will start a get current location sequence
-
-
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
         initWelcomeTextview();
         setTokenListener();
-        // fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
         userCurrentLocation = new Location("");
-
-
         //start the service
         Intent intent = new Intent(this, MyLocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
-
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
-
         isNotifcationPopShowenBefore = false;
-
         mBeaconAdapterItems = new ArrayList<>();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //start the service
-        //showProgress(true);
-        //mHandler.post(mPruneTask);
         Intent intent = new Intent(this, MyLocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         showSmalProgressBar(false);
-
     }
 
     @Override
@@ -179,16 +145,10 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             unbindService(mConnection);
             isBound = false;
         }
-
         if(isBoundBeaconService) {
             getApplicationContext().unbindService(mBeaconConnection);
             isBoundBeaconService = false;
         }
-
-        //mHandler.removeCallbacks(mPruneTask);
-
-        //mBeaconService.setBeaconEventListener(null);
-        //unbindService(this);
     }
 
     @Override
@@ -201,87 +161,17 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         }
     }
 
-    /*
-    private void getUserCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            userCurrentLocation.setLatitude(location.getLatitude());
-                            userCurrentLocation.setLongitude(location.getLongitude());
-                        }
-                        showProgress(false);
-                    }
-                });
-
-    }
-*/
-
-    /*
-        private void permissionCheck() {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-
-        }
-    */
-/*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        permissionCheck();
-                        return;
-                    }
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 50, this);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 50, this);
-
-
-
-
-                } else {
-                    // permission denied, boo!
-                    //closing app
-                    System.exit(0);
-
-                }
-                return;
-            }
-            // other 'case' lines to check for other
-
-        }
-    }
-*/
     public void clickScanner(View view) {
         //temp implementation for debugging
-        //createPopUpFakeScan();
         createPopUpScan();
-        //scanDogForDebug(view);
-
     }
 
     public void initWelcomeTextview() {
         if (firebaseAdapter.isUserConnected()) {
-
             if (firebaseAdapter.isUserDataReadyNow()) {
                 userWelcomeTextView.setText("Hello " + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
                 initProfilePic();
-
             } else {
-
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
                     @Override
                     public void onDataReady() {
@@ -292,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 });
             }
         } else {
-
             userWelcomeTextView.setText("Hello Guest");
         }
     }
@@ -303,12 +192,10 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             if (firebaseAdapter.isUserDataReadyNow()) {
                 createPopUpChooseDogName();
             } else {
-                //showProgress(true);
                 showSmalProgressBar(true);
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
                     @Override
                     public void onDataReady() {
-                        //showProgress(false);
                         showSmalProgressBar(false);
                         createPopUpChooseDogName();
                         firebaseAdapter.removeProfileDataListener();
@@ -316,7 +203,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 });
             }
         } else {
-
             Intent i = new Intent(getBaseContext(), LoginActivity.class);
             startActivity(i);
             showSmalProgressBar(false);
@@ -333,9 +219,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         //check if user logged in
         //if user logged in send to profile
         //else send to login activity
-
-        Toast.makeText(this, "Clicked Profile", Toast.LENGTH_SHORT).show();
-
         if (firebaseAdapter.isUserConnected()) {
             if (firebaseAdapter.isUserDataReadyNow()) {
                 Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
@@ -360,35 +243,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             Intent i = new Intent(getBaseContext(), LoginActivity.class);
             startActivity(i);
         }
-
-        /*
-        if(firebaseAdapter.isUserConnected()){
-            if(firebaseAdapter.isUserDataReadyNow()){
-                Intent i = new Intent(getBaseContext(),ProfileActivity.class);
-                startActivity(i);
-            }
-
-            else {
-                showProgress(true);
-                firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
-                    @Override
-                    public void onDataReady() {
-                        showProgress(false);
-                        Intent i = new Intent(getBaseContext(),ProfileActivity.class);
-                        firebaseAdapter.removeProfileDataListener();
-                        startActivity(i);
-
-                    }
-                });
-            }
-
-        }
-        else{
-            Intent i = new Intent(getBaseContext(),LoginActivity.class);
-            startActivity(i);
-        }
-
-        */
     }
 
     public void clickAbout(View view) {
@@ -413,35 +267,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                //  showProgress(true);
                 showSmalProgressBar(true);
                 popupWindow.dismiss();
-
                 new AsyncToolBarActivityStart(createDogsList().get(i).getCollarId()).execute();
-/*
-
-                new AsyncTask<Void, Void, Intent>() {
-
-                    @Override
-                    protected Intent doInBackground(Void... voids) {
-                        Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
-                        intent.putExtra("TAG", "AlgorithmFragment");
-                        intent.putExtra("fragmentToOpen", "0");
-                        intent.putExtra("DOG_ID", createDogsList().get(i).getCollarId());
-                        intent.putExtra("currentLocation", userCurrentLocation);
-                        return intent;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Intent intent) {
-                        super.onPostExecute(intent);
-                        Toast.makeText(getBaseContext(), "on post execute", Toast.LENGTH_SHORT).show();
-
-                        startActivity(intent);
-                        showSmalProgressBar(false);
-                    }
-                }.execute();
-                */
             }
         });
 
@@ -458,8 +286,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         popupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
-
-
     }
 
 
@@ -540,11 +366,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.fake_scan_debug, null);
-
-        //Button cancelBtn = layout.findViewById(R.id.fake_scan__popup_layout_cancel);
-        //Button scanBtn = layout.findViewById(R.id.fake_scan__popup_layout_add_dog_button);
-
-
         fakeScanPopUp = new PopupWindow(this);
         fakeScanPopUp.setContentView(layout);
         fakeScanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -592,36 +413,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         }
 
     }
-/*
-    public void scanDog(View view) {
-        //for debug
-
-        Dog tempDog = null;
-        String collarId = dogIdFromFakeScanTextView.getText().toString();
-
-        if (!collarId.equals(""))
-            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase(collarId);
-
-        if (tempDog != null) {
-            //LatLng locationToReturn = getRandomLocation((new LatLng(32.30613403, 35.00500989)), 2000);
-            final Dog finalTempDog = tempDog;
-            myLocationService.addScanToDataBase(finalTempDog);
-            fakeScanPopUp.dismiss();
-            Toast.makeText(myLocationService, "Scan accepted", Toast.LENGTH_SHORT).show();
-
-        } else {
-            dogIdFromFakeScanTextView.setText("Id not found in Database");
-        }
-
-    }
-*/
 
     public void cancelScanPopUp(View view) {
         //for debug
-        //fakeScanPopUp.dismiss();
-//        mHandler.removeCallbacks(mPruneTask);
-//        mBeaconService.setBeaconEventListener(null);
-//        unbindService(this);
         if(isBoundBeaconService) {
             getApplicationContext().unbindService(mBeaconConnection);
             isBoundBeaconService = false;
@@ -652,59 +446,22 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
         return true;
     }
-//    private Handler mHandler = new Handler();
-//    private Runnable mPruneTask = new Runnable() {
-//        @Override
-//        public void run() {
-//            final ArrayList<Beacon> expiredBeacons = new ArrayList<>();
-//            final long now = System.currentTimeMillis();
-//            for (Beacon beacon : mBeaconAdapterItems) {
-//                long delta = now - beacon.getLastDetectedTimestamp();
-//                if (delta >= BT_EXPIRE_TIMEOUT) {
-//                    expiredBeacons.add(beacon);
-//                }
-//            }
-//
-//            if (!expiredBeacons.isEmpty()) {
-//                Log.d(TAG, "Found " + expiredBeacons.size() + " expired");
-//                mBeaconAdapterItems.removeAll(expiredBeacons);
-//                dogScanListAdapter.notifyDataSetChanged();
-//            }
-//
-//
-//        }
-//    };
-
 
     private void createPopUpScan() {
-
         //real implementation
-
-
-
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.scan_popup, null);
-
         recyclerView = layout.findViewById(R.id.scan_popup_layout_recyclerview);
-
         recyclerView.setHasFixedSize(true);
-
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
         //scan pop up
         listOfDogScanned = new ArrayList<>();
 
         dogScanListAdapter = new DogScanListAdapter(listOfDogScanned, MainActivity.this, this);
         recyclerView.setAdapter(dogScanListAdapter);
 
-            //Button cancelBtn = layout.findViewById(R.id.fake_scan__popup_layout_cancel);
-            //Button scanBtn = layout.findViewById(R.id.fake_scan__popup_layout_add_dog_button);
-
-
             scanPopUp = new PopupWindow(this);
-
-
             scanPopUp.setContentView(layout);
             scanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
             scanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -712,14 +469,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             scanPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             scanPopUp.setFocusable(true);
             scanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
-
             scanPopUp.setOutsideTouchable(false);
 
-
-
-
-            // listOfDogScanned.clear();
-            // listOfDogScanned.addAll(firebaseAdapter.getAllDogs());
 
         if(checkBluetoothStatus()) {
             Log.i(TAG, "Start scanning...");
@@ -727,20 +478,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             isBoundBeaconService =  getApplicationContext().bindService(intent, mBeaconConnection, BIND_AUTO_CREATE);
 
         }
-
-        //dogIdFromFakeScanTextView = layout.findViewById(R.id.scan_layout_popup);
     }
 
     public void scanRefresh(View view) {
         //TODO add bluetooth refresh functionality
         listOfDogScanned.clear();
         dogScanListAdapter.notifyDataSetChanged();
-//        Toast.makeText(myLocationService, "clicked Refresh", Toast.LENGTH_SHORT).show();
-//
-//        listOfDogScanned.clear();
-//        listOfDogScanned.addAll(firebaseAdapter.getAllDogs());
-//        dogScanListAdapter.notifyDataSetChanged();
-
     }
 
     @Override
@@ -757,10 +500,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void showInfo(Profile ownerProfile) {
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.scan_owner_information_popup, null);
-
-        //Button cancelBtn = layout.findViewById(R.id.fake_scan__popup_layout_cancel);
-        //Button scanBtn = layout.findViewById(R.id.fake_scan__popup_layout_add_dog_button);
-
         ownerInfoPopUp = new PopupWindow(this);
         ownerInfoPopUp.setContentView(layout);
         ownerInfoPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -769,20 +508,16 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         ownerInfoPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         ownerInfoPopUp.setFocusable(true);
         ownerInfoPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
-
-
         TextView ownerNameTextView = layout.findViewById(R.id.scan_pop_up_owner_info_name);
         ownerPhoneTextView = layout.findViewById(R.id.scan_pop_up_owner_info_number);
         TextView ownerAddressTextView = layout.findViewById(R.id.scan_pop_up_owner_info_address);
         TextView ownerMailTextView = layout.findViewById(R.id.scan_pop_up_owner_info_mail);
         CircleImageView ownerPicView = layout.findViewById(R.id.scan_pop_up_owner_info_image);
         Button ownerInfoCallButton = layout.findViewById(R.id.scan_pop_up_owner_info_call_button);
-
         ownerNameTextView.setText(ownerProfile.getFullName() == null ? "Not available" : ownerProfile.getFullName());
         ownerPhoneTextView.setText(ownerProfile.getPhoneNumber()== null ? "Not available" : ownerProfile.getPhoneNumber());
         ownerAddressTextView.setText(ownerProfile.getAddress()== null ? "Not available" : ownerProfile.getAddress());
         ownerMailTextView.setText(ownerProfile.geteMail()== null ? "Not available" : ownerProfile.geteMail());
-
         if(ownerPhoneTextView.getText().toString().equals("Not available")){
             ownerInfoCallButton.setVisibility(View.INVISIBLE);
         }
@@ -831,7 +566,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
             // Adjust the x-coordinate for the shrinking of the east-west distances
             double new_x = x / Math.cos(y0);
-
             double foundLatitude = new_x + x0;
             double foundLongitude = y + y0;
             LatLng randomLatLng = new LatLng(foundLatitude, foundLongitude);
@@ -845,41 +579,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
         return randomPoints.get(indexOfNearestPointToCentre);
     }
-/*
-    public void getPlaceType(double latitide, double longitude){
-        //Getting Lat Long and get type list from google api
-        Object transferData[] = new Object[1];
-        GetNearbyPlaces getNearbyPlaces = new GetNearbyPlaces();
 
-        String url = getUrl(latitide, longitude,"30");
-        transferData[0] = url;
-        getNearbyPlaces.execute(transferData);
-    }
-
-    private String getUrl(double latitide, double longitude, String ProximityRadius)
-    {
-        //Assist function for "getPlaceType", building Url to fit the Search
-        StringBuilder googleURL = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        googleURL.append("location=" + latitide + "," + longitude);
-        googleURL.append("&radius=" + ProximityRadius);
-        //googleURL.append("&type=" + nearbyPlace); not a specific type
-        googleURL.append("&sensor=true"); //not a must
-        googleURL.append("&key=" + "AIzaSyDTDmMNFTekqcFEWeK9yAJYzxdaM-IU8Wk");
-
-        Log.d("GoogleMapsActivity", "url = " + googleURL.toString());
-
-        return googleURL.toString();
-    }
-*/
     @Override
     public void locationChanged(Location location) {
-        //Toast.makeText(this, "Location Updated At MainActivity", Toast.LENGTH_SHORT).show();
-
         showProgress(false);
-
         userCurrentLocation = location;
         Log.d("DorCheck","Location At MainActivity: userCurrentLocation: "+ userCurrentLocation+" location from function "+location );
-
         if(mProgressView.getVisibility()!=View.VISIBLE) {
             if (!isNotifcationPopShowenBefore)
                 showNotificationPop();
@@ -888,7 +593,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
     public void showNotificationPop(){
         isNotifcationPopShowenBefore = true;
-        //Intent extras = getIntent();
         if(bundle!=null){
            for(String key : bundle.keySet()){
                if(key.equals("lat"))
@@ -900,60 +604,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
            if(latitude!=null && latitude!=0.0
                    && longitude != null && longitude != 0.0)
                 startNotificationPopUp();
-
-            /*
-        if(extras.getStringExtra("latitude") != null) {
-
-            latitude = Double.valueOf(extras.getStringExtra("latitude"));
-            longitude = Double.valueOf(extras.getStringExtra("longitude"));
-
-            startNotificationPopUp();
         }
-        */
-        }
-/*
-        else if(getIntent().getExtras() != null){
-            Bundle bundle = getIntent().getExtras();
-            if(bundle != null) {
-                if(bundle.getString("latitude") != null) {
-                    latitude = Double.valueOf(bundle.getString("latitude"));
-                    longitude = Double.valueOf(bundle.getString("longitude"));
-                    startNotificationPopUp();
-                }
-            }
-        }
-  */
         else{
             Toast.makeText(this, "Got Nothing", Toast.LENGTH_SHORT).show();
         }
     }
 
-
-
-    /*
-        @Override
-        public void onLocationChanged(Location location) {
-            //getUserCurrentLocation();
-            userCurrentLocation.setLatitude(location.getLatitude());
-            userCurrentLocation.setLongitude(location.getLongitude());
-            showProgress(false);
-        }
-
-        @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String s) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String s) {
-
-        }
-        */
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -962,11 +618,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             mBinder.registerLocationListener(MainActivity.this);
             myLocationService = mBinder.getMyLocationService();
             isBound = true;
-/*
-            if(myLocationService.isFirstTimeRuning()){
-                showProgress(true);
-            }
-*/
         }
 
         @Override
@@ -1027,7 +678,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mSmallProgressBarView.setVisibility(toShow ? View.VISIBLE : View.GONE);
-            //mMainMenuFormView.setVisibility(toShow ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -1076,14 +726,11 @@ private class AsyncToolBarActivityStart extends AsyncTask<Void, Void, Intent>{
 
     @Override
     protected Intent doInBackground(Void... voids) {
-
         Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
         intent.putExtra("TAG", "AlgorithmFragment");
         intent.putExtra("fragmentToOpen", "0");
         intent.putExtra("DOG_ID", collarId);
         intent.putExtra("currentLocation", userCurrentLocation);
-
-
         return intent;
     }
 
@@ -1091,9 +738,7 @@ private class AsyncToolBarActivityStart extends AsyncTask<Void, Void, Intent>{
     protected void onPostExecute(Intent intent) {
         super.onPostExecute(intent);
         Toast.makeText(getBaseContext(), "on post execute", Toast.LENGTH_SHORT).show();
-
         startActivity(intent);
-        //showSmalProgressBar(false);
     }
 }
 
