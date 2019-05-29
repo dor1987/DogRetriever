@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import java.io.File;
@@ -73,6 +75,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     private EditText breedTextView;
     private EditText notesTextView;
     private EditText collarIdTextView;
+    private TextView errorTextView;
     private ImageView dogProfileImage;
 
     private ImageButton editImageButton;
@@ -197,8 +200,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         breedTextView = layout.findViewById(R.id.add_dog_popup_layout_breed);
         notesTextView = layout.findViewById(R.id.add_dog_popup_layout_notes);
         collarIdTextView = layout.findViewById(R.id.add_dog_popup_layout_collarid);
-
-
+        errorTextView = layout.findViewById(R.id.add_dog_popup_layout_error_message);
     }
 
     @Override
@@ -259,7 +261,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         switch (view.getId()){
 
         case R.id.add_dog_popup_layout_add_dog_button:
-            saveDog(view);
+            if(validateNewDogInput())
+                saveDog(view);
             break;
 
         case R.id.add_dog_popup_layout_cancel:
@@ -362,6 +365,20 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 }
                 break;
         }
+    }
+
+    private boolean validateNewDogInput() {
+        boolean result = true;
+        if(collarIdTextView.getText()==null || collarIdTextView.getText().toString().trim().isEmpty()){
+            result = false;
+            errorTextView.setText("Id is needed");
+        }
+        else if(firebaseAdapter.getDogByCollarIdFromFireBase(collarIdTextView.getText().toString())!=null){
+            result = false;
+            errorTextView.setText("Id is taken");
+        }
+
+    return result;
     }
 
     private void createPopEditImage() {
