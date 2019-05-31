@@ -1,8 +1,6 @@
 package dtg.dogretriever.Model;
 
 
-import android.util.Log;
-
 public class Beacon{
     private String deviceAddress;
     private String id;
@@ -26,7 +24,7 @@ public class Beacon{
     // Parse the instance id out of a UID packet
     public static String getInstanceId(byte[] data) {
         StringBuilder sb = new StringBuilder();
-        Log.e("tal", "data length: " +  data.length);
+
         //UID packets are always 18 bytes in length
         //Parse out the last 6 bytes for the id
         int packetLength = 18;

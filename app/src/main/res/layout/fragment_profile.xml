@@ -131,16 +131,6 @@
 </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginBottom="10dp"
-        android:background="@color/light_blue"
-        android:orientation="vertical"
-        android:paddingBottom="10dp">
-
-    </LinearLayout>
-
     <TextView
 
         android:layout_width="wrap_content"

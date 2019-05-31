@@ -17,6 +17,7 @@
         android:textStyle="bold"
         android:textSize="20dp"
         android:text="Your dog has been scanned:"
+        android:fontFamily="@font/merienda_one"
         android:padding="20dp"/>
 
 
@@ -37,22 +38,28 @@
             <Button
             android:id="@+id/notification_popup_layout_show_info_button"
             style="?android:textAppearanceSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="220dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical|center_horizontal"
             android:layout_marginTop="10dp"
             android:textStyle="bold"
             android:text="Show me where"
+                android:fontFamily="@font/merienda_one"
+                android:background="@drawable/asset22h"
             android:onClick="openMapWithNotificationCords"
                 />
 
             <Button
                 android:id="@+id/notification_popup_layout_cancel"
                 style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="220dp"
+                android:layout_height="60dp"
                 android:layout_marginTop="2dp"
                 android:textStyle="bold"
+                android:layout_gravity="center_vertical|center_horizontal"
                 android:text="close"
+                android:fontFamily="@font/merienda_one"
+                android:background="@drawable/asset22h"
                 android:onClick="closeNotificationPopUp"
                 />
 

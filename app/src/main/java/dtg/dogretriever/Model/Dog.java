@@ -3,6 +3,7 @@ package dtg.dogretriever.Model;
 import java.util.ArrayList;
 import java.util.Map;
 
+
 public class Dog {
     public enum enumSize {TINY , SMALL, MEDIUM, LARGE};
 
@@ -18,6 +19,8 @@ public class Dog {
     private String mImageUrl;
 
     public Dog(){}
+
+
 
 
     private Dog(DogBuilder dogBuilder){
@@ -112,6 +115,14 @@ public class Dog {
 
     public void setmImageUrl(String mImageUrl) {
         this.mImageUrl = mImageUrl;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Dog){
+            return this.getCollarId().equals(((Dog) obj).getCollarId());
+        }
+        return super.equals(obj);
     }
 
     public static class DogBuilder {
