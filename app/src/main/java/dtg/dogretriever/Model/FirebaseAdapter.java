@@ -624,4 +624,9 @@ public class FirebaseAdapter {
             });
         }
     }
+
+    public void logOut(){
+        writeNewTokenToFireBase("");
+        mAuth.signOut();
+    }
 }
