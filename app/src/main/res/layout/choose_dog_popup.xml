@@ -13,7 +13,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Choose dog:" />
+            android:textSize="20dp"
+            android:fontFamily="@font/merienda_one"
+            android:text="@string/choose_dog" />
 
         <ListView
             android:id="@+id/popup_dog_name_list_view"
@@ -26,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="You don't have any dogs"
+            android:text="@string/you_don_t_have_any_dogs"
             android:visibility="gone"
 
             />
@@ -35,10 +37,12 @@
             android:id="@+id/popup_layout_cancel"
             style="?android:textAppearanceSmall"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginTop="2dp"
             android:textStyle="bold"
             android:text="Cancel"
+            android:fontFamily="@font/merienda_one"
+            android:background="@drawable/asset22h"
             android:onClick="cancelPopUp"
             />
 
