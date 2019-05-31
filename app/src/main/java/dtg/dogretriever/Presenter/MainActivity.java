@@ -165,14 +165,14 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void initWelcomeTextview() {
         if (firebaseAdapter.isUserConnected()) {
             if (firebaseAdapter.isUserDataReadyNow()) {
-                userWelcomeTextView.setText(getString(R.string.hello) + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
+                userWelcomeTextView.setText(getString(R.string.hello) + " " + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
                 initProfilePic();
             } else {
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
                     @Override
                     public void onDataReady() {
                         firebaseAdapter.removeProfileDataListener();
-                        userWelcomeTextView.setText(getString(R.string.hello)  + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
+                        userWelcomeTextView.setText(getString(R.string.hello) + " " + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
                         initProfilePic();
                     }
                 });
