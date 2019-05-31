@@ -95,4 +95,5 @@
     <string name="call_owner">Call Owner</string>
     <string name="close">Close</string>
     <string name="log_out">Log Out</string>
+    <string name="hello">Hello</string>
 </resources>

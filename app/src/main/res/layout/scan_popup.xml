@@ -13,29 +13,31 @@
         android:id="@+id/scan__popup_layout_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:textStyle="bold"
-        android:textSize="24dp"
-        android:text="@string/dogs_around_you"
-        android:padding="20dp"
-        android:fontFamily="@font/merienda_one"
+        android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_marginLeft="30dp"/>
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/merienda_one"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp"
+        android:text="@string/dogs_around_you"
+        android:textSize="24dp"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/popup_scan_small_progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@id/scan_popup_layout_form"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="7dp"
+        android:visibility="visible" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-
-        <ProgressBar
-            android:id="@+id/scan_small_progres_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            style="?android:attr/progressBarStyle"
-            android:visibility="invisible"
-            />
 
 
         <ScrollView
@@ -46,7 +48,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"

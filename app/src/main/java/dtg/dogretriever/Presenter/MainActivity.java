@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
@@ -98,11 +99,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     Bundle bundle;
 
     //Bluetooth
-    private static final int BT_EXPIRE_TIMEOUT = 5000;
-    private static final int BT_EXPIRE_TASK_PERIOD = 1000;
     private BeaconScannerService mBeaconService;
-    private DogScanListAdapter DogScanListAdapter;
-    private ArrayList <Beacon> mBeaconAdapterItems;
     private boolean isBoundBeaconService = false;
 
 
@@ -125,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
         isNotifcationPopShowenBefore = false;
-        mBeaconAdapterItems = new ArrayList<>();
     }
 
     @Override
@@ -169,14 +165,14 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void initWelcomeTextview() {
         if (firebaseAdapter.isUserConnected()) {
             if (firebaseAdapter.isUserDataReadyNow()) {
-                userWelcomeTextView.setText("Hello " + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
+                userWelcomeTextView.setText(getString(R.string.hello) + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
                 initProfilePic();
             } else {
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
                     @Override
                     public void onDataReady() {
                         firebaseAdapter.removeProfileDataListener();
-                        userWelcomeTextView.setText("Hello " + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
+                        userWelcomeTextView.setText(getString(R.string.hello)  + firebaseAdapter.getCurrentUserProfileFromFireBase().getFullName());
                         initProfilePic();
                     }
                 });
@@ -434,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         if (adapter == null || !adapter.isEnabled()) {
             //Bluetooth is disabled
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivity(enableBtIntent);
+            startActivityForResult(enableBtIntent,0);
 
             return false;
         }
@@ -447,8 +443,18 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK){
+           createPopUpScan();
+        }else{
+            // show error
+        }
+    }
+
     private void createPopUpScan() {
-        //real implementation
+        if(checkBluetoothStatus()) {
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.scan_popup, null);
         recyclerView = layout.findViewById(R.id.scan_popup_layout_recyclerview);
@@ -472,18 +478,26 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             scanPopUp.setOutsideTouchable(false);
 
 
-        if(checkBluetoothStatus()) {
+
             Log.i(TAG, "Start scanning...");
-            final Intent intent = new Intent(this, BeaconScannerService.class);
-            isBoundBeaconService =  getApplicationContext().bindService(intent, mBeaconConnection, BIND_AUTO_CREATE);
+            bindToServiceScan();
 
         }
     }
 
+    private void bindToServiceScan(){
+        final Intent intent = new Intent(this, BeaconScannerService.class);
+        isBoundBeaconService =  getApplicationContext().bindService(intent, mBeaconConnection, BIND_AUTO_CREATE);
+    }
     public void scanRefresh(View view) {
-        //TODO add bluetooth refresh functionality
         listOfDogScanned.clear();
         dogScanListAdapter.notifyDataSetChanged();
+
+        if(isBoundBeaconService){
+            getApplicationContext().unbindService(mBeaconConnection);
+            bindToServiceScan();
+        }
+
     }
 
     @Override
@@ -606,7 +620,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 startNotificationPopUp();
         }
         else{
-            Toast.makeText(this, "Got Nothing", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Got Nothing", Toast.LENGTH_SHORT).show();
         }
     }
 
