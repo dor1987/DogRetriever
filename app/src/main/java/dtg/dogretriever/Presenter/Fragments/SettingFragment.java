@@ -21,7 +21,7 @@ import static dtg.dogretriever.Presenter.MyMessagingService.SHARED_PREFS;
 public class SettingFragment extends PreferenceFragmentCompat{
 
     private Preference logoutBtn;
-    private FirebaseAuth mAuth;
+    //private FirebaseAuth mAuth;
     private FirebaseAdapter firebaseAdapter;
     public SettingFragment() {
         // Required empty public constructor
@@ -30,12 +30,25 @@ public class SettingFragment extends PreferenceFragmentCompat{
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.preferences);
-        mAuth = FirebaseAuth.getInstance();
+        firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
+
+        //mAuth = FirebaseAuth.getInstance();
         logoutBtn = findPreference(getString(R.string.log_out));
+        if(firebaseAdapter.isUserConnected())
+            logoutBtn.setVisible(true);
+        else
+            logoutBtn.setVisible(false);
 
         logoutBtn.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                firebaseAdapter.logOut();
+                SharedPreferences sh = getContext().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+                if(sh != null)
+                    sh.edit().clear().apply();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+
 //                mAuth.signOut();
 //                Intent intent = new Intent(getContext(), MainActivity.class);
 //                SharedPreferences sh = getContext().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
