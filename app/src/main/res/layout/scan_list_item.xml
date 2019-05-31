@@ -21,6 +21,7 @@
         android:layout_toRightOf="@id/scan_list_item_image"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="5dp"
+        android:fontFamily="@font/merienda_one"
         android:textColor="@color/black"
         android:textSize="17sp"
         />
@@ -29,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Color: Default text"
+        android:fontFamily="@font/merienda_one"
         android:id="@+id/scan_list_item_color"
         android:layout_toRightOf="@id/scan_list_item_image"
         android:layout_centerVertical="true"
@@ -42,6 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Breed: Default text"
+        android:fontFamily="@font/merienda_one"
         android:id="@+id/scan_list_item_breed"
         android:layout_toRightOf="@id/scan_list_item_image"
         android:layout_centerVertical="true"

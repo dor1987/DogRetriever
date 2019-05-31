@@ -44,7 +44,7 @@ public class SettingFragment extends PreferenceFragmentCompat{
 //                    sh.edit().clear().apply();
 //                }
 //                startActivity(intent);
-
+                
                 return true;
             }
         });

@@ -184,16 +184,17 @@
         >
 
         <ImageButton
-            android:background="@drawable/asset23h"
+            android:id="@+id/main_info_button"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:layout_marginLeft="10dp"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
-            android:onClick="clickAbout"
-            />
+            android:layout_marginStart="7dp"
+            android:background="@drawable/asset23h"
+            android:onClick="clickAbout" />
 
         <ImageView
+            android:id="@+id/main_dog_img"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:background="@drawable/asset7h"

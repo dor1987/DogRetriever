@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.squareup.picasso.Picasso;
@@ -65,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private static final String TAG = "MainActivity";
 
     private PopupWindow popupWindow = null;
-    private FirebaseAdapter firebaseAdapter;
     private View mProgressView, mSmallProgressBarView;
     private View mMainMenuFormView;
     private TextView userWelcomeTextView;
@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private ArrayList <Beacon> mBeaconAdapterItems;
     private boolean isBoundBeaconService = false;
 
+    //firebase
+
+    private FirebaseAdapter firebaseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 });
             }
         } else {
+            removeProfilePic();
             userWelcomeTextView.setText("Hello Guest");
         }
     }
@@ -606,7 +610,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 startNotificationPopUp();
         }
         else{
-            Toast.makeText(this, "Got Nothing", Toast.LENGTH_SHORT).show();
+            //debug
+          //  Toast.makeText(this, "Got Nothing", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -641,6 +646,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         }
     }
 
+
     public void initProfilePic(){
         if(firebaseAdapter.getCurrentUserProfileFromFireBase().getmImageUrl()!=null &&
                 !firebaseAdapter.getCurrentUserProfileFromFireBase().getmImageUrl().trim().isEmpty())
@@ -651,6 +657,14 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 .error(R.drawable.asset6h)
                 .into(profilePicView);
 
+    }
+
+    private void removeProfilePic(){
+        Picasso.get()
+                .load(R.drawable.asset6h)
+                .placeholder(R.drawable.asset6h)
+                .error(R.drawable.asset6h)
+                .into(profilePicView);
     }
 
     public void showSmalProgressBar(final Boolean toShow){
@@ -718,7 +732,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     };
 
 
-private class AsyncToolBarActivityStart extends AsyncTask<Void, Void, Intent>{
+
+
+    private class AsyncToolBarActivityStart extends AsyncTask<Void, Void, Intent>{
     private String collarId;
     private AsyncToolBarActivityStart(String collarId) {
         this.collarId = collarId;

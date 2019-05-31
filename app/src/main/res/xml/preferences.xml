@@ -25,6 +25,15 @@
         >
     </ListPreference>
 
+    <Preference
+        android:title="Log Out"
+        android:key="@string/log_out"
+        >
+
+    </Preference>
+
+
+
 
 
 </PreferenceScreen>

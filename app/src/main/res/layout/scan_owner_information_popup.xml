@@ -16,23 +16,26 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="30dp"
-        android:text="Scan completed"
+        android:text="@string/scan_completed"
+        android:fontFamily="@font/merienda_one"
         android:padding="10dp"
         />
 
     <TextView
+        android:id="@+id/scan_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
-        android:text="We sent a message to the owner.
-Here is some contact information:"
+        android:textSize="16dp"
+        android:text="@string/we_sent_a_message_to_the_owner_here_is_some_contact_information"
         android:lines="2"
+        android:fontFamily="@font/merienda_one"
         android:padding="10dp"
         />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         >
 
         <ProgressBar
@@ -74,7 +77,9 @@ Here is some contact information:"
             android:id="@+id/scan_pop_up_owner_info_name_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name: "
+            android:text="@string/name"
+            android:layout_marginStart="5dp"
+            android:fontFamily="@font/merienda_one"
             android:textStyle="bold"
 
             />
@@ -84,6 +89,8 @@ Here is some contact information:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Default Name"
+            android:layout_marginStart="5dp"
+            android:fontFamily="@font/merienda_one"
             android:layout_toRightOf="@+id/scan_pop_up_owner_info_name_description"
             />
 
@@ -96,7 +103,9 @@ Here is some contact information:"
                         android:id="@+id/scan_pop_up_owner_info_number_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Number: "
+                        android:text="@string/number"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="@font/merienda_one"
                         android:textStyle="bold"
 
                         />
@@ -106,6 +115,8 @@ Here is some contact information:"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Default Number"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="@font/merienda_one"
                         android:layout_toRightOf="@+id/scan_pop_up_owner_info_number_description"
                         />
 
@@ -119,7 +130,9 @@ Here is some contact information:"
                         android:id="@+id/scan_pop_up_owner_info_address_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Address: "
+                        android:text="@string/address2"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="@font/merienda_one"
                         android:textStyle="bold"
 
                         />
@@ -129,6 +142,8 @@ Here is some contact information:"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Default Address"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="@font/merienda_one"
                         android:layout_toRightOf="@+id/scan_pop_up_owner_info_address_description"
                         />
 
@@ -142,7 +157,9 @@ Here is some contact information:"
                         android:id="@+id/scan_pop_up_owner_info_mail_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mail: "
+                        android:text="@string/mail"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="@font/merienda_one"
                         android:textStyle="bold"
 
                         />
@@ -152,6 +169,8 @@ Here is some contact information:"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Default Mail"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="@font/merienda_one"
                         android:layout_toRightOf="@+id/scan_pop_up_owner_info_mail_description"
                         />
 
@@ -167,22 +186,26 @@ Here is some contact information:"
                     <Button
                         android:id="@+id/scan_pop_up_owner_info_call_button"
                         style="?android:textAppearanceSmall"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
                         android:layout_marginTop="16dp"
                         android:textStyle="bold"
-                        android:text="Call Owner"
+                        android:fontFamily="@font/merienda_one"
+                        android:text="@string/call_owner"
+                        android:background="@drawable/asset22h"
                         android:onClick="onCallOwnerClicked"
                         />
 
                     <Button
                         android:id="@+id/scan_pop_up_owner_info_cancel"
                         style="?android:textAppearanceSmall"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
                         android:layout_marginTop="2dp"
                         android:textStyle="bold"
-                        android:text="Close"
+                        android:text="@string/close"
+                        android:background="@drawable/asset22h"
+                        android:fontFamily="@font/merienda_one"
                         android:onClick="onClosedOwnerInfoClicked"
                         />
 
