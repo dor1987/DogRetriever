@@ -31,12 +31,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.squareup.picasso.Picasso;
@@ -50,7 +48,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
-import dtg.dogretriever.Model.Beacon;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.Model.FirebaseAdapter;
@@ -133,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         //start the service
         Intent intent = new Intent(this, MyLocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        showSmalProgressBar(false);
+        showSmallProgressBar(false);
     }
 
     @Override
@@ -191,11 +188,11 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             if (firebaseAdapter.isUserDataReadyNow()) {
                 createPopUpChooseDogName();
             } else {
-                showSmalProgressBar(true);
+                showSmallProgressBar(true);
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
                     @Override
                     public void onDataReady() {
-                        showSmalProgressBar(false);
+                        showSmallProgressBar(false);
                         createPopUpChooseDogName();
                         firebaseAdapter.removeProfileDataListener();
                     }
@@ -204,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         } else {
             Intent i = new Intent(getBaseContext(), LoginActivity.class);
             startActivity(i);
-            showSmalProgressBar(false);
+            showSmallProgressBar(false);
         }
     }
 
@@ -224,11 +221,11 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 intent.putExtra("fragmentToOpen", 3);
                 startActivity(intent);
             } else {
-                showSmalProgressBar(true);
+                showSmallProgressBar(true);
                 firebaseAdapter.registerProfileDataListener(new FirebaseAdapter.ProfileDataListener() {
                     @Override
                     public void onDataReady() {
-                        showSmalProgressBar(false);
+                        showSmallProgressBar(false);
                         Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
                         intent.putExtra("fragmentToOpen", 3);
                         firebaseAdapter.removeProfileDataListener();
@@ -266,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                showSmalProgressBar(true);
+                showSmallProgressBar(true);
                 popupWindow.dismiss();
                 new AsyncToolBarActivityStart(createDogsList().get(i).getCollarId()).execute();
             }
@@ -675,7 +672,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
 
 
-    public void showSmalProgressBar(final Boolean toShow){
+    public void showSmallProgressBar(final Boolean toShow){
 
         if(toShow){ //disable/enable user interaction
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -707,7 +704,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     @Override
     public void onBeaconIdentifier(String deviceAddress, int rssi, String instanceId) {
         Dog foundDog = firebaseAdapter.getDogByCollarIdFromFireBase(instanceId);
-        Log.i(TAG, "beacon with id " + instanceId + " was found");
         if(foundDog != null) {
             if (!listOfDogScanned.contains(foundDog)) {
                 Log.i(TAG, foundDog.getName() + "'s beacon was found");

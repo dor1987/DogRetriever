@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
+
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference android:title="Settings"
@@ -7,6 +8,7 @@
        />
 
     <CheckBoxPreference
+        android:icon="@drawable/asset20h"
         android:key="notification_pre"
         android:title="Notification"
         android:summary="Will notify you if your dog is scanned"
@@ -16,6 +18,7 @@
     </CheckBoxPreference>
 
     <ListPreference
+        android:icon="@drawable/asset17h"
         android:key="hot_zones_algo_radius"
         android:title="Hot Zones"
         android:entries="@array/pref_hotzones_radius_type_entries"

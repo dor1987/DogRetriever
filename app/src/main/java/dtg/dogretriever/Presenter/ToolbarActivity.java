@@ -12,15 +12,11 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import dtg.dogretriever.Model.FakeDataBaseGenerator;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Presenter.Fragments.AboutFragment;
 import dtg.dogretriever.Presenter.Fragments.NotificationFragment;
@@ -28,13 +24,9 @@ import dtg.dogretriever.Presenter.Fragments.ProfileFragment;
 import dtg.dogretriever.Presenter.Fragments.SettingFragment;
 import dtg.dogretriever.R;
 
-public class ToolbarActivity extends AppCompatActivity implements View.OnClickListener, MyLocationService.LocationListener {
-    private static final String PREDICT_ALGO_KEY = "predictAlgo";
-    private static final String LEARNING_ALGO_KEY = "learningAlgo";
+public class ToolbarActivity extends AppCompatActivity implements MyLocationService.LocationListener {
 
-    TextView profile_textview;
-    FragmentManager fm;
-    FrameLayout frameLayout;
+
     AlgorithmFragment algorithmFragment;
     SettingFragment settingFragment;
     AboutFragment aboutFragment;
@@ -43,7 +35,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
     FirebaseAdapter firebaseAdapter;
     final Bundle bundle = new Bundle();
     private View mProgressView;
-    private View mFragmentContinerView;
+    private View mFragmentContainerView;
 
     //Location Service
     boolean isBound = false;
@@ -59,7 +51,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_toolbar);
-        Bundle extras = getIntent().getExtras();
+        Bundle extras;
         userCurrentLocation = getIntent().getExtras().getParcelable("currentLocation");
         latitude = getIntent().getExtras().getDouble("latitude");
         longitude = getIntent().getExtras().getDouble("longitude");
@@ -72,7 +64,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         aboutFragment = new AboutFragment();
         profileFragment = new ProfileFragment();
         notificationFragment = new NotificationFragment();
-        mFragmentContinerView = findViewById(R.id.fragment_container);
+        mFragmentContainerView = findViewById(R.id.fragment_container);
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
 
         int fragmentToOpen = getIntent().getIntExtra("fragmentToOpen",0);
@@ -160,21 +152,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.about_container:
-                break;
-            case R.id.home_container:
-                break;
-            case R.id.settings_container:
-                break;
-            case R.id.profile_container:
-                break;
 
-            default:
-        }
-    }
 
     public void startAlgoMapFragment(String dogId){
         //Testing new way of starting the algo fragment
@@ -242,12 +220,12 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mFragmentContinerView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mFragmentContinerView.animate().setDuration(shortAnimTime).alpha(
+            mFragmentContainerView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mFragmentContainerView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mFragmentContinerView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mFragmentContainerView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -263,7 +241,7 @@ public class ToolbarActivity extends AppCompatActivity implements View.OnClickLi
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mFragmentContinerView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mFragmentContainerView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 

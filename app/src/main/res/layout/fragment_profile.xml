@@ -137,6 +137,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="@font/merienda_one"
+        android:paddingTop="5dp"
         android:text="@string/my_dogs"
         android:textColor="@color/black"
         android:textSize="30dp"
