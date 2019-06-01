@@ -426,7 +426,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 && data != null && data.getData() != null) {
 
                 mImageUri = data.getData();
-                Picasso.get().load(mImageUri).into(imageBeforeUploadView);
+                Picasso.get().load(mImageUri).fit().into(imageBeforeUploadView);
 
                 String uriString = mImageUri.toString();
                 File myFile = new File(uriString);
