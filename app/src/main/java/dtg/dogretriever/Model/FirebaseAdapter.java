@@ -463,7 +463,6 @@ public class FirebaseAdapter {
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    //todo think a way to pass success to the fragment
                         fileRefrence.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
@@ -486,7 +485,6 @@ public class FirebaseAdapter {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                    //todo think of a way to pass fail to the fragment
                         Log.e("UPLOADFAIL"," UPLOADFAIL");
 
                     }
@@ -495,7 +493,6 @@ public class FirebaseAdapter {
                     @Override
                     public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                         double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                        //todo think of a way to pass progress to the fragment
                         imageUploadListener.onUploadProgress(progress);
                     }
                 });
@@ -552,7 +549,6 @@ public class FirebaseAdapter {
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                //todo think a way to pass success to the fragment
                                 fileRefrence.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
@@ -573,7 +569,6 @@ public class FirebaseAdapter {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                //todo think of a way to pass fail to the fragment
                                 Log.e("UPLOADFAIL"," UPLOADFAIL");
 
                             }

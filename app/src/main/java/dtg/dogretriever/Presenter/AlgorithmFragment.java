@@ -238,7 +238,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         return false;
     }
 
-    // TODO: Rename and change types and number of parameters
     public static AlgorithmFragment newInstance(String param1, String param2) {
         AlgorithmFragment fragment = new AlgorithmFragment();
 
@@ -377,12 +376,10 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
     private void showRadiusArea(Coordinate coord) {
-    //TODO radius is now fixed size Tal how to determne radius?
         double radius = 50;
         mMap.addCircle(new CircleOptions().center(new LatLng(coord.getLatitude(),coord.getLongitude())).radius(radius).fillColor(0x22249ACF));
     }

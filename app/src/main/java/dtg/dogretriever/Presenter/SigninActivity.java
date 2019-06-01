@@ -145,7 +145,6 @@ protected void onCreate(Bundle savedInstanceState) {
     }
 
     private boolean isUserNameValid(String userName) {
-    //TODO implement restrictions
     return true;
     }
 
@@ -173,7 +172,6 @@ protected void onCreate(Bundle savedInstanceState) {
                             //add new profile to firebase
                             firebaseAdapter.addUserToDataBase(tempProfile);
 
-                            //TODO need to update preferences
                             Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
                             intent.putExtra("fragmentToOpen", 3);
                             startActivity(intent);

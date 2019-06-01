@@ -8,8 +8,18 @@
     <string name="my_dogs">My Dogs:</string>
     <string name="google_maps_key">AIzaSyDTDmMNFTekqcFEWeK9yAJYzxdaM-IU8Wk</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="about_fragment_title">About fragment</string>
+    <string name="about_fragment_title">Dog Retriever</string>
+    <string name="about_fragment_credits">Developers: Tal Farbman, Dor Ashush.</string>
+    <string name="about_fragment_text">Dog Retriever is a lost dog locating system
+    that has been developed as a final project for Software Engineering B.Sc.\nThe goal of this project is to provide an easy to use infrastructure
+    with high availability to find lost dogs.\nThe systems includes the following features:\n
+    1. Location predication algorithm.\n
+    2. Hot Zones algorithm.\n
+    3. User Profile management.\n
+    4. Scanning tool.\n
+    5. Notifications tool.\nand much more...\n
+    </string>
+
     <string name="setting_fragment_title">Settings fragment</string>
     <string name="title_activity_login">Sign in</string>
 
@@ -74,7 +84,6 @@
         <item>8000</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="dogs_around_you">Dogs around you:</string>
     <string name="refresh">Refresh</string>

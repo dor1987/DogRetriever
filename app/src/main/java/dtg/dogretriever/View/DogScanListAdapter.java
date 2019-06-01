@@ -36,8 +36,6 @@ public class DogScanListAdapter extends  RecyclerView.Adapter<DogScanListAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        //TODO add image implantation
-
         String name = mDogList.get(position).getName();
         holder.nameTextView.setText("Name: "+ (name==null?"":name));
         String color = mDogList.get(position).getColor();

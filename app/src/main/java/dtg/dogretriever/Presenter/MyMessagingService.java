@@ -46,7 +46,6 @@ public class MyMessagingService extends FirebaseMessagingService {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean isNotificationOn = sharedPreferences.getBoolean("notification_pre",true);
 
-        //TODO Adjust to work when app is not on the background
         if(isNotificationOn) {
             Map<String, String> data = remoteMessage.getData();
             if(data!=null){

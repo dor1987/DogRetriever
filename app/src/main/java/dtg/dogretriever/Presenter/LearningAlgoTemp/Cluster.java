@@ -98,7 +98,6 @@ public class Cluster {
         //calculating the average sum of points
         //convreting average from 3d vector to latlng(spherical coords)
         //setting it to be new cluster center
-        //ToDo when numOfPoints = 1 doesnt have to calc center, u can just set center as the point cords. need to think of a way to implement
         double x = sumOfPointsX / numOfPoints;
         double y = sumOfPointsY / numOfPoints;
         double z = sumOfPointsZ / numOfPoints;

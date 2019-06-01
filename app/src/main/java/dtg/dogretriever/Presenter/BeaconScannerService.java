@@ -96,7 +96,6 @@ public class BeaconScannerService extends Service {
         ScanSettings settings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .build();
-        //TODO remove from comment
         //mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
 
         mBluetoothLeScanner.startScan(mScanCallback);
