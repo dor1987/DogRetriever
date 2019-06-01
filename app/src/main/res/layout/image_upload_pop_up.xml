@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/image_upload_layout_popup"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -16,6 +17,7 @@
         android:padding="20dp"
         android:text="Upload your profile picture"
         android:textSize="20dp"
+        android:fontFamily="@font/merienda_one"
         android:textStyle="bold" />
 
 
@@ -34,9 +36,11 @@
             <Button
                 android:id="@+id/image_upload_layout_choose_file_button"
                 style="?android:textAppearanceSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="150dp"
+                android:layout_height="60dp"
                 android:onClick="openMapWithNotificationCords"
+                android:fontFamily="@font/merienda_one"
+                android:background="@drawable/asset22h"
                 android:text="Choose File"
                 android:textStyle="bold" />
 
@@ -47,21 +51,22 @@
                 android:layout_marginStart="16dp"
                 android:layout_toEndOf="@+id/image_upload_layout_choose_file_button"
                 android:hint="file name"
+                android:lines="1"
+                android:fontFamily="@font/merienda_one"
                 android:enabled="false"
 
                 />
 
 
-
             <ImageView
                 android:id="@+id/image_upload_popup_layout_imageviewbeforeupload"
-                android:layout_width="wrap_content"
+                android:layout_width="240dp"
                 android:layout_height="240dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/asset6h"
+                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/image_upload_layout_choose_file_button"
+                android:layout_marginTop="15dp"
                 android:adjustViewBounds="true"
-                />
+                android:background="@drawable/asset6h" />
 
             <ProgressBar
                 android:id="@+id/image_upload_progressbar"
@@ -74,22 +79,24 @@
 
             <Button
                 android:id="@+id/image_upload_popup_layout_upload_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="150dp"
+                android:layout_height="80dp"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="30dp"
                 android:layout_marginBottom="5dp"
+                android:fontFamily="@font/merienda_one"
+                android:background="@drawable/asset22h"
                 android:layout_below="@+id/image_upload_progressbar"
                 android:text="Upload" />
 
             <Button
                 android:id="@+id/image_upload_popup_layout_cancel_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="30dp"
-                android:layout_marginBottom="5dp"
-                android:layout_below="@+id/image_upload_progressbar"
+                android:layout_width="150dp"
+                android:layout_height="80dp"
+                android:layout_alignBaseline="@+id/image_upload_popup_layout_upload_button"
+                android:layout_alignBottom="@+id/image_upload_popup_layout_upload_button"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/asset22h"
+                android:fontFamily="@font/merienda_one"
                 android:text="Cancel" />
         </RelativeLayout>
     </ScrollView>
