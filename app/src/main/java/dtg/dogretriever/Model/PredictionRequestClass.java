@@ -1,7 +1,7 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Model;
 
 import java.util.ArrayList;
-import dtg.dogretriever.Presenter.LearningAlgoTemp.Point;
+import dtg.dogretriever.Model.Point;
 
 public class PredictionRequestClass {
     ArrayList<Point> pointsList;

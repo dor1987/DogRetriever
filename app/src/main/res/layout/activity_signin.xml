@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/pattern02"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:background="@drawable/pattern02"
-    tools:context=".Presenter.SigninActivity">
+    tools:context=".Controller.SigninActivity">
 
     <!-- Signin progress -->
 
@@ -52,14 +52,13 @@
                     android:id="@+id/signin_user_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_user_name"
                     android:fontFamily="@font/merienda_one"
+                    android:hint="@string/prompt_user_name"
                     android:inputType="text"
                     android:maxLines="1"
                     android:singleLine="true" />
 
-            </com.google.android.material.textfield.TextInputLayout
-                >
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
 
@@ -70,17 +69,16 @@
                     android:id="@+id/signin_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/prompt_password"
                     android:imeActionId="6"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:fontFamily="@font/merienda_one"
                     android:singleLine="true" />
 
-            </com.google.android.material.textfield.TextInputLayout
-                >
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
 
@@ -91,17 +89,16 @@
                     android:id="@+id/signin_re_enter_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/prompt_re_enter_password"
                     android:imeActionId="6"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
-                    android:fontFamily="@font/merienda_one"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true" />
 
-            </com.google.android.material.textfield.TextInputLayout
-                >
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
 
@@ -112,14 +109,13 @@
                     android:id="@+id/signin_full_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/prompt_full_name"
                     android:inputType="text"
-                    android:fontFamily="@font/merienda_one"
                     android:maxLines="1"
                     android:singleLine="true" />
 
-            </com.google.android.material.textfield.TextInputLayout
-                >
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
 
@@ -130,14 +126,13 @@
                     android:id="@+id/signin_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/prompt_address"
                     android:inputType="text"
-                    android:fontFamily="@font/merienda_one"
                     android:maxLines="1"
                     android:singleLine="true" />
 
-            </com.google.android.material.textfield.TextInputLayout
-                >
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
 
@@ -148,14 +143,13 @@
                     android:id="@+id/signin_phone_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/prompt_phone_number"
                     android:inputType="numberDecimal"
                     android:maxLines="1"
-                    android:fontFamily="@font/merienda_one"
                     android:singleLine="true" />
 
-            </com.google.android.material.textfield.TextInputLayout
-                >
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
 
@@ -166,14 +160,13 @@
                     android:id="@+id/signin_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/merienda_one"
                     android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:fontFamily="@font/merienda_one"
                     android:singleLine="true" />
 
-            </com.google.android.material.textfield.TextInputLayout
-                >
+            </com.google.android.material.textfield.TextInputLayout>
 
 
             <Button
@@ -181,9 +174,9 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="200dp"
                 android:layout_height="70dp"
+                android:layout_gravity="center_vertical|center_horizontal"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/asset22h"
-                android:layout_gravity="center_vertical|center_horizontal"
                 android:fontFamily="@font/merienda_one"
                 android:text="Sign In"
                 android:textStyle="bold" />

@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter.GooglePlaces;
+package dtg.dogretriever.Controller.GooglePlaces;
 import android.os.AsyncTask;
 
 

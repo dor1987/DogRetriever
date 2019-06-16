@@ -1,9 +1,8 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Controller;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,11 +13,8 @@ import android.os.Build;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -67,6 +63,7 @@ public class MyMessagingService extends FirebaseMessagingService {
 
 
     public void showNotification(String title,String message,String latitude, String logitude){
+
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -96,6 +93,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                     .setContentText(message)
                     .setContentIntent(pendingIntent);
             notificationManager.notify(notificationId, builder.build());
+
     }
     public int createID() {
         Date now = new Date();

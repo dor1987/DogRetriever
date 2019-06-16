@@ -1,8 +1,8 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Model;
 
 import java.util.ArrayList;
 
-import dtg.dogretriever.Presenter.LearningAlgoTemp.Cluster;
+import dtg.dogretriever.Model.Cluster;
 
 public class ResponseClass {
 

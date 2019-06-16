@@ -27,7 +27,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         >
-        <activity android:name=".Presenter.MainActivity"
+        <activity android:name=".Controller.MainActivity"
            android:screenOrientation="portrait"
             >
             <intent-filter>
@@ -40,18 +40,18 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Presenter.ProfileActivity"
+        <activity android:name=".Controller.ProfileActivity"
             android:screenOrientation="portrait"
 
             />
-        <activity android:name=".Presenter.SigninActivity"
+        <activity android:name=".Controller.SigninActivity"
             android:screenOrientation="portrait"
             />
         <activity
-            android:name=".Presenter.LoginActivity"
+            android:name=".Controller.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".Presenter.ToolbarActivity"
+            android:name=".Controller.ToolbarActivity"
             android:label="@string/title_activity_toolbar"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
@@ -68,19 +68,19 @@
             android:resource="@array/preloaded_fonts" />
 
         <service
-            android:name=".Presenter.MyMessagingService"
+            android:name=".Controller.MyMessagingService"
             android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-        android:name=".Presenter.MyLocationService"
+        android:name=".Controller.MyLocationService"
         android:enabled="true"
         android:exported="true"></service>
-        <service android:name=".Presenter.MainActivity" />
+        <service android:name=".Controller.MainActivity" />
         <service
-            android:name=".Presenter.BeaconScannerService"
+            android:name=".Controller.BeaconScannerService"
             android:enabled="true"
             android:exported="true"
         />

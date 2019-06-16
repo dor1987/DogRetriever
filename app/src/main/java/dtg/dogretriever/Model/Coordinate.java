@@ -19,7 +19,6 @@ public class Coordinate implements Parcelable {
     }
 
     public Coordinate(Double latitude , Double longitude) {
-       // this.location = location;
         this.latitude =latitude;
         this.longitude =longitude;
 

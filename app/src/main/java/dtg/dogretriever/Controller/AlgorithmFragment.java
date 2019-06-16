@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Controller;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -51,7 +51,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -61,10 +61,14 @@ import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.FirebaseAdapter;
+import dtg.dogretriever.Model.PredictionRequestClass;
+import dtg.dogretriever.Model.PredictionResponseClass;
+import dtg.dogretriever.Model.RequestClass;
+import dtg.dogretriever.Model.ResponseClass;
 import dtg.dogretriever.Model.Scan;
 import dtg.dogretriever.Model.Weather;
-import dtg.dogretriever.Presenter.LearningAlgoTemp.Cluster;
-import dtg.dogretriever.Presenter.LearningAlgoTemp.Point;
+import dtg.dogretriever.Model.Cluster;
+import dtg.dogretriever.Model.Point;
 import dtg.dogretriever.R;
 import com.google.android.material.tabs.TabLayout;
 
@@ -72,13 +76,21 @@ import com.google.android.material.tabs.TabLayout;
 public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, View.OnClickListener {
     private static final String TAG = "AlgorithmFragment";
     public static final int MY_CODE_REQUEST = 123;
-    private enum algoType {DEFUALT, PREDICTION, LEARNING}
-    private final double minRadius = 1000.0;
-    private final double maxRadius = 5000.0;
-    private ArrayList<Color> colors;
-    private algoType currentAlgoShown = algoType.DEFUALT;
-    private Button predictAlgoBtn;
-    private Button learningAlgoBtn;
+   // private enum algoType {DEFUALT, PREDICTION, LEARNING}
+    private final int ALL_MY_DOG_SCANS = 0;
+    private final int HOT_ZONE_ALGO = 1;
+    private final int PREDICTION_ALGO = 2;
+
+    private final int ALL_MY_DOG_SCANS_ZOOM = 8;
+    private final int HOT_ZONE_ALGO_ZOOM = 13;
+    private final int PREDICTION_ALGO_ZOOM = 17;
+
+    private final int RADIUS_OFFSET = 2;
+
+    //private ArrayList<Color> colors;
+    //private algoType currentAlgoShown = algoType.DEFUALT;
+    //private Button predictAlgoBtn;
+    //private Button learningAlgoBtn;
     private GoogleMap mMap;
     private SupportMapFragment smFragment;
     private FragmentTabHost mTabHost;
@@ -87,13 +99,13 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private ArrayList<Cluster> hotZonesAlgoResultAsCluster;
     private Coordinate predictionAlgoResult;
     private OnFragmentInteractionListener mListener;
-    final Map<String, Scan> mapOfScans = new HashMap<>();
-    FirebaseAdapter firebaseAdapter;
+    private final Map<String, Scan> mapOfScans = new HashMap<>();
+    private FirebaseAdapter firebaseAdapter;
     private FusedLocationProviderClient fusedLocationClient;
     LocationManager mLocationManager;
     TabLayout tabLayout;
-    boolean isMapReady;
-    boolean isFirstTimeLocationSet;
+    private boolean isMapReady;
+    private boolean isFirstTimeLocationSet;
     private PopupWindow notEnoughScansPopupWindow;
     //weather
     private Weather.weather currentWeather;
@@ -125,7 +137,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     private Marker createMarker(double latitude, double longitude, String title, String snippet) {
-
         return mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .anchor(0.5f, 0.5f)
@@ -197,22 +208,22 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(true);
-        if(currentTab==0) {
+        if(currentTab==ALL_MY_DOG_SCANS) {
             if(mapOfScans!= null &&!mapOfScans.isEmpty()){
                 for(Scan scan : mapOfScans.values()){
                     createMarker(scan.getCoordinate().getLatitude(),scan.getCoordinate().getLongitude(),sdf.format(scan.getTimeStamp()),scan.getCoordinate().getLatitude()+","+scan.getCoordinate().getLongitude());
                 }
             }
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.686378,35.017207),8));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.686378,35.017207),ALL_MY_DOG_SCANS_ZOOM));
         }
-        else if (currentTab==1){
+        else if (currentTab==HOT_ZONE_ALGO){
                 showRadiusArea(hotZonesAlgoResultAsCluster);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),13));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),HOT_ZONE_ALGO_ZOOM));
         }
-        else if(currentTab ==2) {
+        else if(currentTab ==PREDICTION_ALGO) {
             if(predictionAlgoResult!=null) {
                 showRadiusArea(predictionAlgoResult);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(predictionAlgoResult.getLatitude(), predictionAlgoResult.getLongitude()), 17));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(predictionAlgoResult.getLatitude(), predictionAlgoResult.getLongitude()), PREDICTION_ALGO_ZOOM));
             }
         }
     }
@@ -238,11 +249,13 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         return false;
     }
 
+/*
     public static AlgorithmFragment newInstance(String param1, String param2) {
         AlgorithmFragment fragment = new AlgorithmFragment();
 
         return fragment;
     }
+*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -343,7 +356,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         });
 
     }
-
+/*
     private void setPredictAlgoON() {
         predictAlgoBtn.setBackgroundResource(R.color.colorPrimaryDark);
         learningAlgoBtn.setBackgroundResource(R.color.colorPrimary);
@@ -355,7 +368,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         learningAlgoBtn.setBackgroundResource(R.color.colorPrimaryDark);
         currentAlgoShown = algoType.LEARNING;
     }
-
+*/
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -391,7 +404,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
             totalAmountOfPoints+= cluster.getNumOfPoints();
         }
         for(Cluster cluster : arrayOfClusters){
-            mMap.addCircle(new CircleOptions().center(new LatLng(cluster.getCenterLat(),cluster.getCenterLong())).radius(cluster.getDiameter()/2).fillColor(getColorOfCircle(totalAmountOfPoints,cluster.getNumOfPoints())));
+            mMap.addCircle(new CircleOptions().center(new LatLng(cluster.getCenterLat(),cluster.getCenterLong())).radius(cluster.getDiameter()/RADIUS_OFFSET).fillColor(getColorOfCircle(totalAmountOfPoints,cluster.getNumOfPoints())));
         }
     }
     private int getColorOfCircle(int totalAmountOfPoints,int clusterAmountOfPoints){
@@ -408,30 +421,15 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         }
 
     }
-    private int getRandomColor() {
-        Random rnd = new Random();
-        return Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-    }
 
 
-    private ArrayList getRandomRadius(int size) {
-        Random rnd = new Random();
-        ArrayList radiusList = new ArrayList<>();
-
-        for (int i = 0; i < size; i++)
-            radiusList.add(minRadius + (maxRadius - minRadius) * rnd.nextDouble());
-
-        return radiusList;
-    }
 
     public void locationChanged(Location location) {
         //activates from toolbar activity
         if(location!=null)
             currentLocation = location;
-
         Log.i(TAG, "Current location: Lat - " + currentLocation.getLatitude() + "Long - " + currentLocation.getLongitude());
         if(isMapReady) {
-
             if (isFirstTimeLocationSet) {
                 isFirstTimeLocationSet = false;
             }
@@ -460,8 +458,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 // The Lambda function invocation results in a network call.
 // Make sure it is not called from the main thread.
 try {
-
-
         new AsyncTask<RequestClass, Void, ResponseClass>() {
             @Override
             protected ResponseClass doInBackground(RequestClass... params) {
@@ -491,7 +487,7 @@ try {
                 }
                hotZonesAlgoResultAsCluster.addAll(result.getClustersList());
 
-                if(currentTab==1) {
+                if(currentTab==HOT_ZONE_ALGO) {
                    tabLayout.selectTab(tabLayout.getTabAt(1));
                 }
             }
@@ -563,8 +559,10 @@ catch (Exception e){
                 protected void onPostExecute(PredictionResponseClass result) {
                     gotPredictAlgoAnswer = true;
                     if (result == null) {
+                        /*
                         if(currentTab==2)
                             tabLayout.selectTab(tabLayout.getTabAt(2));
+                        */
                         return;
                     }
 
@@ -575,7 +573,7 @@ catch (Exception e){
                 }
             }.execute(request);
 
-            //End testing lambda
+            //End lambda
         }
         catch (Exception e){
             e.printStackTrace();
@@ -597,7 +595,7 @@ catch (Exception e){
     }
         return pointsArrayList;
     }
-
+/*
     public ArrayList<Coordinate> convertClusterArrayListToCoordiante(ArrayList<Cluster> cluserArrayList){
         ArrayList<Coordinate> coordinatesArrayList = new ArrayList<>();
 
@@ -606,6 +604,7 @@ catch (Exception e){
         }
         return coordinatesArrayList;
     }
+*/
 
     public void showHotZonesAlgoMarkersOnMap(){
         updateMapUI();
@@ -621,7 +620,6 @@ catch (Exception e){
     }
 
     public void showPredictAlgoMarkersOnMap(){
-
         updateMapUI();
 
         if(predictionAlgoResult == null && !gotPredictAlgoAnswer){

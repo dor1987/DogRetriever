@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Controller;
 
 import dtg.dogretriever.Model.Dog;
 

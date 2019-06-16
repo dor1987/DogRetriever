@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Controller;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

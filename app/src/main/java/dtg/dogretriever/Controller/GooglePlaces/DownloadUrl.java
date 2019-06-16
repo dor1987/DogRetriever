@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter.GooglePlaces;
+package dtg.dogretriever.Controller.GooglePlaces;
 
 import java.io.BufferedReader;
 import java.io.IOException;

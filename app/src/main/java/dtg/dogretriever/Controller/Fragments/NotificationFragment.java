@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter.Fragments;
+package dtg.dogretriever.Controller.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -7,7 +7,6 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,17 +31,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
-import androidx.viewpager.widget.ViewPager;
+
 import dtg.dogretriever.Model.Coordinate;
-import dtg.dogretriever.Model.Weather;
-import dtg.dogretriever.Presenter.ToolbarActivity;
+import dtg.dogretriever.Controller.ToolbarActivity;
 import dtg.dogretriever.R;
 
 public class NotificationFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener  {
@@ -142,9 +138,8 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(true);
 
-        createMarker(coordinate.getLatitude(), coordinate.getLongitude(), "bla bla", "bla bla");
+        createMarker(coordinate.getLatitude(), coordinate.getLongitude(), "Your dog was here", "");
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(coordinate.getLatitude(),coordinate.getLongitude()),15));
-        Toast.makeText(getContext(), "Created marker with cords: "+ coordinate.getLatitude()+" "+coordinate.getLongitude()+" ", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -216,8 +211,9 @@ public class NotificationFragment extends Fragment implements OnMapReadyCallback
     public void onDetach() {
         super.onDetach();
     }
-
+/*
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
+*/
 }

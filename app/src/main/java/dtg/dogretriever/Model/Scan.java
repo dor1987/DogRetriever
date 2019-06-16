@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Scan {
-    private final int NEARBY_PLACES_RADIUS = 30;
     private Coordinate coordinate;
     private Date timeStamp;
     private Weather.weather currentWeather;

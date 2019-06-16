@@ -25,6 +25,8 @@ public class Place {
     private final String CLIENT_ID = "DYSSILD5DEHVLDFII0BELZ4QHOTS4PEEPNAP5UXEZTTTRC3F";
     private final String CLIENT_SECRET = "HRXKJAWTGVUP130AP5Y1G1IA1J35NOSGDVFGKLODTFMGXUWA";
     private final String API = "https://api.foursquare.com/v2/venues/search?client_id=";
+    private final int TIME_OUT = 10000;
+    private final int JSON_CAPACITY = 1024;
 
     private HashSet<String> placeType;
 
@@ -56,14 +58,15 @@ public class Place {
             httpsURLConnection = (HttpsURLConnection)urlConnection.openConnection();
             // instanciate an HttpGet
             httpsURLConnection.setRequestMethod("GET");
-            httpsURLConnection.setReadTimeout(10000);
-            httpsURLConnection.setConnectTimeout(10000);
+            httpsURLConnection.setReadTimeout(TIME_OUT);
+            httpsURLConnection.setConnectTimeout(TIME_OUT);
+
 
 
             Log.i(TAG, "connection status: "+ httpsURLConnection.getResponseMessage());
             reader = new BufferedReader( new InputStreamReader(httpsURLConnection.getInputStream()));
 
-            StringBuilder json = new StringBuilder(1024);
+            StringBuilder json = new StringBuilder(JSON_CAPACITY);
             String tmp;
 
             while((tmp=reader.readLine())!=null) {

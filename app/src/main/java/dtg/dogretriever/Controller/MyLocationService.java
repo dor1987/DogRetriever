@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Controller;
 
 import android.Manifest;
 import android.app.Activity;
@@ -52,8 +52,6 @@ public class MyLocationService extends Service implements LocationListener {
 
     public void addScanToDataBase(final Dog dog){
         new AsyncTask<Dog,Void,Scan>(){
-
-
             @Override
             protected Scan doInBackground(Dog... dogs) {
                 while(isFirstTimeRuning);
@@ -64,19 +62,14 @@ public class MyLocationService extends Service implements LocationListener {
                     e.printStackTrace();
                     return null;
                 }
-
             }
 
             @Override
             protected void onPostExecute(Scan scan) {
                 super.onPostExecute(scan);
                 firebaseAdapter.addScanToDog(dog, scan);
-
             }
         }.execute();
-
-
-
 
     }
 

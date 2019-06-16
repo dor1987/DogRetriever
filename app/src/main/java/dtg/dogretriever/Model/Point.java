@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter.LearningAlgoTemp;
+package dtg.dogretriever.Model;
 
 
 import java.util.ArrayList;

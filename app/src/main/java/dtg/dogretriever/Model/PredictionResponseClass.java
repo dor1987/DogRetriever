@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Model;
 
 
 public class PredictionResponseClass {

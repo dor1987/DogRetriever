@@ -1,9 +1,9 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Model;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-import dtg.dogretriever.Presenter.LearningAlgoTemp.Point;
+import dtg.dogretriever.Model.Point;
 
 public class RequestClass {
     ArrayList<Point> pointsList;
@@ -42,33 +42,5 @@ public class RequestClass {
     public void setPlacesHistogram(Map<String, Integer> placesHistogram) {
         this.placesHistogram = placesHistogram;
     }
-    /*
-    String firstName;
-    String lastName;
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public RequestClass(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
-    public RequestClass() {
-    }
-
-    */
 }

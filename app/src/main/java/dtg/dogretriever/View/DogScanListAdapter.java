@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import dtg.dogretriever.Model.Dog;
-import dtg.dogretriever.Presenter.DogScanListFunctionalityInterface;
+import dtg.dogretriever.Controller.DogScanListFunctionalityInterface;
 import dtg.dogretriever.R;
 
 public class DogScanListAdapter extends  RecyclerView.Adapter<DogScanListAdapter.ViewHolder>{

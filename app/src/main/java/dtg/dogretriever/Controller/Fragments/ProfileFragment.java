@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter.Fragments;
+package dtg.dogretriever.Controller.Fragments;
 
 
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -185,10 +184,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(1);
         popupWindow.setWidth(1);
-        //one of this made the corners transprent
         popupWindow.setClippingEnabled(true);
         popupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-        //
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
@@ -396,19 +393,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         cancelImageUploadButton.setOnClickListener(this);
         chooseImageUploadButton.setOnClickListener(this);
 
-
-        popupWindow = new PopupWindow(this.getActivity());
-        popupWindow.setContentView(layout);
-        popupWindow.setWindowLayoutMode(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.setHeight(1);
-        popupWindow.setWidth(1);
-        popupWindow.setClippingEnabled(true);
-        popupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-        popupWindow.setFocusable(true);
-        popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
-
+        initPopUpsGraphics(layout);
     }
 
     private void openFileChooser(int src){
@@ -486,7 +471,10 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         NextImageUploadButton.setOnClickListener(this);
         chooseDogImageUploadButton.setOnClickListener(this);
 
+        initPopUpsGraphics(layout);
+    }
 
+    public void initPopUpsGraphics(View layout){
         popupWindow = new PopupWindow(this.getActivity());
         popupWindow.setContentView(layout);
         popupWindow.setWindowLayoutMode(
@@ -500,6 +488,5 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
 
     }
-
 
 }

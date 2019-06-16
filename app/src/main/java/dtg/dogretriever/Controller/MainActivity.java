@@ -1,8 +1,7 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Controller;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
@@ -19,7 +18,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,10 +37,13 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.squareup.picasso.Picasso;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -57,30 +58,30 @@ import dtg.dogretriever.R;
 import dtg.dogretriever.View.DogNamesAdapter;
 import dtg.dogretriever.View.DogScanListAdapter;
 
-import static dtg.dogretriever.Presenter.MyMessagingService.SHARED_PREFS;
+import static dtg.dogretriever.Controller.MyMessagingService.SHARED_PREFS;
 
 public class MainActivity extends AppCompatActivity implements MyLocationService.LocationListener,
         DogScanListFunctionalityInterface, BeaconScannerService.OnBeaconEventListener {
     private static final String TAG = "MainActivity";
 
-    private PopupWindow popupWindow = null;
-    private View mProgressView, mSmallProgressBarView;
-    private View mMainMenuFormView;
+    private View mSmallProgressBarView;
+   // private View mProgressView, mSmallProgressBarView;
+    //private View mMainMenuFormView;
     private TextView userWelcomeTextView;
     private CircleImageView profilePicView;
-    //debug
+
+    private PopupWindow popupWindow = null;
     private PopupWindow fakeScanPopUp = null;
     private PopupWindow notificationPopUp = null;
-    private EditText dogIdFromFakeScanTextView;
+    private PopupWindow ownerInfoPopUp = null;
 
-    //real scan debug
+    private EditText dogIdFromFakeScanTextView;
 
     private PopupWindow scanPopUp = null;
     private RecyclerView.Adapter dogScanListAdapter;
     private ArrayList<Dog> listOfDogScanned;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
-    private PopupWindow ownerInfoPopUp = null;
     private TextView ownerPhoneTextView;
 
     //Location Service
@@ -90,10 +91,10 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private MyLocationService myLocationService;
 
     //notification pop up
-    Double latitude;
-    Double longitude;
-    boolean isNotifcationPopShowenBefore;
-    Bundle bundle;
+    private Double latitude;
+    private Double longitude;
+    private boolean isNotifcationPopShowenBefore;
+    private Bundle bundle;
 
     //Bluetooth
     private BeaconScannerService mBeaconService;
@@ -108,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bundle = getIntent().getExtras();
-        mProgressView = findViewById(R.id.loading_progress);
+        //mProgressView = findViewById(R.id.loading_progress);
         mSmallProgressBarView = findViewById(R.id.main_menu_small_progres_bar);
-        mMainMenuFormView = findViewById(R.id.mainMenuForm);
+        //mMainMenuFormView = findViewById(R.id.mainMenuForm);
         userWelcomeTextView = findViewById(R.id.userWelcome);
         profilePicView = findViewById(R.id.profile_image);
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         //start the service
         Intent intent = new Intent(this, MyLocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+        //DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
         isNotifcationPopShowenBefore = false;
     }
 
@@ -158,8 +159,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     }
 
     public void clickScanner(View view) {
-        //temp implementation for debugging
         createPopUpScan();
+        //scanDogForDebug(view);
     }
 
     public void initWelcomeTextview() {
@@ -253,19 +254,18 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         View layout = layoutInflater.inflate(R.layout.choose_dog_popup, null);
 
         ListView listView = layout.findViewById(R.id.popup_dog_name_list_view);
-        Button cancelBtn = layout.findViewById(R.id.popup_layout_cancel);
         TextView errorMessage = layout.findViewById(R.id.popup_layout_errorMessage);
 
         DogNamesAdapter dogNamesAdapter = new DogNamesAdapter(createDogsList(), this);
         listView.setAdapter(dogNamesAdapter);
-        Log.d("DorCheck", "Location At MainMenu: " + userCurrentLocation + "");
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
                 showSmallProgressBar(true);
                 popupWindow.dismiss();
-                new AsyncToolBarActivityStart(createDogsList().get(i).getCollarId()).execute();
+                AsyncToolBarActivityStart asyncToolBarActivityStart = new AsyncToolBarActivityStart(createDogsList().get(i).getCollarId());
+                asyncToolBarActivityStart.execute();
             }
         });
 
@@ -275,6 +275,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         }
 
         popupWindow = new PopupWindow(this);
+        initPopUpGraphics(layout,popupWindow);
+
+        /*
         popupWindow.setContentView(layout);
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -282,6 +285,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         popupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
+        */
     }
 
 
@@ -294,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void cancelPopUp(View view) {
         popupWindow.dismiss();
     }
-
+/*
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -327,11 +331,14 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             mMainMenuFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
+*/
 
     private void startNotificationPopUp() {
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = layoutInflater.inflate(R.layout.notification_pop_up, null);
         notificationPopUp = new PopupWindow(this);
+        initPopUpGraphics(layout,notificationPopUp);
+        /*
         notificationPopUp.setContentView(layout);
         notificationPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         notificationPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -339,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         notificationPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         notificationPopUp.setFocusable(true);
         notificationPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
-
+        */
     }
 
     public void openMapWithNotificationCords(View view) {
@@ -357,61 +364,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         notificationPopUp.dismiss();
     }
 
-    private void createPopUpFakeScan() {
-        //for debug
-
-        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = layoutInflater.inflate(R.layout.fake_scan_debug, null);
-        fakeScanPopUp = new PopupWindow(this);
-        fakeScanPopUp.setContentView(layout);
-        fakeScanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        fakeScanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        fakeScanPopUp.setClippingEnabled(true);
-        fakeScanPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-        fakeScanPopUp.setFocusable(true);
-        fakeScanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
-        dogIdFromFakeScanTextView = layout.findViewById(R.id.fake_scan__popup_layout_dog_id);
-
-    }
-
-    public void scanDogForDebug(View view) {
-        //Used to put data in data base, dont use without asking dor
-        Dog tempDog = null;
-       // String collarId = dogIdFromFakeScanTextView.getText().toString();
-
-        //if (!collarId.equals(""))
-            tempDog = firebaseAdapter.getDogByCollarIdFromFireBase("7777777");
-
-        if (tempDog != null) {
-            final Dog finalTempDog = tempDog;
-            new Thread(new Runnable() {
-                public void run(){
-                    for (int i = 0; i < 20; i++) {
-                        LatLng locationToReturn = getRandomLocation((new LatLng(32.083729, 34.811020)), 2000);
-                        try {
-                            Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude), new Date(1558372715000L + i*1000));
-                            firebaseAdapter.addScanToDog(finalTempDog, tempScan);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-            }).start();
-
-
-
-            //fakeScanPopUp.dismiss();
-            Toast.makeText(myLocationService, "Scan accepted", Toast.LENGTH_SHORT).show();
-
-        } else {
-            dogIdFromFakeScanTextView.setText("Id not found in Database");
-        }
-
-    }
-
     public void cancelScanPopUp(View view) {
-        //for debug
         if(isBoundBeaconService) {
             getApplicationContext().unbindService(mBeaconConnection);
             isBoundBeaconService = false;
@@ -468,6 +421,10 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         recyclerView.setAdapter(dogScanListAdapter);
 
             scanPopUp = new PopupWindow(this);
+            initPopUpGraphics(layout,scanPopUp);
+            scanPopUp.setOutsideTouchable(false);
+
+            /*
             scanPopUp.setContentView(layout);
             scanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
             scanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -475,9 +432,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             scanPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             scanPopUp.setFocusable(true);
             scanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
-            scanPopUp.setOutsideTouchable(false);
-
-
+            */
 
             Log.i(TAG, "Start scanning...");
             bindToServiceScan();
@@ -515,6 +470,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.scan_owner_information_popup, null);
         ownerInfoPopUp = new PopupWindow(this);
+
+        initPopUpGraphics(layout,ownerInfoPopUp);
+        /*
         ownerInfoPopUp.setContentView(layout);
         ownerInfoPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         ownerInfoPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -522,12 +480,15 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         ownerInfoPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
         ownerInfoPopUp.setFocusable(true);
         ownerInfoPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
+        */
+
         TextView ownerNameTextView = layout.findViewById(R.id.scan_pop_up_owner_info_name);
         ownerPhoneTextView = layout.findViewById(R.id.scan_pop_up_owner_info_number);
         TextView ownerAddressTextView = layout.findViewById(R.id.scan_pop_up_owner_info_address);
         TextView ownerMailTextView = layout.findViewById(R.id.scan_pop_up_owner_info_mail);
         CircleImageView ownerPicView = layout.findViewById(R.id.scan_pop_up_owner_info_image);
         Button ownerInfoCallButton = layout.findViewById(R.id.scan_pop_up_owner_info_call_button);
+
         ownerNameTextView.setText(ownerProfile.getFullName() == null ? "Not available" : ownerProfile.getFullName());
         ownerPhoneTextView.setText(ownerProfile.getPhoneNumber()== null ? "Not available" : ownerProfile.getPhoneNumber());
         ownerAddressTextView.setText(ownerProfile.getAddress()== null ? "Not available" : ownerProfile.getAddress());
@@ -553,56 +514,14 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         ownerInfoPopUp.dismiss();
     }
 
-    public LatLng getRandomLocation(LatLng point, int radius) {
-        //get random location in a predefined radius
-        List<LatLng> randomPoints = new ArrayList<>();
-        List<Float> randomDistances = new ArrayList<>();
-        Location myLocation = new Location("");
-        myLocation.setLatitude(point.latitude);
-        myLocation.setLongitude(point.longitude);
-
-        //This is to generate 10 random points
-        for(int i = 0; i<10; i++) {
-            double x0 = point.latitude;
-            double y0 = point.longitude;
-
-            Random random = new Random();
-
-            // Convert radius from meters to degrees
-            double radiusInDegrees = radius / 111000f;
-
-            double u = random.nextDouble();
-            double v = random.nextDouble();
-            double w = radiusInDegrees * Math.sqrt(u);
-            double t = 2 * Math.PI * v;
-            double x = w * Math.cos(t);
-            double y = w * Math.sin(t);
-
-            // Adjust the x-coordinate for the shrinking of the east-west distances
-            double new_x = x / Math.cos(y0);
-            double foundLatitude = new_x + x0;
-            double foundLongitude = y + y0;
-            LatLng randomLatLng = new LatLng(foundLatitude, foundLongitude);
-            randomPoints.add(randomLatLng);
-            Location l1 = new Location("");
-            l1.setLatitude(randomLatLng.latitude);
-            l1.setLongitude(randomLatLng.longitude);
-            randomDistances.add(l1.distanceTo(myLocation));
-        }
-        //Get nearest point to the centre
-        int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
-        return randomPoints.get(indexOfNearestPointToCentre);
-    }
-
     @Override
     public void locationChanged(Location location) {
-        showProgress(false);
+        //showProgress(false);
         userCurrentLocation = location;
-        Log.d("DorCheck","Location At MainActivity: userCurrentLocation: "+ userCurrentLocation+" location from function "+location );
-        if(mProgressView.getVisibility()!=View.VISIBLE) {
-            if (!isNotifcationPopShowenBefore)
-                showNotificationPop();
-        }
+      //  if(mProgressView.getVisibility()!=View.VISIBLE) {
+        if (!isNotifcationPopShowenBefore)
+            showNotificationPop();
+        //}
     }
 
     public void showNotificationPop(){
@@ -618,11 +537,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
            if(latitude!=null && latitude!=0.0
                    && longitude != null && longitude != 0.0)
                 startNotificationPopUp();
-        }
-        else{
-            //debug
-          //  Toast.makeText(this, "Got Nothing", Toast.LENGTH_SHORT).show();
-
         }
     }
 
@@ -670,7 +584,15 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
     }
 
-
+    public void initPopUpGraphics(View layout, PopupWindow window){
+        window.setContentView(layout);
+        window.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setClippingEnabled(true);
+        window.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+        window.setFocusable(true);
+        window.showAtLocation(layout, Gravity.CENTER, 1, 1);
+    }
 
     public void showSmallProgressBar(final Boolean toShow){
 
@@ -735,8 +657,128 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         }
     };
 
+//Debug Functions Start
+    public LatLng getRandomLocation(LatLng point, int radius) {
+    //For debug
+    //get random location in a predefined radius
+    List<LatLng> randomPoints = new ArrayList<>();
+    List<Float> randomDistances = new ArrayList<>();
+    Location myLocation = new Location("");
+    myLocation.setLatitude(point.latitude);
+    myLocation.setLongitude(point.longitude);
+
+    //This is to generate 10 random points
+    for(int i = 0; i<10; i++) {
+        double x0 = point.latitude;
+        double y0 = point.longitude;
+
+        Random random = new Random();
+
+        // Convert radius from meters to degrees
+        double radiusInDegrees = radius / 111000f;
+
+        double u = random.nextDouble();
+        double v = random.nextDouble();
+        double w = radiusInDegrees * Math.sqrt(u);
+        double t = 2 * Math.PI * v;
+        double x = w * Math.cos(t);
+        double y = w * Math.sin(t);
+
+        // Adjust the x-coordinate for the shrinking of the east-west distances
+        double new_x = x / Math.cos(y0);
+        double foundLatitude = new_x + x0;
+        double foundLongitude = y + y0;
+        LatLng randomLatLng = new LatLng(foundLatitude, foundLongitude);
+        randomPoints.add(randomLatLng);
+        Location l1 = new Location("");
+        l1.setLatitude(randomLatLng.latitude);
+        l1.setLongitude(randomLatLng.longitude);
+        randomDistances.add(l1.distanceTo(myLocation));
+    }
+    //Get nearest point to the centre
+    int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
+    return randomPoints.get(indexOfNearestPointToCentre);
+}
+
+    private void createPopUpFakeScan() {
+        //for debug
+
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.fake_scan_debug, null);
+        fakeScanPopUp = new PopupWindow(this);
+        fakeScanPopUp.setContentView(layout);
+        fakeScanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        fakeScanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        fakeScanPopUp.setClippingEnabled(true);
+        fakeScanPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+        fakeScanPopUp.setFocusable(true);
+        fakeScanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
+        dogIdFromFakeScanTextView = layout.findViewById(R.id.fake_scan__popup_layout_dog_id);
+
+    }
+
+    public void scanDogForDebug(View view) {
+        //Used to put data in data base, dont use without asking dor
+        Dog tempDog = null;
+        // String collarId = dogIdFromFakeScanTextView.getText().toString();
+
+        //if (!collarId.equals(""))
+        tempDog = firebaseAdapter.getDogByCollarIdFromFireBase("5556");
 
 
+
+        if (tempDog != null) {
+            final Dog finalTempDog = tempDog;
+            new Thread(new Runnable() {
+                public void run(){
+                    for (int i = 0; i < 1; i++) {
+                        LatLng locationToReturn = getRandomLocation((new LatLng(32.113885, 34.818631)), 10);
+                        try {
+                            Scan tempScan = new Scan(new Coordinate(locationToReturn.latitude, locationToReturn.longitude), new Date(generateDate()));
+                            firebaseAdapter.addScanToDog(finalTempDog, tempScan);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+            }).start();
+
+
+
+            //fakeScanPopUp.dismiss();
+            Toast.makeText(myLocationService, "Scan accepted", Toast.LENGTH_SHORT).show();
+
+        } else {
+            dogIdFromFakeScanTextView.setText("Id not found in Database");
+        }
+
+    }
+
+    public long generateDate(){
+        //for debug
+        SimpleDateFormat dfDateTime  = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+        int year = randBetween(2019, 2019);// Here you can set Range of years you need
+        int month = randBetween(5, 6);
+        int hour = randBetween(9, 22); //Hours will be displayed in between 9 to 22
+        int min = randBetween(0, 59);
+        int sec = randBetween(0, 59);
+
+
+        GregorianCalendar gc = new GregorianCalendar(year, month, 1);
+        int day = randBetween(1, gc.getActualMaximum(gc.DAY_OF_MONTH));
+
+        gc.set(year, month, day, hour, min,sec);
+
+        System.out.println(dfDateTime.format(gc.getTime()));
+        return gc.getTimeInMillis();
+    }
+
+    public static int randBetween(int start, int end) {
+        return start + (int)Math.round(Math.random() * (end - start));
+    }
+
+//Debug Functions End
 
     private class AsyncToolBarActivityStart extends AsyncTask<Void, Void, Intent>{
     private String collarId;
@@ -757,7 +799,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     @Override
     protected void onPostExecute(Intent intent) {
         super.onPostExecute(intent);
-        Toast.makeText(getBaseContext(), "on post execute", Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
 }

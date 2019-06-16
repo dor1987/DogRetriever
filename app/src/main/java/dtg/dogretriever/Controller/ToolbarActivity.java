@@ -1,4 +1,4 @@
-package dtg.dogretriever.Presenter;
+package dtg.dogretriever.Controller;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -18,33 +18,35 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import dtg.dogretriever.Model.FirebaseAdapter;
-import dtg.dogretriever.Presenter.Fragments.AboutFragment;
-import dtg.dogretriever.Presenter.Fragments.NotificationFragment;
-import dtg.dogretriever.Presenter.Fragments.ProfileFragment;
-import dtg.dogretriever.Presenter.Fragments.SettingFragment;
+import dtg.dogretriever.Controller.Fragments.AboutFragment;
+import dtg.dogretriever.Controller.Fragments.NotificationFragment;
+import dtg.dogretriever.Controller.Fragments.ProfileFragment;
+import dtg.dogretriever.Controller.Fragments.SettingFragment;
 import dtg.dogretriever.R;
 
 public class ToolbarActivity extends AppCompatActivity implements MyLocationService.LocationListener {
 
+    //Fragments
+    private AlgorithmFragment algorithmFragment;
+    private SettingFragment settingFragment;
+    private AboutFragment aboutFragment;
+    private ProfileFragment profileFragment;
+    private NotificationFragment notificationFragment;
 
-    AlgorithmFragment algorithmFragment;
-    SettingFragment settingFragment;
-    AboutFragment aboutFragment;
-    ProfileFragment profileFragment;
-    NotificationFragment notificationFragment;
-    FirebaseAdapter firebaseAdapter;
-    final Bundle bundle = new Bundle();
-    private View mProgressView;
-    private View mFragmentContainerView;
 
     //Location Service
     boolean isBound = false;
     private MyLocationService.MylocalBinder mBinder;
     private Location userCurrentLocation;
     private MyLocationService myLocationService;
-    Double latitude = 0.0;
-    Double longitude = 0.0;
+    private Double latitude = 0.0;
+    private Double longitude = 0.0;
+
+    private View mFragmentContainerView;
     private View smallProgressBar;
+    private View mProgressView;
+    private FirebaseAdapter firebaseAdapter;
+    final Bundle bundle = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +157,6 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
 
 
     public void startAlgoMapFragment(String dogId){
-        //Testing new way of starting the algo fragment
         //we pass dogId and the algo fragment get the data needed directly from Firebase
 
         bundle.putString("dogId",dogId);
