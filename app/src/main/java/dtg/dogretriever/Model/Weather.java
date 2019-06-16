@@ -12,7 +12,8 @@ import javax.net.ssl.HttpsURLConnection;
 public class Weather {
     private static final String TAG = "Weather";
     private static final String API = "https://api.forecast.io/forecast/dc740664c686a65b34462152a32c898c/%s";
-
+    private final int TIMEOUT = 10000;
+    private final int CAPACITY = 1024;
 
     public enum weather {UNKNOWN,SNOWY,COLD,WARM,HOT,VERY_HOT}
 
@@ -41,7 +42,7 @@ public class Weather {
     }
 
 
-    public static JSONObject getJSON(String coord) throws IOException {
+    private JSONObject getJSON(String coord) throws IOException {
         //get json from weather API
         HttpsURLConnection connection = null;
         BufferedReader reader = null;
@@ -51,13 +52,13 @@ public class Weather {
             connection =(HttpsURLConnection)url.openConnection();
 
             connection.setRequestMethod("GET");
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(TIMEOUT);
+            connection.setConnectTimeout(TIMEOUT);
 
             Log.i(TAG, "connection status: "+ connection.getResponseMessage());
             reader = new BufferedReader( new InputStreamReader(connection.getInputStream()));
 
-            StringBuilder json = new StringBuilder(1024);
+            StringBuilder json = new StringBuilder(CAPACITY);
             String tmp;
 
             while((tmp=reader.readLine())!=null) {
@@ -105,7 +106,7 @@ public class Weather {
 
     }
 
-    public void setCurrentWeather(Double temperature) {
+    private void setCurrentWeather(Double temperature) {
         if (temperature <= 0 )
             currentWeather = weather.SNOWY;
         else if (temperature > 0 && temperature <= 20)
