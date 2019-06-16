@@ -105,4 +105,6 @@
     <string name="close">Close</string>
     <string name="log_out">Log Out</string>
     <string name="hello">Hello</string>
+    <string name="helloguest">Hello Guest</string>
+    <string name="not_available">Not available</string>
 </resources>

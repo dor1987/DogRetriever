@@ -63,19 +63,18 @@ import static dtg.dogretriever.Controller.MyMessagingService.SHARED_PREFS;
 public class MainActivity extends AppCompatActivity implements MyLocationService.LocationListener,
         DogScanListFunctionalityInterface, BeaconScannerService.OnBeaconEventListener {
     private static final String TAG = "MainActivity";
+    public final String FRAGMENT_KEY = "fragmentToOpen";
 
     private View mSmallProgressBarView;
-   // private View mProgressView, mSmallProgressBarView;
-    //private View mMainMenuFormView;
     private TextView userWelcomeTextView;
     private CircleImageView profilePicView;
 
     private PopupWindow popupWindow = null;
-    private PopupWindow fakeScanPopUp = null;
+    //private PopupWindow fakeScanPopUp = null;
     private PopupWindow notificationPopUp = null;
     private PopupWindow ownerInfoPopUp = null;
 
-    private EditText dogIdFromFakeScanTextView;
+    //private EditText dogIdFromFakeScanTextView;
 
     private PopupWindow scanPopUp = null;
     private RecyclerView.Adapter dogScanListAdapter;
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private Location userCurrentLocation;
     private MyLocationService myLocationService;
 
-    //notification pop up
+    //Notification pop up
     private Double latitude;
     private Double longitude;
     private boolean isNotifcationPopShowenBefore;
@@ -100,8 +99,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     private BeaconScannerService mBeaconService;
     private boolean isBoundBeaconService = false;
 
-    //firebase
-
+    //Firebase
     private FirebaseAdapter firebaseAdapter;
 
     @Override
@@ -109,9 +107,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bundle = getIntent().getExtras();
-        //mProgressView = findViewById(R.id.loading_progress);
         mSmallProgressBarView = findViewById(R.id.main_menu_small_progres_bar);
-        //mMainMenuFormView = findViewById(R.id.mainMenuForm);
         userWelcomeTextView = findViewById(R.id.userWelcome);
         profilePicView = findViewById(R.id.profile_image);
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
@@ -121,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         //start the service
         Intent intent = new Intent(this, MyLocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        //DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
         isNotifcationPopShowenBefore = false;
     }
 
@@ -179,13 +174,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 });
             }
         } else {
-            userWelcomeTextView.setText("Hello Guest");
+            userWelcomeTextView.setText(getString(R.string.helloguest));
         }
     }
 
     public void clickFindMyDog(View view) {
         if (firebaseAdapter.isUserConnected()) {
-
             if (firebaseAdapter.isUserDataReadyNow()) {
                 createPopUpChooseDogName();
             } else {
@@ -208,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
     public void clickSettings(View view) {
         Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
-        intent.putExtra("fragmentToOpen", 1);
+        intent.putExtra(FRAGMENT_KEY, 1);
         startActivity(intent);
     }
 
@@ -219,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         if (firebaseAdapter.isUserConnected()) {
             if (firebaseAdapter.isUserDataReadyNow()) {
                 Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
-                intent.putExtra("fragmentToOpen", 3);
+                intent.putExtra(FRAGMENT_KEY, 3);
                 startActivity(intent);
             } else {
                 showSmallProgressBar(true);
@@ -228,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                     public void onDataReady() {
                         showSmallProgressBar(false);
                         Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
-                        intent.putExtra("fragmentToOpen", 3);
+                        intent.putExtra(FRAGMENT_KEY, 3);
                         firebaseAdapter.removeProfileDataListener();
                         startActivity(intent);
 
@@ -244,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
     public void clickAbout(View view) {
         Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
-        intent.putExtra("fragmentToOpen", 2);
+        intent.putExtra(FRAGMENT_KEY, 2);
         startActivity(intent);
     }
 
@@ -276,16 +270,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
         popupWindow = new PopupWindow(this);
         initPopUpGraphics(layout,popupWindow);
-
-        /*
-        popupWindow.setContentView(layout);
-        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.setClippingEnabled(true);
-        popupWindow.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-        popupWindow.setFocusable(true);
-        popupWindow.showAtLocation(layout, Gravity.CENTER, 1, 1);
-        */
     }
 
 
@@ -298,55 +282,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public void cancelPopUp(View view) {
         popupWindow.dismiss();
     }
-/*
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mMainMenuFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mMainMenuFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mMainMenuFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mMainMenuFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-    }
-*/
 
     private void startNotificationPopUp() {
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = layoutInflater.inflate(R.layout.notification_pop_up, null);
         notificationPopUp = new PopupWindow(this);
         initPopUpGraphics(layout,notificationPopUp);
-        /*
-        notificationPopUp.setContentView(layout);
-        notificationPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        notificationPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        notificationPopUp.setClippingEnabled(true);
-        notificationPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-        notificationPopUp.setFocusable(true);
-        notificationPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
-        */
     }
 
     public void openMapWithNotificationCords(View view) {
@@ -357,7 +298,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         intent.putExtra("longitude", longitude);
         intent.putExtra("currentLocation", userCurrentLocation);
         startActivity(intent);
-
     }
 
     public void closeNotificationPopUp(View view) {
@@ -376,15 +316,10 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         BluetoothManager manager =
                 (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         BluetoothAdapter adapter = manager.getAdapter();
-        /*
-         * We need to enforce that Bluetooth is first enabled, and take the
-         * user to settings to enable it if they have not done so.
-         */
         if (adapter == null || !adapter.isEnabled()) {
             //Bluetooth is disabled
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent,0);
-
             return false;
         }
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
@@ -392,7 +327,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             finish();
             return false;
         }
-
         return true;
     }
 
@@ -401,8 +335,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
            createPopUpScan();
-        }else{
-            // show error
         }
     }
 
@@ -414,29 +346,17 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        //scan pop up
         listOfDogScanned = new ArrayList<>();
 
         dogScanListAdapter = new DogScanListAdapter(listOfDogScanned, MainActivity.this, this);
         recyclerView.setAdapter(dogScanListAdapter);
 
-            scanPopUp = new PopupWindow(this);
-            initPopUpGraphics(layout,scanPopUp);
-            scanPopUp.setOutsideTouchable(false);
+        scanPopUp = new PopupWindow(this);
+        initPopUpGraphics(layout,scanPopUp);
+        scanPopUp.setOutsideTouchable(false);
 
-            /*
-            scanPopUp.setContentView(layout);
-            scanPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-            scanPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-            scanPopUp.setClippingEnabled(true);
-            scanPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-            scanPopUp.setFocusable(true);
-            scanPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
-            */
-
-            Log.i(TAG, "Start scanning...");
-            bindToServiceScan();
-
+        Log.i(TAG, "Start scanning...");
+        bindToServiceScan();
         }
     }
 
@@ -452,7 +372,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
             getApplicationContext().unbindService(mBeaconConnection);
             bindToServiceScan();
         }
-
     }
 
     @Override
@@ -472,16 +391,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         ownerInfoPopUp = new PopupWindow(this);
 
         initPopUpGraphics(layout,ownerInfoPopUp);
-        /*
-        ownerInfoPopUp.setContentView(layout);
-        ownerInfoPopUp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        ownerInfoPopUp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        ownerInfoPopUp.setClippingEnabled(true);
-        ownerInfoPopUp.setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-        ownerInfoPopUp.setFocusable(true);
-        ownerInfoPopUp.showAtLocation(layout, Gravity.CENTER, 1, 1);
-        */
-
         TextView ownerNameTextView = layout.findViewById(R.id.scan_pop_up_owner_info_name);
         ownerPhoneTextView = layout.findViewById(R.id.scan_pop_up_owner_info_number);
         TextView ownerAddressTextView = layout.findViewById(R.id.scan_pop_up_owner_info_address);
@@ -489,11 +398,12 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
         CircleImageView ownerPicView = layout.findViewById(R.id.scan_pop_up_owner_info_image);
         Button ownerInfoCallButton = layout.findViewById(R.id.scan_pop_up_owner_info_call_button);
 
-        ownerNameTextView.setText(ownerProfile.getFullName() == null ? "Not available" : ownerProfile.getFullName());
-        ownerPhoneTextView.setText(ownerProfile.getPhoneNumber()== null ? "Not available" : ownerProfile.getPhoneNumber());
-        ownerAddressTextView.setText(ownerProfile.getAddress()== null ? "Not available" : ownerProfile.getAddress());
-        ownerMailTextView.setText(ownerProfile.geteMail()== null ? "Not available" : ownerProfile.geteMail());
-        if(ownerPhoneTextView.getText().toString().equals("Not available")){
+        String defaultValue = getString(R.string.not_available);
+        ownerNameTextView.setText(ownerProfile.getFullName() == null ? defaultValue : ownerProfile.getFullName());
+        ownerPhoneTextView.setText(ownerProfile.getPhoneNumber()== null ? defaultValue: ownerProfile.getPhoneNumber());
+        ownerAddressTextView.setText(ownerProfile.getAddress()== null ? defaultValue : ownerProfile.getAddress());
+        ownerMailTextView.setText(ownerProfile.geteMail()== null ? defaultValue : ownerProfile.geteMail());
+        if(ownerPhoneTextView.getText().toString().equals(defaultValue)){
             ownerInfoCallButton.setVisibility(View.INVISIBLE);
         }
 
@@ -516,12 +426,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
 
     @Override
     public void locationChanged(Location location) {
-        //showProgress(false);
         userCurrentLocation = location;
-      //  if(mProgressView.getVisibility()!=View.VISIBLE) {
         if (!isNotifcationPopShowenBefore)
             showNotificationPop();
-        //}
     }
 
     public void showNotificationPop(){
@@ -616,8 +523,6 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
                 }
             });
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
             mSmallProgressBarView.setVisibility(toShow ? View.VISIBLE : View.GONE);
         }
     }
@@ -658,6 +563,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     };
 
 //Debug Functions Start
+    /*
     public LatLng getRandomLocation(LatLng point, int radius) {
     //For debug
     //get random location in a predefined radius
@@ -777,30 +683,29 @@ public class MainActivity extends AppCompatActivity implements MyLocationService
     public static int randBetween(int start, int end) {
         return start + (int)Math.round(Math.random() * (end - start));
     }
-
+    */
 //Debug Functions End
 
     private class AsyncToolBarActivityStart extends AsyncTask<Void, Void, Intent>{
-    private String collarId;
-    private AsyncToolBarActivityStart(String collarId) {
-        this.collarId = collarId;
-    }
+        private String collarId;
+        private AsyncToolBarActivityStart(String collarId) {
+            this.collarId = collarId;
+        }
 
-    @Override
-    protected Intent doInBackground(Void... voids) {
-        Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
-        intent.putExtra("TAG", "AlgorithmFragment");
-        intent.putExtra("fragmentToOpen", "0");
-        intent.putExtra("DOG_ID", collarId);
-        intent.putExtra("currentLocation", userCurrentLocation);
-        return intent;
-    }
+        @Override
+        protected Intent doInBackground(Void... voids) {
+            Intent intent = new Intent(getBaseContext(), ToolbarActivity.class);
+            intent.putExtra("TAG", "AlgorithmFragment");
+            intent.putExtra("fragmentToOpen", "0");
+            intent.putExtra("DOG_ID", collarId);
+            intent.putExtra("currentLocation", userCurrentLocation);
+            return intent;
+        }
 
-    @Override
-    protected void onPostExecute(Intent intent) {
-        super.onPostExecute(intent);
-        startActivity(intent);
+        @Override
+        protected void onPostExecute(Intent intent) {
+            super.onPostExecute(intent);
+            startActivity(intent);
+        }
     }
-}
-
 }

@@ -13,7 +13,7 @@ public class Scan {
 
     public Scan() {}
 
-    public Scan(Coordinate coordinate) throws IOException {
+    public Scan(Coordinate coordinate){
         this.coordinate = coordinate;
         setTimeStamp();
         Weather weather = new Weather(coordinate.toString());
@@ -22,10 +22,9 @@ public class Scan {
         Place place  = new Place(coordinate.toString());
         if(place.getPlaceType()!=null)
             setPlaces(new ArrayList<>(place.getPlaceType()));
-
     }
 
-    public Scan(Coordinate coordinate, Date timeStamp) throws IOException {
+    public Scan(Coordinate coordinate, Date timeStamp){
         this.coordinate = coordinate;
         this.timeStamp = timeStamp;
         Weather weather = new Weather(coordinate.toString());

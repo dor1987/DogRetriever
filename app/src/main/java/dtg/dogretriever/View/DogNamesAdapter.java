@@ -12,7 +12,7 @@ import dtg.dogretriever.Model.Dog;
 import dtg.dogretriever.R;
 
 public class DogNamesAdapter extends BaseAdapter {
-    ArrayList<Dog> dogsList;
+    private ArrayList<Dog> dogsList;
     private LayoutInflater inflater;
     private Context context;
 

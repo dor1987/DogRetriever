@@ -1,4 +1,4 @@
-package dtg.dogretriever.Controller;
+package dtg.dogretriever.Controller.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -59,6 +59,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTabHost;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
+
+import dtg.dogretriever.Controller.MyInterface;
+import dtg.dogretriever.Controller.PredicationAlgoInterface;
+import dtg.dogretriever.Controller.ToolbarActivity;
 import dtg.dogretriever.Model.Coordinate;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Model.PredictionRequestClass;
@@ -76,7 +80,6 @@ import com.google.android.material.tabs.TabLayout;
 public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, View.OnClickListener {
     private static final String TAG = "AlgorithmFragment";
     public static final int MY_CODE_REQUEST = 123;
-   // private enum algoType {DEFUALT, PREDICTION, LEARNING}
     private final int ALL_MY_DOG_SCANS = 0;
     private final int HOT_ZONE_ALGO = 1;
     private final int PREDICTION_ALGO = 2;
@@ -87,10 +90,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
     private final int RADIUS_OFFSET = 2;
 
-    //private ArrayList<Color> colors;
-    //private algoType currentAlgoShown = algoType.DEFUALT;
-    //private Button predictAlgoBtn;
-    //private Button learningAlgoBtn;
     private GoogleMap mMap;
     private SupportMapFragment smFragment;
     private FragmentTabHost mTabHost;
@@ -98,12 +97,11 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private ArrayList<Coordinate> hotZonesAlgoResult;
     private ArrayList<Cluster> hotZonesAlgoResultAsCluster;
     private Coordinate predictionAlgoResult;
-    private OnFragmentInteractionListener mListener;
     private final Map<String, Scan> mapOfScans = new HashMap<>();
     private FirebaseAdapter firebaseAdapter;
-    private FusedLocationProviderClient fusedLocationClient;
-    LocationManager mLocationManager;
-    TabLayout tabLayout;
+    //private FusedLocationProviderClient fusedLocationClient;
+    //private LocationManager mLocationManager;
+    private TabLayout tabLayout;
     private boolean isMapReady;
     private boolean isFirstTimeLocationSet;
     private PopupWindow notEnoughScansPopupWindow;
@@ -111,13 +109,12 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     private Weather.weather currentWeather;
     private Weather weather;
 
-    SharedPreferences sharedPreferences;
-
     private int currentTab;
     private SimpleDateFormat sdf = new SimpleDateFormat("'Date:' dd.MM.yy ' Time:'HH:mm:ss");
     private LinearLayout colorExplainLayout;
     private boolean gotHotZoneAnswer;
     private boolean gotPredictAlgoAnswer;
+    SharedPreferences sharedPreferences;
 
     public AlgorithmFragment() {
         // Required empty public constructor
@@ -142,7 +139,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                 .anchor(0.5f, 0.5f)
                 .title(title)
                 .snippet(snippet));
-
     }
 
     private void displayLocationSettingsRequest(Context context) {
@@ -189,7 +185,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
     private void checkForPermissions() {
         if (mMap == null) {
-            Log.d(TAG, "map in null");
+            Log.d(TAG, "map is null");
             return;
         }
 
@@ -216,11 +212,11 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
             }
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.686378,35.017207),ALL_MY_DOG_SCANS_ZOOM));
         }
-        else if (currentTab==HOT_ZONE_ALGO){
+        else if (currentTab == HOT_ZONE_ALGO){
                 showRadiusArea(hotZonesAlgoResultAsCluster);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),HOT_ZONE_ALGO_ZOOM));
         }
-        else if(currentTab ==PREDICTION_ALGO) {
+        else if(currentTab == PREDICTION_ALGO) {
             if(predictionAlgoResult!=null) {
                 showRadiusArea(predictionAlgoResult);
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(predictionAlgoResult.getLatitude(), predictionAlgoResult.getLongitude()), PREDICTION_ALGO_ZOOM));
@@ -231,15 +227,13 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case MY_CODE_REQUEST:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    updateMapUI();
-                    Log.d(TAG, "Location permission granted");
-                } else {
-                    Log.d(TAG, "Location permission denied");
-                }
+        if(requestCode == MY_CODE_REQUEST) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                updateMapUI();
+                Log.d(TAG, "Location permission granted");
+            } else {
+                Log.d(TAG, "Location permission denied");
+            }
         }
     }
 
@@ -249,13 +243,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         return false;
     }
 
-/*
-    public static AlgorithmFragment newInstance(String param1, String param2) {
-        AlgorithmFragment fragment = new AlgorithmFragment();
-
-        return fragment;
-    }
-*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -274,17 +261,12 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         weather = new Weather(new Coordinate(currentLocation.getLatitude(), currentLocation.getLongitude()).toString());
         currentWeather = weather.getCurrentWeather();
 
-        Log.d("DorCheck","Location At AlgoFragment OnCreateView: "+ currentLocation+"");
-
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
         View view = inflater.inflate(R.layout.fragment_algorithm, container, false);
-        ViewPager viewPager = view.findViewById(R.id.viewpager);
         tabLayout = view.findViewById(R.id.tablayout);
         colorExplainLayout = view.findViewById(R.id.algo_fragment_color_explain);
-        //coordinatesToShow = new ArrayList<>();
         hotZonesAlgoResult = new ArrayList<>();
         hotZonesAlgoResultAsCluster = new ArrayList<>();
-        //learningAlgo = new LearningAlgo();
         gotHotZoneAnswer = false;
         gotPredictAlgoAnswer = false;
 
@@ -315,7 +297,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                 String dogId = getArguments().getString("dogId");
 
                 switch (tab.getPosition()) {
-                    case 0:
+                    case ALL_MY_DOG_SCANS:
                         //Show all scan of selected dog
                         ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
                         mapOfScans.clear();
@@ -327,16 +309,15 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
                         updateMapUI();
                         break;
 
-                    case 1:
-                        //show algo1 result for selected dog
+                    case HOT_ZONE_ALGO:
+                        //show algo1 result
                         showHotZonesAlgoMarkersOnMap();
                         colorExplainLayout.setVisibility(View.VISIBLE);
 
                         break;
 
-                    case 2:
+                    case PREDICTION_ALGO:
                         //show algo2 result for selected dog
-                        //Right now will show ll scans of all dogs
                         ((ToolbarActivity)getActivity()).showSmalProgressBar(false);
                         colorExplainLayout.setVisibility(View.INVISIBLE);
                         showPredictAlgoMarkersOnMap();
@@ -356,40 +337,15 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         });
 
     }
-/*
-    private void setPredictAlgoON() {
-        predictAlgoBtn.setBackgroundResource(R.color.colorPrimaryDark);
-        learningAlgoBtn.setBackgroundResource(R.color.colorPrimary);
-        currentAlgoShown = algoType.PREDICTION;
-    }
-
-    private void setLearningAlgoON() {
-        predictAlgoBtn.setBackgroundResource(R.color.colorPrimary);
-        learningAlgoBtn.setBackgroundResource(R.color.colorPrimaryDark);
-        currentAlgoShown = algoType.LEARNING;
-    }
-*/
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 
     private void showRadiusArea(Coordinate coord) {
@@ -407,9 +363,9 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
             mMap.addCircle(new CircleOptions().center(new LatLng(cluster.getCenterLat(),cluster.getCenterLong())).radius(cluster.getDiameter()/RADIUS_OFFSET).fillColor(getColorOfCircle(totalAmountOfPoints,cluster.getNumOfPoints())));
         }
     }
+
     private int getColorOfCircle(int totalAmountOfPoints,int clusterAmountOfPoints){
     double ratio = (double)clusterAmountOfPoints/(double)totalAmountOfPoints;
-
         if(ratio<=0.1){
             return 0x22ff0000;
         }
@@ -421,8 +377,6 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
         }
 
     }
-
-
 
     public void locationChanged(Location location) {
         //activates from toolbar activity
@@ -437,26 +391,26 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     @SuppressLint("StaticFieldLeak")
-    public void hotZonesAlgo(){
-        //testing Lambda
+    private void hotZonesAlgo(){
+        //Lambda
 
         // Create an instance of CognitoCachingCredentialsProvider
         CognitoCachingCredentialsProvider cognitoProvider = new CognitoCachingCredentialsProvider(
                 this.getActivity().getApplicationContext(), "us-east-1:0843e7a0-4eaa-4d94-8450-29790fb2faf0", Regions.US_EAST_1);
-// Create LambdaInvokerFactory, to be used to instantiate the Lambda proxy.
+        // Create LambdaInvokerFactory, to be used to instantiate the Lambda proxy.
 
         LambdaInvokerFactory factory = new LambdaInvokerFactory(this.getActivity().getApplicationContext(),
                 Regions.US_EAST_1, cognitoProvider);
 
-// Create the Lambda proxy object with a default Json data binder.
-// You can provide your own data binder by implementing
-// LambdaDataBinder.
+        // Create the Lambda proxy object with a default Json data binder.
+        // You can provide your own data binder by implementing
+        // LambdaDataBinder.
         final MyInterface myInterface = factory.build(MyInterface.class);
         int radius = Integer.parseInt(sharedPreferences.getString("hot_zones_algo_radius","4000"));
         RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
 
-// The Lambda function invocation results in a network call.
-// Make sure it is not called from the main thread.
+        // The Lambda function invocation results in a network call.
+        // Make sure it is not called from the main thread.
 try {
         new AsyncTask<RequestClass, Void, ResponseClass>() {
             @Override
@@ -466,15 +420,15 @@ try {
                 try {
                     return myInterface.AndroidBackendLambdaFunction(params[0]);
                 } catch (LambdaFunctionException lfe) {
-                    Log.e("Tag", "Failed to invoke echo", lfe);
+                    Log.e(TAG, "Failed to invoke echo", lfe);
                     return null;
                 }
                 catch (AmazonServiceException e){
-                    Log.e("Tag", "request time out",e);
+                    Log.e(TAG, "request time out",e);
                     return null;
                 }
                 catch (AmazonClientException e){
-                    Log.e("Tag","request time out");
+                    Log.e(TAG,"request time out");
                     return null;
                 }
             }
@@ -506,16 +460,15 @@ catch (Exception e){
         // Create an instance of CognitoCachingCredentialsProvider
         CognitoCachingCredentialsProvider cognitoProvider = new CognitoCachingCredentialsProvider(
                 this.getActivity().getApplicationContext(), "us-east-1:f03c6ed8-afad-4497-9a9b-a4024e891a21", Regions.US_EAST_1);
-// Create LambdaInvokerFactory, to be used to instantiate the Lambda proxy.
+        // Create LambdaInvokerFactory, to be used to instantiate the Lambda proxy.
 
         LambdaInvokerFactory factory = new LambdaInvokerFactory(this.getActivity().getApplicationContext(),
                 Regions.US_EAST_1, cognitoProvider);
 
-// Create the Lambda proxy object with a default Json data binder.
-// You can provide your own data binder by implementing
-// LambdaDataBinder.
+        // Create the Lambda proxy object with a default Json data binder.
+        // You can provide your own data binder by implementing
+        // LambdaDataBinder.
         final PredicationAlgoInterface predicationAlgoInterface = factory.build(PredicationAlgoInterface.class);
-       // RequestClass request = new RequestClass(convretMapOfScansToPoint(firebaseAdapter.getAllScanOfAllDogsInNamedRadius(currentLocation, radius)),currentWeather.name(),firebaseAdapter.getPlacesHistogram());
         String dogId = getArguments().getString("dogId");
         ArrayList<Point> points = convretMapOfScansToPoint(firebaseAdapter.getAllScanOfSpecificDog(firebaseAdapter.getDogByCollarIdFromFireBase(dogId)));
 
@@ -533,7 +486,6 @@ catch (Exception e){
 // Make sure it is not called from the main thread.
         try {
 
-
             new AsyncTask<PredictionRequestClass, Void, PredictionResponseClass>() {
                 @Override
                 protected PredictionResponseClass doInBackground(PredictionRequestClass... params) {
@@ -542,15 +494,15 @@ catch (Exception e){
                     try {
                         return predicationAlgoInterface.LambdaPrediction(params[0]);
                     } catch (LambdaFunctionException lfe) {
-                        Log.e("Tag", "Failed to invoke echo", lfe);
+                        Log.e(TAG, "Failed to invoke echo", lfe);
                         return null;
                     }
                     catch (AmazonServiceException e){
-                        Log.e("Tag", "request time out",e);
+                        Log.e(TAG, "request time out",e);
                         return null;
                     }
                     catch (AmazonClientException e){
-                        Log.e("Tag","request time out");
+                        Log.e(TAG,"request time out");
                         return null;
                     }
                 }
@@ -559,10 +511,6 @@ catch (Exception e){
                 protected void onPostExecute(PredictionResponseClass result) {
                     gotPredictAlgoAnswer = true;
                     if (result == null) {
-                        /*
-                        if(currentTab==2)
-                            tabLayout.selectTab(tabLayout.getTabAt(2));
-                        */
                         return;
                     }
 
@@ -595,16 +543,6 @@ catch (Exception e){
     }
         return pointsArrayList;
     }
-/*
-    public ArrayList<Coordinate> convertClusterArrayListToCoordiante(ArrayList<Cluster> cluserArrayList){
-        ArrayList<Coordinate> coordinatesArrayList = new ArrayList<>();
-
-        for (Cluster cluser : cluserArrayList){
-            coordinatesArrayList.add(new Coordinate(cluser.getCenterLat(),cluser.getCenterLong()));
-        }
-        return coordinatesArrayList;
-    }
-*/
 
     public void showHotZonesAlgoMarkersOnMap(){
         updateMapUI();
@@ -637,7 +575,6 @@ catch (Exception e){
         View layout = layoutInflater.inflate(R.layout.not_enough_scans_pop_up, null);
 
         Button closeBtn = layout.findViewById(R.id.not_enough_scans_popup_layout_close_button);
-
         closeBtn.setOnClickListener(this);
 
         notEnoughScansPopupWindow = new PopupWindow(this.getActivity());

@@ -54,8 +54,8 @@ public class DogsListAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.profile_dog_layout,
                     viewGroup, false);
         }
-        TextView textViewDogName = (TextView)view.findViewById(R.id.profile_dog_List_Name);
-        ImageView deleteDog = (ImageView)view.findViewById(R.id.profile_delete_dog);
+        TextView textViewDogName = view.findViewById(R.id.profile_dog_List_Name);
+        deleteDog = view.findViewById(R.id.profile_delete_dog);
         CircleImageView dogImg = view.findViewById(R.id.profile_dog_img);
 
         textViewDogName.setText(dogsList.get(i).getName());

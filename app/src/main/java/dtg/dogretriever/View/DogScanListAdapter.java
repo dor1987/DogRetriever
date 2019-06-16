@@ -16,7 +16,7 @@ import dtg.dogretriever.Controller.DogScanListFunctionalityInterface;
 import dtg.dogretriever.R;
 
 public class DogScanListAdapter extends  RecyclerView.Adapter<DogScanListAdapter.ViewHolder>{
-    private ArrayList<Dog> mDogList = new ArrayList<>();
+    private ArrayList<Dog> mDogList;
     private Context mContext;
     private DogScanListFunctionalityInterface methodCaller;
 
@@ -78,7 +78,6 @@ public class DogScanListAdapter extends  RecyclerView.Adapter<DogScanListAdapter
             colorTextView = itemView.findViewById(R.id.scan_list_item_color);
             breedTextView = itemView.findViewById(R.id.scan_list_item_breed);
             parentLayout = itemView.findViewById(R.id.scan_list_item_parent_layout);
-
         }
     }
 }

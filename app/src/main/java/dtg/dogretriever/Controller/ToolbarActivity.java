@@ -17,6 +17,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
+
+import dtg.dogretriever.Controller.Fragments.AlgorithmFragment;
 import dtg.dogretriever.Model.FirebaseAdapter;
 import dtg.dogretriever.Controller.Fragments.AboutFragment;
 import dtg.dogretriever.Controller.Fragments.NotificationFragment;
@@ -25,6 +27,11 @@ import dtg.dogretriever.Controller.Fragments.SettingFragment;
 import dtg.dogretriever.R;
 
 public class ToolbarActivity extends AppCompatActivity implements MyLocationService.LocationListener {
+    private final int ALGO_FRAGMENT = 0;
+    private final int SETTINGS_FRAGMENT = 1;
+    private final int ABOUT_FRAGMENT = 2;
+    private final int PROFILE_FRAGMENT = 3;
+    private final int NOTIFICATION_FRAGMENT = 4;
 
     //Fragments
     private AlgorithmFragment algorithmFragment;
@@ -35,7 +42,7 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
 
 
     //Location Service
-    boolean isBound = false;
+    private boolean isBound = false;
     private MyLocationService.MylocalBinder mBinder;
     private Location userCurrentLocation;
     private MyLocationService myLocationService;
@@ -46,7 +53,7 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
     private View smallProgressBar;
     private View mProgressView;
     private FirebaseAdapter firebaseAdapter;
-    final Bundle bundle = new Bundle();
+    private final Bundle bundle = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +79,7 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
         int fragmentToOpen = getIntent().getIntExtra("fragmentToOpen",0);
         //which fragment to show depends on what is on the getExtra
         switch (fragmentToOpen){
-            case 0: // Open algo fragment
+            case ALGO_FRAGMENT: // Open algo fragment
 
                 String dogId;
                 if (savedInstanceState == null) {
@@ -91,21 +98,21 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
                 startAlgoMapFragment(dogId);
 
                 break;
-            case 1:
+            case SETTINGS_FRAGMENT:
                 //open Setting fragment
                 startSettingFragment();
                 break;
-            case 2:
+            case ABOUT_FRAGMENT:
                 //open about fragment
                 startAboutFragment();
                 break;
 
-            case 3:
-                //open about fragment
+            case PROFILE_FRAGMENT:
+                //open profile fragment
                 startProfileFragment();
                 break;
 
-            case 4:
+            case NOTIFICATION_FRAGMENT:
                 //open notification fragment
                 startNotificationFragment(latitude,longitude);
         }
@@ -158,7 +165,6 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
 
     public void startAlgoMapFragment(String dogId){
         //we pass dogId and the algo fragment get the data needed directly from Firebase
-
         bundle.putString("dogId",dogId);
         algorithmFragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -215,9 +221,6 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -239,8 +242,6 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
                 }
             });
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mFragmentContainerView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
@@ -254,10 +255,9 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
 
         userCurrentLocation = location;
         algorithmFragment.locationChanged(userCurrentLocation);
-
     }
     public Location getCurrentLocation(){
-        //used for fragment to get inital value
+        //used for fragment to get initial value
         return userCurrentLocation;
     }
 
@@ -281,9 +281,7 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
         }
     };
 
-
     public void showSmalProgressBar(final Boolean toShow){
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -296,8 +294,6 @@ public class ToolbarActivity extends AppCompatActivity implements MyLocationServ
                 }
             });
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
             smallProgressBar.setVisibility(toShow ? View.VISIBLE : View.GONE);
         }
     }

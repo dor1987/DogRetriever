@@ -55,13 +55,8 @@ public class MyLocationService extends Service implements LocationListener {
             @Override
             protected Scan doInBackground(Dog... dogs) {
                 while(isFirstTimeRuning);
-                try {
-                    Scan tempScan = new Scan(new Coordinate(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude()));
-                    return  tempScan;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+                Scan tempScan = new Scan(new Coordinate(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude()));
+                return  tempScan;
             }
 
             @Override

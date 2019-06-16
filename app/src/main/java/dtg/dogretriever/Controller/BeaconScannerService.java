@@ -93,11 +93,6 @@ public class BeaconScannerService extends Service {
         List<ScanFilter> filters = new ArrayList<>();
         filters.add(beaconFilter);
 
-        ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .build();
-        //mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
-
         mBluetoothLeScanner.startScan(mScanCallback);
         Log.d(TAG, "Scanning started…");
     }

@@ -19,7 +19,6 @@ public class Point {
         this.weather = weather;
         this.timeStamp = timeStamp;
         this.places = places;
-
     }
     public Point() {
     }

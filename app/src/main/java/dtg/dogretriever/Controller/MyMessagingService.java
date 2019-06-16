@@ -7,9 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-//import android.support.v4.app.NotificationCompat;
-//import android.support.v4.app.NotificationManagerCompat;
-
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -27,9 +24,9 @@ public class MyMessagingService extends FirebaseMessagingService {
     public static final String SHARED_PREFS = "sharedPrefs";
     private FirebaseAdapter firebaseAdapter;
     private String token;
-    int notificationId = createID();
-    String channelId = "channel-id";
-    String channelName = "Channel Name";
+    private int notificationId = createID();
+    private String channelId = "channel-id";
+    private String channelName = "Channel Name";
 
     public MyMessagingService() {
         firebaseAdapter = firebaseAdapter.getInstanceOfFireBaseAdapter();
