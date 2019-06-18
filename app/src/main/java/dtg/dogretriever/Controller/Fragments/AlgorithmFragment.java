@@ -396,7 +396,7 @@ public class AlgorithmFragment extends Fragment implements OnMapReadyCallback, G
 
         // Create an instance of CognitoCachingCredentialsProvider
         CognitoCachingCredentialsProvider cognitoProvider = new CognitoCachingCredentialsProvider(
-                this.getActivity().getApplicationContext(), "us-east-1:0843e7a0-4eaa-4d94-8450-29790fb2faf0", Regions.US_EAST_1);
+                this.getActivity().getApplicationContext(), "", Regions.US_EAST_1);
         // Create LambdaInvokerFactory, to be used to instantiate the Lambda proxy.
 
         LambdaInvokerFactory factory = new LambdaInvokerFactory(this.getActivity().getApplicationContext(),
@@ -459,7 +459,7 @@ catch (Exception e){
 
         // Create an instance of CognitoCachingCredentialsProvider
         CognitoCachingCredentialsProvider cognitoProvider = new CognitoCachingCredentialsProvider(
-                this.getActivity().getApplicationContext(), "us-east-1:f03c6ed8-afad-4497-9a9b-a4024e891a21", Regions.US_EAST_1);
+                this.getActivity().getApplicationContext(), "", Regions.US_EAST_1);
         // Create LambdaInvokerFactory, to be used to instantiate the Lambda proxy.
 
         LambdaInvokerFactory factory = new LambdaInvokerFactory(this.getActivity().getApplicationContext(),
